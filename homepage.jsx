@@ -14,7 +14,6 @@ const C = {
 // ============================================================
 // useScrollReveal — IntersectionObserver-triggered fade + slide
 // Elements start invisible, animate in when entering viewport.
-// One-shot animation (like El Amigo / Elementor fadeIn).
 // ============================================================
 function useScrollReveal() {
   const ref = useRef(null);
@@ -23,7 +22,6 @@ function useScrollReveal() {
     const el = ref.current;
     if (!el) return;
 
-    // Start invisible
     el.style.opacity = '0';
     el.style.transform = 'translateY(48px)';
     el.style.transition = 'opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1)';
@@ -46,6 +44,105 @@ function useScrollReveal() {
   }, []);
 
   return ref;
+}
+
+// ============================================================
+// WordReveal — scroll-driven word-by-word text reveal
+// Each word starts faded, becomes opaque as user scrolls.
+// Progress tied to scroll position (not one-shot).
+// ============================================================
+function WordReveal({ text, italic, style }) {
+  const containerRef = useRef(null);
+
+  // Split text into segments: regular words and the italic portion
+  const segments = [];
+  if (italic) {
+    const idx = text.indexOf(italic);
+    if (idx >= 0) {
+      const before = text.substring(0, idx).trim();
+      const after = text.substring(idx + italic.length).trim();
+      if (before) before.split(/\s+/).forEach(w => segments.push({ word: w, em: false }));
+      italic.split(/\s+/).forEach(w => segments.push({ word: w, em: true }));
+      if (after) after.split(/\s+/).forEach(w => segments.push({ word: w, em: false }));
+    } else {
+      text.split(/\s+/).forEach(w => segments.push({ word: w, em: false }));
+    }
+  } else {
+    text.split(/\s+/).forEach(w => segments.push({ word: w, em: false }));
+  }
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const wordEls = container.querySelectorAll('[data-word]');
+    if (!wordEls.length) return;
+
+    let raf = null;
+    const update = () => {
+      const rect = container.getBoundingClientRect();
+      const wh = window.innerHeight;
+      // Range: words start revealing when container top hits 85% of viewport
+      // All words revealed when container top hits 25% of viewport
+      const enter = wh * 0.85;
+      const full = wh * 0.25;
+      const totalWords = wordEls.length;
+
+      wordEls.forEach((wordEl, i) => {
+        // Each word has its own reveal point within the scroll range
+        const wordStart = enter - (i / totalWords) * (enter - full);
+        const wordEnd = wordStart - (enter - full) * 0.12; // each word reveals over ~12% of the range
+
+        let p;
+        if (rect.top >= wordStart) p = 0;
+        else if (rect.top <= wordEnd) p = 1;
+        else p = (wordStart - rect.top) / (wordStart - wordEnd);
+
+        // Clamp
+        p = Math.max(0, Math.min(1, p));
+        wordEl.style.opacity = String(0.15 + p * 0.85);
+      });
+    };
+
+    const onScroll = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <h2 ref={containerRef} style={style}>
+      {segments.map((seg, i) => {
+        const wordStyle = {
+          display: 'inline',
+          opacity: 0.15,
+          transition: 'opacity 0.05s linear',
+        };
+        if (seg.em) {
+          return (
+            <span key={i}>
+              <em data-word style={{ ...wordStyle, fontStyle: 'italic', color: C.green, fontWeight: 300 }}>
+                {seg.word}
+              </em>
+              {i < segments.length - 1 ? ' ' : ''}
+            </span>
+          );
+        }
+        return (
+          <span key={i}>
+            <span data-word style={wordStyle}>{seg.word}</span>
+            {i < segments.length - 1 ? ' ' : ''}
+          </span>
+        );
+      })}
+    </h2>
+  );
 }
 
 // ============================================================
@@ -201,51 +298,59 @@ function LoadingScreen() {
 // ============================================================
 // 1. Nav — logo left, hamburger right, fullscreen overlay menu
 // ============================================================
-function MenuOverlay({ open, onClose }) {
-  if (!open) return null;
+function MenuDrawer({ open, onClose }) {
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 200,
-      background: C.green,
-      display: 'flex', flexDirection: 'column',
-      justifyContent: 'center', alignItems: 'center',
-      opacity: open ? 1 : 0,
-      transition: 'opacity 0.4s ease',
-    }}>
-      {/* Close button */}
-      <button onClick={onClose} style={{
-        position: 'absolute', top: 32, right: 48,
-        background: 'transparent', border: 'none',
-        cursor: 'pointer', padding: 12,
-      }}>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C.bege} strokeWidth="1.2" strokeLinecap="round">
-          <line x1="4" y1="4" x2="20" y2="20" />
-          <line x1="20" y1="4" x2="4" y2="20" />
-        </svg>
-      </button>
-
-      {/* Nav links */}
-      <nav style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 36 }}>
-        {['Home', 'About Us', 'Projects', 'Contact Us'].map((l) => (
-          <a key={l} href="#" onClick={onClose} style={{
-            fontFamily: '"General Sans", sans-serif',
-            fontWeight: 300, fontSize: 36, letterSpacing: '-0.01em',
-            color: C.bege, textDecoration: 'none',
-            transition: 'opacity 0.3s',
-          }}>{l}</a>
-        ))}
-      </nav>
-
-      {/* Contact info at bottom */}
+    <>
+      {/* Dark backdrop */}
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 199,
+          background: 'rgba(0,0,0,0.4)',
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? 'auto' : 'none',
+          transition: 'opacity 0.4s ease',
+        }}
+      />
+      {/* Side drawer from right */}
       <div style={{
-        position: 'absolute', bottom: 48, left: 0, right: 0,
-        textAlign: 'center',
-        fontFamily: '"General Sans", sans-serif',
-        fontSize: 13, color: C.clearGreen, letterSpacing: '0.06em',
+        position: 'fixed', top: 0, right: 0, bottom: 0,
+        width: 380,
+        zIndex: 201,
+        background: C.white,
+        transform: open ? 'translateX(0)' : 'translateX(100%)',
+        transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+        display: 'flex', flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '80px 56px',
       }}>
-        info@orma.pt - +351 220 000 000
+        {/* Close button */}
+        <button onClick={onClose} style={{
+          position: 'absolute', top: 28, right: 28,
+          background: 'transparent', border: 'none',
+          cursor: 'pointer', padding: 8,
+        }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="1.2" strokeLinecap="round">
+            <line x1="5" y1="5" x2="19" y2="19" />
+            <line x1="19" y1="5" x2="5" y2="19" />
+          </svg>
+        </button>
+
+        {/* Nav links */}
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {['Projects', 'Contact', 'About'].map((l) => (
+            <a key={l} href="#" onClick={onClose} style={{
+              fontFamily: '"General Sans", sans-serif',
+              fontWeight: 500, fontSize: 16, letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              color: C.ink, textDecoration: 'none',
+              padding: '14px 0',
+              transition: 'color 0.3s',
+            }}>{l}</a>
+          ))}
+        </nav>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -275,7 +380,7 @@ function Nav() {
 
   return (
     <>
-      <MenuOverlay open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MenuDrawer open={menuOpen} onClose={() => setMenuOpen(false)} />
       <nav style={{
         position: 'fixed',
         top: 0, left: 0, right: 0,
@@ -426,7 +531,6 @@ function Hero() {
 // 3. Brand Promise — symmetrical breath
 // ============================================================
 function Promise() {
-  const contentRef = useScrollReveal();
   return (
     <section data-screen-label="02 Promise" style={{
       position: 'relative',
@@ -438,14 +542,16 @@ function Promise() {
       <div style={{ position: 'absolute', left: '50%', top: '50%', width: 760, height: 760, transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
         <TreeMark opacity={0.07} />
       </div>
-      <div ref={contentRef} style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2, willChange: 'opacity, transform' }}>
-        <h2 style={{
-          fontFamily: '"General Sans", sans-serif',
-          fontWeight: 300, fontSize: 38, lineHeight: 1.5,
-          letterSpacing: '-0.015em', color: C.ink, margin: 0, textWrap: 'balance',
-        }}>
-          Each project is designed with a focus on natural light, spatial clarity and the connection between indoor and outdoor living - creating spaces that feel intuitive, balanced and easy to <em style={{ fontStyle: 'italic', color: C.green, fontWeight: 300 }}>live in.</em>
-        </h2>
+      <div style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <WordReveal
+          text="Each project is designed with a focus on natural light, spatial clarity and the connection between indoor and outdoor living - creating spaces that feel intuitive, balanced and easy to live in."
+          italic="live in."
+          style={{
+            fontFamily: '"General Sans", sans-serif',
+            fontWeight: 300, fontSize: 38, lineHeight: 1.5,
+            letterSpacing: '-0.015em', color: C.ink, margin: 0, textWrap: 'balance',
+          }}
+        />
       </div>
     </section>
   );
