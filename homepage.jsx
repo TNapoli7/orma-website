@@ -138,7 +138,7 @@ function StickyBar() {
       boxShadow: '0 -2px 20px rgba(0,0,0,0.1)',
     }}>
       <span style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: C.bege, fontWeight: 300 }}>
-        Designed for Living — Discover our projects
+        Designed for Living - Discover our projects
       </span>
       <button style={{
         background: C.terracota, color: C.white, border: 'none',
@@ -151,18 +151,40 @@ function StickyBar() {
 }
 
 // ============================================================
-// Loading Screen — brand logo on green, clean fade, curtain up
+// Loading Screen - logo revealed by horizontal strokes
 // ============================================================
 function LoadingScreen() {
-  const [phase, setPhase] = useState('in'); // in → hold → reveal → done
+  const [phase, setPhase] = useState('strokes'); // strokes -> solid -> reveal -> done
+  const lines = 12;
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase('hold'), 1200);
-    const t2 = setTimeout(() => setPhase('reveal'), 2400);
+    if (!document.getElementById('orma-loader-css')) {
+      const style = document.createElement('style');
+      style.id = 'orma-loader-css';
+      style.textContent = Array.from({ length: lines }, (_, i) => {
+        const delay = (i * 0.08).toFixed(2);
+        return `
+          .orma-stroke-${i} {
+            animation: ormaStroke 0.6s ${delay}s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          }
+        `;
+      }).join('') + `
+        @keyframes ormaStroke {
+          0%   { transform: scaleX(0); }
+          100% { transform: scaleX(1); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    const t1 = setTimeout(() => setPhase('solid'), 1800);
+    const t2 = setTimeout(() => setPhase('reveal'), 2800);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   if (phase === 'done') return null;
+
+  const isSolid = phase === 'solid' || phase === 'reveal';
+  const lineH = 100 / lines;
 
   return (
     <div style={{
@@ -179,16 +201,54 @@ function LoadingScreen() {
     }}
       onTransitionEnd={() => { if (phase === 'reveal') setPhase('done'); }}
     >
-      <img
-        src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-bege-slogan-2.png"
-        alt="Orma — Designed for Living"
-        style={{
-          width: 220,
-          opacity: phase === 'in' ? 0 : 1,
-          transform: phase === 'in' ? 'translateY(12px)' : 'translateY(0)',
-          transition: 'opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1)',
-        }}
-      />
+      <div style={{ position: 'relative', width: 220, height: 65 }}>
+        {/* Hidden real image used as source */}
+        <img
+          src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-bege-slogan-2.png"
+          alt="Orma"
+          style={{
+            position: 'absolute', top: 0, left: 0,
+            width: '100%', height: '100%',
+            objectFit: 'contain',
+            opacity: isSolid ? 1 : 0,
+            transition: 'opacity 0.4s ease',
+          }}
+        />
+
+        {/* Stroke lines that reveal the logo slice by slice */}
+        {!isSolid && Array.from({ length: lines }, (_, i) => (
+          <div key={i} style={{
+            position: 'absolute',
+            left: 0, width: '100%',
+            top: `${i * lineH}%`,
+            height: `${lineH + 0.5}%`,
+            overflow: 'hidden',
+          }}>
+            {/* Each line contains a slice of the logo */}
+            <div
+              className={`orma-stroke-${i}`}
+              style={{
+                width: '100%', height: '100%',
+                transformOrigin: i % 2 === 0 ? 'left center' : 'right center',
+                transform: 'scaleX(0)',
+              }}
+            >
+              <img
+                src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-bege-slogan-2.png"
+                alt=""
+                style={{
+                  position: 'absolute',
+                  top: 0, left: 0,
+                  width: 220, height: 65,
+                  objectFit: 'contain',
+                  marginTop: `${-i * lineH}%`,
+                  pointerEvents: 'none',
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -361,30 +421,6 @@ function Hero() {
         </div>
       </div>
 
-      {/* Stats strip at bottom */}
-      <div style={{
-        position: 'absolute', left: 0, right: 0, bottom: 0,
-        background: `${C.green}ee`,
-        backdropFilter: 'blur(8px)',
-        height: 64,
-        display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
-        zIndex: 3,
-      }}>
-        {[
-          ['Est.', '1985'],
-          ['In development', '2 projects'],
-          ['Region', 'Northern Portugal'],
-        ].map(([k, v], i) => (
-          <div key={k} style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14,
-            borderLeft: i === 0 ? 'none' : `1px solid ${C.clearGreen}44`,
-            fontFamily: '"General Sans", sans-serif',
-          }}>
-            <span style={{ fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600 }}>{k}</span>
-            <span style={{ fontSize: 13, color: C.bege, fontWeight: 500, letterSpacing: '0.04em' }}>{v}</span>
-          </div>
-        ))}
-      </div>
     </section>
   );
 }
@@ -412,7 +448,7 @@ function Promise() {
           fontWeight: 300, fontSize: 38, lineHeight: 1.5,
           letterSpacing: '-0.015em', color: C.ink, margin: 0, textWrap: 'balance',
         }}>
-          Each project is designed with a focus on natural light, spatial clarity and the connection between indoor and outdoor living — creating spaces that feel intuitive, balanced and easy to <em style={{ fontStyle: 'italic', color: C.green, fontWeight: 300 }}>live in.</em>
+          Each project is designed with a focus on natural light, spatial clarity and the connection between indoor and outdoor living - creating spaces that feel intuitive, balanced and easy to <em style={{ fontStyle: 'italic', color: C.green, fontWeight: 300 }}>live in.</em>
         </h2>
       </div>
     </section>
@@ -499,13 +535,13 @@ function Projects() {
       code: 'ORMA / 01', name: 'Lir 725', location: 'Porto',
       blurb: 'A residential building in Porto designed in response to its surrounding context. The project balances a clear relationship with the street with the inclusion of private outdoor spaces. The result is a well-resolved development that combines efficiency, comfort and careful spatial organization.',
       image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
-      meta: '12 apartments · 2026 — 2027',
+      meta: '12 apartments · 2026 - 2027',
     },
     {
       code: 'ORMA / 02', name: 'Villas Sto. Tirso', location: 'Santo Tirso',
       blurb: 'A residential project in Santo Tirso set within a low-density and naturally defined environment. The design responds to the surrounding landscape, prioritising orientation, privacy and the relationship with outdoor space.',
       image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
-      meta: '6 villas · 2026 — 2028',
+      meta: '6 villas · 2026 - 2028',
     },
   ];
 
@@ -549,7 +585,7 @@ function Projects() {
               )}
               <div style={{ padding: '48px 44px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: 11, color: C.green, letterSpacing: '0.16em', marginBottom: 14, textTransform: 'uppercase' }}>
-                  {p.code} — {p.location}
+                  {p.code} - {p.location}
                 </div>
                 <h3 style={{ fontFamily: '"General Sans", sans-serif', fontWeight: 600, fontSize: 26, color: C.ink, margin: 0, letterSpacing: '-0.01em' }}>{p.name}</h3>
                 <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 12, color: C.green, marginTop: 8, letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 500 }}>
@@ -696,7 +732,7 @@ function Visit() {
             <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.green, fontWeight: 600 }}>Address</div>
             <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: C.ink, lineHeight: 1.6 }}>Rua de Cedofeita 123, 4050-179 Porto</div>
             <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.green, fontWeight: 600 }}>Hours</div>
-            <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: C.ink, lineHeight: 1.6 }}>Tue — Sat · 10:00 — 18:00</div>
+            <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: C.ink, lineHeight: 1.6 }}>Tue - Sat · 10:00 - 18:00</div>
           </div>
         </div>
 
