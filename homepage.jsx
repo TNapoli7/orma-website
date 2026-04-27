@@ -151,54 +151,25 @@ function StickyBar() {
 }
 
 // ============================================================
-// Loading Screen — SVG O. mark with stroke draw animation
+// Loading Screen — brand logo on green, clean fade, curtain up
 // ============================================================
 function LoadingScreen() {
-  const [phase, setPhase] = useState('draw'); // draw → fill → hold → reveal → done
+  const [phase, setPhase] = useState('in'); // in → hold → reveal → done
 
   useEffect(() => {
-    if (!document.getElementById('orma-loader-css')) {
-      const style = document.createElement('style');
-      style.id = 'orma-loader-css';
-      style.textContent = `
-        @keyframes ormaDraw {
-          0%   { stroke-dashoffset: 1; }
-          100% { stroke-dashoffset: 0; }
-        }
-        @keyframes ormaFillIn {
-          0%   { fill-opacity: 0; }
-          100% { fill-opacity: 1; }
-        }
-        @keyframes ormaDotScale {
-          0%   { transform: scale(0); opacity: 0; }
-          60%  { transform: scale(1.2); opacity: 1; }
-          100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes ormaTagReveal {
-          0%   { opacity: 0; letter-spacing: 0.5em; }
-          100% { opacity: 0.7; letter-spacing: 0.28em; }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-    const t1 = setTimeout(() => setPhase('fill'), 1600);
-    const t2 = setTimeout(() => setPhase('hold'), 2400);
-    const t3 = setTimeout(() => setPhase('reveal'), 3200);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    const t1 = setTimeout(() => setPhase('hold'), 1200);
+    const t2 = setTimeout(() => setPhase('reveal'), 2400);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   if (phase === 'done') return null;
-
-  const drawing = phase === 'draw';
-  const filling = phase === 'fill' || phase === 'hold' || phase === 'reveal';
-  const showTag = phase === 'hold' || phase === 'reveal';
 
   return (
     <div style={{
       position: 'fixed',
       top: 0, left: 0, width: '100%',
       height: phase === 'reveal' ? '0vh' : '100vh',
-      background: C.white,
+      background: C.green,
       zIndex: 9999,
       overflow: 'hidden',
       display: 'flex',
@@ -208,87 +179,16 @@ function LoadingScreen() {
     }}
       onTransitionEnd={() => { if (phase === 'reveal') setPhase('done'); }}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {/* SVG O. mark */}
-        <svg viewBox="0 0 120 140" width="100" height="117" xmlns="http://www.w3.org/2000/svg">
-          {/* Outer O — ellipse */}
-          <ellipse
-            cx="52" cy="60" rx="38" ry="50"
-            fill="none"
-            stroke={C.ink}
-            strokeWidth="3"
-            style={{
-              strokeDasharray: 1,
-              strokeDashoffset: drawing ? 1 : 0,
-              animation: drawing ? 'ormaDraw 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards' : 'none',
-              fillOpacity: filling ? 1 : 0,
-              fill: filling ? 'none' : 'none',
-              pathLength: 1,
-            }}
-          />
-
-          {/* Inner leaf/petal — organic curve inside the O */}
-          <path
-            d="M 52 12 C 52 12, 72 28, 68 56 C 65 76, 52 92, 40 102 C 36 105, 34 104, 36 100 C 42 86, 48 68, 46 48 C 44 30, 38 18, 52 12 Z"
-            fill="none"
-            stroke={C.ink}
-            strokeWidth="1.5"
-            style={{
-              strokeDasharray: 1,
-              strokeDashoffset: drawing ? 1 : 0,
-              animation: drawing ? 'ormaDraw 1.4s 0.3s cubic-bezier(0.65, 0, 0.35, 1) forwards' : 'none',
-              fill: filling ? C.ink : 'none',
-              fillOpacity: filling ? 1 : 0,
-              transition: 'fill-opacity 0.6s ease',
-              pathLength: 1,
-            }}
-          />
-
-          {/* Dot */}
-          <circle
-            cx="102" cy="104" r="6"
-            fill={C.ink}
-            style={{
-              transformOrigin: '102px 104px',
-              animation: drawing
-                ? 'ormaDotScale 0.5s 1.0s cubic-bezier(0.22, 1, 0.36, 1) forwards'
-                : 'none',
-              opacity: drawing ? 0 : 1,
-              transform: drawing ? 'scale(0)' : 'scale(1)',
-            }}
-          />
-
-          {/* DESIGNED text */}
-          <text
-            x="52" y="126"
-            textAnchor="middle"
-            style={{
-              fontFamily: '"General Sans", sans-serif',
-              fontSize: 8.5,
-              fontWeight: 500,
-              letterSpacing: '0.28em',
-              fill: C.ink,
-              animation: showTag ? 'ormaTagReveal 0.6s ease forwards' : 'none',
-              opacity: showTag ? undefined : 0,
-            }}
-          >DESIGNED</text>
-
-          {/* FOR LIVING text */}
-          <text
-            x="52" y="137"
-            textAnchor="middle"
-            style={{
-              fontFamily: '"General Sans", sans-serif',
-              fontSize: 8.5,
-              fontWeight: 500,
-              letterSpacing: '0.28em',
-              fill: C.ink,
-              animation: showTag ? 'ormaTagReveal 0.6s 0.1s ease forwards' : 'none',
-              opacity: showTag ? undefined : 0,
-            }}
-          >FOR LIVING</text>
-        </svg>
-      </div>
+      <img
+        src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-bege-slogan-2.png"
+        alt="Orma — Designed for Living"
+        style={{
+          width: 220,
+          opacity: phase === 'in' ? 0 : 1,
+          transform: phase === 'in' ? 'translateY(12px)' : 'translateY(0)',
+          transition: 'opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1)',
+        }}
+      />
     </div>
   );
 }
