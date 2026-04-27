@@ -12,33 +12,59 @@ const C = {
 };
 
 // ============================================================
-// Tree watermark — abstract organic motif
+// useReveal — scroll-triggered fade-in
 // ============================================================
-function TreeMark({ color = C.green, opacity = 0.08, style = {} }) {
+function useReveal(threshold = 0.15) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setVisible(true); obs.disconnect(); }
+    }, { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return [ref, visible];
+}
+
+const revealStyle = (visible) => ({
+  opacity: visible ? 1 : 0,
+  transform: visible ? 'none' : 'translateY(40px)',
+  transition: 'opacity 0.7s ease, transform 0.7s ease',
+});
+
+// ============================================================
+// SiteImage — real image via background-image
+// ============================================================
+function SiteImage({ src, style = {} }) {
   return (
-    <svg viewBox="0 0 400 400" style={{ display: 'block', opacity, ...style }} aria-hidden="true">
-      <g fill="none" stroke={color} strokeWidth="1" strokeLinecap="round">
-        <circle cx="200" cy="200" r="92" />
-        <path d="M200 292 L200 380" />
-        <path d="M200 200 C 170 160, 140 140, 110 130" />
-        <path d="M200 200 C 230 160, 260 140, 290 130" />
-        <path d="M200 200 C 160 200, 120 210, 80 230" />
-        <path d="M200 200 C 240 200, 280 210, 320 230" />
-        <path d="M200 200 C 180 240, 160 270, 140 300" />
-        <path d="M200 200 C 220 240, 240 270, 260 300" />
-        <path d="M200 200 C 200 160, 200 120, 200 70" />
-      </g>
-      <g fill={color}>
-        <ellipse cx="110" cy="130" rx="14" ry="6" transform="rotate(-25 110 130)" />
-        <ellipse cx="290" cy="130" rx="14" ry="6" transform="rotate(25 290 130)" />
-        <ellipse cx="80" cy="230" rx="14" ry="6" transform="rotate(-10 80 230)" />
-        <ellipse cx="320" cy="230" rx="14" ry="6" transform="rotate(10 320 230)" />
-        <ellipse cx="140" cy="300" rx="14" ry="6" transform="rotate(45 140 300)" />
-        <ellipse cx="260" cy="300" rx="14" ry="6" transform="rotate(-45 260 300)" />
-        <ellipse cx="200" cy="70" rx="14" ry="6" />
-        <circle cx="200" cy="200" r="6" />
-      </g>
-    </svg>
+    <div style={{
+      backgroundImage: `url(${src})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      ...style,
+    }} />
+  );
+}
+
+// ============================================================
+// Tree watermark — actual tree PNG
+// ============================================================
+function TreeMark({ opacity = 0.08, style = {} }) {
+  return (
+    <div style={{
+      display: 'block',
+      width: '100%',
+      height: '100%',
+      backgroundImage: 'url(https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-arvore-black-1.png)',
+      backgroundSize: 'contain',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center',
+      opacity,
+      ...style,
+    }} aria-hidden="true" />
   );
 }
 
@@ -86,6 +112,40 @@ function Placeholder({ label, tone = 'green', style = {}, captionPos = 'bottom-l
         background: tone === 'dark' ? `${C.green}cc` : `${C.bege}dd`,
         padding: '5px 9px', borderRadius: 1, maxWidth: '70%',
       }}>{label}</div>
+    </div>
+  );
+}
+
+// ============================================================
+// Sticky CTA Bar
+// ============================================================
+function StickyBar() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const handler = () => setShow(window.scrollY > window.innerHeight * 0.8);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+  return (
+    <div style={{
+      position: 'fixed', bottom: 0, left: 0, right: 0,
+      background: C.green,
+      padding: '14px 56px',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      transform: show ? 'translateY(0)' : 'translateY(100%)',
+      transition: 'transform 0.4s ease',
+      zIndex: 90,
+      boxShadow: '0 -2px 20px rgba(0,0,0,0.1)',
+    }}>
+      <span style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: C.bege, fontWeight: 300 }}>
+        Visit our model apartment — Tue to Sat, 10:00–18:00
+      </span>
+      <button style={{
+        background: C.terracota, color: C.white, border: 'none',
+        padding: '12px 28px', fontFamily: '"General Sans", sans-serif',
+        fontWeight: 500, fontSize: 12, letterSpacing: '0.16em',
+        textTransform: 'uppercase', borderRadius: 6, cursor: 'pointer',
+      }}>Schedule a visit →</button>
     </div>
   );
 }
@@ -148,7 +208,7 @@ function Hero() {
     }}>
       {/* tree watermark behind text */}
       <div style={{ position: 'absolute', left: -160, top: 80, width: 720, height: 720, pointerEvents: 'none', zIndex: 1 }}>
-        <TreeMark color={C.clearGreen} opacity={0.32} />
+        <TreeMark opacity={0.32} />
       </div>
 
       {/* left: text */}
@@ -208,11 +268,9 @@ function Hero() {
 
       {/* right: full bleed image */}
       <div style={{ position: 'relative' }}>
-        <Placeholder
-          label="Interior render — bright living room, floor-to-ceiling windows, oak floor, single green armchair, monstera plant, warm afternoon light"
-          tone="green"
+        <SiteImage
+          src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/ee66e43983e1f35750e3d6d88040a7a8a3015d35.png"
           style={{ position: 'absolute', inset: 0 }}
-          captionPos="bottom-right"
         />
       </div>
 
@@ -247,16 +305,18 @@ function Hero() {
 // 3. Brand Promise — symmetrical breath
 // ============================================================
 function Promise() {
+  const [ref, visible] = useReveal();
   return (
-    <section data-screen-label="02 Promise" style={{
+    <section ref={ref} data-screen-label="02 Promise" style={{
       position: 'relative',
       background: C.bege,
       padding: '180px 64px 200px',
       overflow: 'hidden',
       textAlign: 'center',
+      ...revealStyle(visible),
     }}>
       <div style={{ position: 'absolute', left: '50%', top: '50%', width: 760, height: 760, transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
-        <TreeMark color={C.green} opacity={0.07} />
+        <TreeMark opacity={0.07} />
       </div>
       <div style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2 }}>
         <h2 style={{
@@ -299,21 +359,23 @@ function PillarIcon({ kind }) {
 }
 
 function Pillars() {
+  const [ref, visible] = useReveal();
   const items = [
     { kind: 'land', title: 'Land Vision', body: 'We identify locations where city convenience meets natural surroundings. Every site is chosen for its balance between access, quality of life, and long-term value.' },
     { kind: 'design', title: 'Thoughtful Design', body: 'We collaborate with architects to create layouts that feel intuitive, balanced, and filled with natural light. Spaces shaped by how families actually live.' },
     { kind: 'trust', title: 'Trusted Construction', body: '40+ years of building experience. We work with partners who share our respect for quality, integrity, and responsible execution.' },
   ];
   return (
-    <section data-screen-label="03 Pillars" style={{
+    <section ref={ref} data-screen-label="03 Pillars" style={{
       background: C.white,
-      padding: '160px 64px 140px',
+      padding: '120px 64px 140px',
+      ...revealStyle(visible),
     }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         <div style={{
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
-          textTransform: 'uppercase', fontWeight: 600, textAlign: 'center', marginBottom: 80,
+          textTransform: 'uppercase', fontWeight: 600, textAlign: 'center', marginBottom: 56,
         }}>Our Approach</div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
@@ -340,28 +402,30 @@ function Pillars() {
 }
 
 // ============================================================
-// 5. Featured projects — staggered cards, transitions to green
+// 5. Featured projects — editorial layout, image + text rows
 // ============================================================
 function Projects() {
+  const [ref, visible] = useReveal();
   const projects = [
     {
       code: 'ORMA / 01', name: 'Lir 725', location: 'Porto',
       blurb: 'A residential building designed in response to its surrounding urban context. Clarity, light, and considered proportions.',
-      photoLabel: 'Architectural render — Lir 725, Porto facade at dusk, warm interior lights, cedar cladding',
+      image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
       meta: '12 apartments · 2026 — 2027',
     },
     {
       code: 'ORMA / 02', name: 'Villas Sto. Tirso', location: 'Santo Tirso',
       blurb: 'A residential project set within a low-density, naturally defined environment. Room to breathe, room to grow.',
-      photoLabel: 'Architectural render — Villas Sto. Tirso, six villas in landscape, low afternoon sun',
+      image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
       meta: '6 villas · 2026 — 2028',
     },
   ];
 
   return (
-    <section data-screen-label="04 Projects" style={{
+    <section ref={ref} data-screen-label="04 Projects" style={{
       background: `linear-gradient(180deg, ${C.white} 0%, ${C.white} 65%, ${C.green} 65%, ${C.green} 100%)`,
       padding: '140px 64px 0',
+      ...revealStyle(visible),
     }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 96 }}>
@@ -379,19 +443,23 @@ function Projects() {
           </h2>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56 }}>
+        <div style={{ display: 'grid', gap: 80 }}>
           {projects.map((p, i) => (
             <article key={p.name} style={{
               background: C.white,
               borderRadius: 12,
               boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
               overflow: 'hidden',
-              transform: i === 1 ? 'translateY(72px)' : 'none',
               display: 'grid',
-              gridTemplateRows: 'auto auto',
+              gridTemplateColumns: i === 0 ? '60fr 40fr' : '40fr 60fr',
             }}>
-              <Placeholder label={p.photoLabel} tone={i === 0 ? 'green' : 'warm'} style={{ width: '100%', aspectRatio: '5 / 4' }} />
-              <div style={{ padding: '36px 36px 40px' }}>
+              {i === 0 && (
+                <SiteImage
+                  src={p.image}
+                  style={{ width: '100%', minHeight: 420 }}
+                />
+              )}
+              <div style={{ padding: '48px 44px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: 11, color: C.green, letterSpacing: '0.16em', marginBottom: 14, textTransform: 'uppercase' }}>
                   {p.code} — {p.location}
                 </div>
@@ -406,6 +474,12 @@ function Projects() {
                   color: C.terracota, textDecoration: 'none', fontWeight: 600,
                 }}>Learn more →</a>
               </div>
+              {i === 1 && (
+                <SiteImage
+                  src={p.image}
+                  style={{ width: '100%', minHeight: 420 }}
+                />
+              )}
             </article>
           ))}
         </div>
@@ -419,15 +493,17 @@ function Projects() {
 // 6. Why Orma — dark green, big stats
 // ============================================================
 function WhyOrma() {
+  const [ref, visible] = useReveal();
   return (
-    <section data-screen-label="05 Why Orma" style={{
+    <section ref={ref} data-screen-label="05 Why Orma" style={{
       position: 'relative',
       background: C.green,
       padding: '160px 64px',
       overflow: 'hidden',
+      ...revealStyle(visible),
     }}>
       <div style={{ position: 'absolute', right: -240, bottom: -200, width: 800, height: 800, pointerEvents: 'none' }}>
-        <TreeMark color={C.bege} opacity={0.08} />
+        <TreeMark opacity={0.08} />
       </div>
 
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -470,10 +546,9 @@ function WhyOrma() {
               Led by a new generation that lives the realities of young families and active couples, we design with real life in mind. Our fresh perspective brings a clear understanding of modern routines, daily movement, and the desire for balance.
             </p>
             <div style={{ marginTop: 56 }}>
-              <Placeholder
-                label="Portrait — second-generation team in studio, soft window light"
-                tone="dark"
-                style={{ width: '100%', aspectRatio: '4 / 3' }}
+              <SiteImage
+                src="https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/2.png"
+                style={{ width: '100%', aspectRatio: '4 / 3', borderRadius: 8 }}
               />
             </div>
           </div>
@@ -487,6 +562,7 @@ function WhyOrma() {
 // 7. Visit / conversion
 // ============================================================
 function Visit() {
+  const [ref, visible] = useReveal();
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [agree, setAgree] = useState(false);
   const [sent, setSent] = useState(false);
@@ -502,9 +578,10 @@ function Visit() {
   };
 
   return (
-    <section data-screen-label="06 Visit" style={{
+    <section ref={ref} data-screen-label="06 Visit" style={{
       background: C.bege,
       padding: '140px 64px',
+      ...revealStyle(visible),
     }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
         <div>
@@ -560,9 +637,18 @@ function Visit() {
 
           {/* photo strip */}
           <div style={{ display: 'grid', gap: 12 }}>
-            <Placeholder label="Living" tone="green" style={{ flex: 1, minHeight: 0 }} />
-            <Placeholder label="Kitchen" tone="bege" style={{ flex: 1, minHeight: 0 }} />
-            <Placeholder label="Terrace" tone="warm" style={{ flex: 1, minHeight: 0 }} />
+            <SiteImage
+              src="https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/1-scaled.jpg"
+              style={{ flex: 1, minHeight: 0, borderRadius: 6 }}
+            />
+            <SiteImage
+              src="https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/3-scaled.jpg"
+              style={{ flex: 1, minHeight: 0, borderRadius: 6 }}
+            />
+            <SiteImage
+              src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/ee66e43983e1f35750e3d6d88040a7a8a3015d35.png"
+              style={{ flex: 1, minHeight: 0, borderRadius: 6 }}
+            />
           </div>
         </div>
       </div>
@@ -574,11 +660,13 @@ function Visit() {
 // 8. Community — compact, centered
 // ============================================================
 function Community() {
+  const [ref, visible] = useReveal();
   return (
-    <section data-screen-label="07 Community" style={{
+    <section ref={ref} data-screen-label="07 Community" style={{
       background: C.white,
       padding: '140px 64px 120px',
       textAlign: 'center',
+      ...revealStyle(visible),
     }}>
       <div style={{ maxWidth: 800, margin: '0 auto' }}>
         <div style={{
@@ -602,21 +690,19 @@ function Community() {
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 64 }}>
           {[
-            'Local school garden',
-            'Riverside walk',
-            'Library renovation',
-            'Youth football',
-          ].map((label, i) => (
-            <div key={label} style={{
+            { label: 'Local school garden', src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/joel-muniz-qvzjG2pF4bE-unsplash-scaled.jpg' },
+            { label: 'Riverside walk', src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png' },
+            { label: 'Library renovation', src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg' },
+            { label: 'Youth football', src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/2.png' },
+          ].map((item) => (
+            <div key={item.label} style={{
               width: 130, height: 130, borderRadius: '50%',
               border: `1px solid ${C.green}66`,
               padding: 4, overflow: 'hidden',
             }}>
-              <Placeholder
-                label={label}
-                tone={['bege', 'green', 'warm', 'grey'][i]}
+              <SiteImage
+                src={item.src}
                 style={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                captionPos="bottom-left"
               />
             </div>
           ))}
@@ -630,11 +716,13 @@ function Community() {
 // 9. Final CTA banner
 // ============================================================
 function FinalCTA() {
+  const [ref, visible] = useReveal();
   return (
-    <section data-screen-label="08 Final CTA" style={{
+    <section ref={ref} data-screen-label="08 Final CTA" style={{
       background: C.bege,
       padding: '120px 64px',
       textAlign: 'center',
+      ...revealStyle(visible),
     }}>
       <h2 style={{
         fontFamily: '"General Sans", sans-serif',
@@ -670,7 +758,7 @@ function Footer() {
       position: 'relative', overflow: 'hidden',
     }}>
       <div style={{ position: 'absolute', right: -200, bottom: -200, width: 540, height: 540, pointerEvents: 'none' }}>
-        <TreeMark color={C.bege} opacity={0.03} />
+        <TreeMark opacity={0.03} />
       </div>
 
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -734,6 +822,7 @@ function DesktopHomepage() {
       <Community />
       <FinalCTA />
       <Footer />
+      <StickyBar />
     </div>
   );
 }
