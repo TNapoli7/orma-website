@@ -151,43 +151,41 @@ function StickyBar() {
 }
 
 // ============================================================
-// Loading Screen — line-fill logo reveal, then curtain up
+// Loading Screen — architectural line + logo wipe reveal
 // ============================================================
 function LoadingScreen() {
-  const [phase, setPhase] = useState('filling'); // filling → hold → reveal → done
+  const [phase, setPhase] = useState('line'); // line → logo → hold → reveal → done
 
   useEffect(() => {
-    // Inject keyframes once
     if (!document.getElementById('orma-loader-css')) {
       const style = document.createElement('style');
       style.id = 'orma-loader-css';
       style.textContent = `
-        @keyframes ormaLineSweep {
-          0%   { transform: translateX(-110%); }
-          50%  { transform: translateX(0%); }
-          100% { transform: translateX(110%); }
+        @keyframes ormaLineGrow {
+          0%   { transform: scaleX(0); }
+          100% { transform: scaleX(1); }
         }
-        @keyframes ormaLogoReveal {
-          0%   { clip-path: inset(100% 0 0 0); opacity: 0.3; }
-          60%  { clip-path: inset(20% 0 0 0); opacity: 0.7; }
-          100% { clip-path: inset(0 0 0 0); opacity: 1; }
+        @keyframes ormaLogoWipe {
+          0%   { clip-path: inset(0 100% 0 0); }
+          100% { clip-path: inset(0 0% 0 0); }
         }
-        @keyframes ormaLogoPulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.85; }
+        @keyframes ormaTagFade {
+          0%   { opacity: 0; transform: translateY(6px); }
+          100% { opacity: 0.6; transform: translateY(0); }
         }
       `;
       document.head.appendChild(style);
     }
-    const t1 = setTimeout(() => setPhase('hold'), 2000);
-    const t2 = setTimeout(() => setPhase('reveal'), 2800);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const t1 = setTimeout(() => setPhase('logo'), 800);
+    const t2 = setTimeout(() => setPhase('hold'), 2200);
+    const t3 = setTimeout(() => setPhase('reveal'), 3000);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
   if (phase === 'done') return null;
 
-  const lineCount = 5;
-  const lines = Array.from({ length: lineCount }, (_, i) => i);
+  const showLogo = phase === 'logo' || phase === 'hold' || phase === 'reveal';
+  const showTag = phase === 'hold' || phase === 'reveal';
 
   return (
     <div style={{
@@ -204,49 +202,83 @@ function LoadingScreen() {
     }}
       onTransitionEnd={() => { if (phase === 'reveal') setPhase('done'); }}
     >
-      <div style={{ position: 'relative' }}>
-        {/* Logo with clip-path reveal animation */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+        {/* Logo — wipes in left-to-right */}
         <img
           src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
           alt="Orma"
           style={{
             width: 200,
             display: 'block',
-            animation: phase === 'filling'
-              ? 'ormaLogoReveal 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards'
-              : phase === 'hold'
-              ? 'ormaLogoPulse 1.5s ease infinite'
-              : 'none',
-            opacity: phase === 'reveal' ? 1 : undefined,
+            animation: showLogo ? 'ormaLogoWipe 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards' : 'none',
+            clipPath: showLogo ? undefined : 'inset(0 100% 0 0)',
           }}
         />
 
-        {/* Scan lines sweeping across the logo */}
-        {phase === 'filling' && lines.map(i => (
-          <div key={i} style={{
-            position: 'absolute',
-            left: 0, right: 0,
-            top: `${(i / lineCount) * 100}%`,
-            height: `${(1 / lineCount) * 100}%`,
-            overflow: 'hidden',
-            pointerEvents: 'none',
-          }}>
-            <div style={{
-              width: '60%', height: '1px',
-              background: `linear-gradient(90deg, transparent, ${C.bege}88, transparent)`,
-              animation: `ormaLineSweep ${0.9 + i * 0.15}s ${i * 0.12}s cubic-bezier(0.45, 0, 0.55, 1) infinite`,
-            }} />
-          </div>
-        ))}
+        {/* Horizontal line — expands from center */}
+        <div style={{
+          width: 200,
+          height: 1,
+          marginTop: 16,
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          <div style={{
+            width: '100%',
+            height: '100%',
+            background: C.bege,
+            transformOrigin: 'center',
+            animation: 'ormaLineGrow 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+            opacity: 0.5,
+          }} />
+        </div>
+
+        {/* Tagline — fades in last */}
+        <div style={{
+          marginTop: 14,
+          fontFamily: '"General Sans", sans-serif',
+          fontSize: 9,
+          letterSpacing: '0.35em',
+          textTransform: 'uppercase',
+          color: C.bege,
+          fontWeight: 500,
+          animation: showTag ? 'ormaTagFade 0.6s ease forwards' : 'none',
+          opacity: showTag ? undefined : 0,
+        }}>
+          Designed for Living
+        </div>
       </div>
     </div>
   );
 }
 
 // ============================================================
-// 1. Nav — Green, sticky, with Contact Us button
+// 1. Nav — hides on scroll down, shows on scroll up
 // ============================================================
 function Nav() {
+  const [visible, setVisible] = useState(true);
+  const lastScroll = useRef(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const heroH = window.innerHeight;
+      if (y < heroH * 0.5) {
+        // Always show nav in hero area
+        setVisible(true);
+      } else if (y < lastScroll.current) {
+        // Scrolling UP → show
+        setVisible(true);
+      } else if (y > lastScroll.current + 10) {
+        // Scrolling DOWN (with threshold) → hide
+        setVisible(false);
+      }
+      lastScroll.current = y;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <nav style={{
       position: 'fixed',
@@ -258,6 +290,8 @@ function Nav() {
       alignItems: 'center',
       justifyContent: 'space-between',
       zIndex: 100,
+      transform: visible ? 'translateY(0)' : 'translateY(-100%)',
+      transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
     }}>
       <img
         src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
