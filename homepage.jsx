@@ -138,31 +138,56 @@ function StickyBar() {
       boxShadow: '0 -2px 20px rgba(0,0,0,0.1)',
     }}>
       <span style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: C.bege, fontWeight: 300 }}>
-        Visit our model apartment — Tue to Sat, 10:00–18:00
+        Designed for Living — Discover our projects
       </span>
       <button style={{
         background: C.terracota, color: C.white, border: 'none',
         padding: '12px 28px', fontFamily: '"General Sans", sans-serif',
         fontWeight: 500, fontSize: 12, letterSpacing: '0.16em',
         textTransform: 'uppercase', borderRadius: 6, cursor: 'pointer',
-      }}>Schedule a visit →</button>
+      }}>Contact Us →</button>
     </div>
   );
 }
 
 // ============================================================
-// Loading Screen — Antas Atrium style curtain reveal
+// Loading Screen — line-fill logo reveal, then curtain up
 // ============================================================
 function LoadingScreen() {
-  const [phase, setPhase] = useState('logo-in'); // logo-in → hold → reveal → done
+  const [phase, setPhase] = useState('filling'); // filling → hold → reveal → done
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase('hold'), 800);
-    const t2 = setTimeout(() => setPhase('reveal'), 2200);
+    // Inject keyframes once
+    if (!document.getElementById('orma-loader-css')) {
+      const style = document.createElement('style');
+      style.id = 'orma-loader-css';
+      style.textContent = `
+        @keyframes ormaLineSweep {
+          0%   { transform: translateX(-110%); }
+          50%  { transform: translateX(0%); }
+          100% { transform: translateX(110%); }
+        }
+        @keyframes ormaLogoReveal {
+          0%   { clip-path: inset(100% 0 0 0); opacity: 0.3; }
+          60%  { clip-path: inset(20% 0 0 0); opacity: 0.7; }
+          100% { clip-path: inset(0 0 0 0); opacity: 1; }
+        }
+        @keyframes ormaLogoPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.85; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    const t1 = setTimeout(() => setPhase('hold'), 2000);
+    const t2 = setTimeout(() => setPhase('reveal'), 2800);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   if (phase === 'done') return null;
+
+  const lineCount = 5;
+  const lines = Array.from({ length: lineCount }, (_, i) => i);
 
   return (
     <div style={{
@@ -179,28 +204,53 @@ function LoadingScreen() {
     }}
       onTransitionEnd={() => { if (phase === 'reveal') setPhase('done'); }}
     >
-      <img
-        src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
-        alt="Orma"
-        style={{
-          width: 180,
-          opacity: phase === 'logo-in' ? 0 : 1,
-          transform: phase === 'logo-in' ? 'translateY(16px)' : 'translateY(0)',
-          transition: 'opacity 0.8s ease, transform 0.8s ease',
-        }}
-      />
+      <div style={{ position: 'relative' }}>
+        {/* Logo with clip-path reveal animation */}
+        <img
+          src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
+          alt="Orma"
+          style={{
+            width: 200,
+            display: 'block',
+            animation: phase === 'filling'
+              ? 'ormaLogoReveal 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards'
+              : phase === 'hold'
+              ? 'ormaLogoPulse 1.5s ease infinite'
+              : 'none',
+            opacity: phase === 'reveal' ? 1 : undefined,
+          }}
+        />
+
+        {/* Scan lines sweeping across the logo */}
+        {phase === 'filling' && lines.map(i => (
+          <div key={i} style={{
+            position: 'absolute',
+            left: 0, right: 0,
+            top: `${(i / lineCount) * 100}%`,
+            height: `${(1 / lineCount) * 100}%`,
+            overflow: 'hidden',
+            pointerEvents: 'none',
+          }}>
+            <div style={{
+              width: '60%', height: '1px',
+              background: `linear-gradient(90deg, transparent, ${C.bege}88, transparent)`,
+              animation: `ormaLineSweep ${0.9 + i * 0.15}s ${i * 0.12}s cubic-bezier(0.45, 0, 0.55, 1) infinite`,
+            }} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
 // ============================================================
-// 1. Nav — Green, sticky, with Schedule a visit button
+// 1. Nav — Green, sticky, with Contact Us button
 // ============================================================
 function Nav() {
   return (
     <nav style={{
-      position: 'sticky',
-      top: 0,
+      position: 'fixed',
+      top: 0, left: 0, right: 0,
       height: 68,
       padding: '0 56px',
       background: C.green,
@@ -215,7 +265,7 @@ function Nav() {
         style={{ height: 22 }}
       />
       <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
-        {['Home', 'About', 'Projects', 'Contact'].map((l, i) => (
+        {['Home', 'About Us', 'Projects', 'Contact Us'].map((l, i) => (
           <a key={l} href="#" style={{
             fontFamily: '"General Sans", sans-serif',
             fontWeight: 500, fontSize: 12, letterSpacing: '0.2em',
@@ -234,7 +284,7 @@ function Nav() {
           textTransform: 'uppercase',
           borderRadius: 6, cursor: 'pointer',
           marginLeft: 8,
-        }}>Schedule a visit</button>
+        }}>Contact Us</button>
       </div>
     </nav>
   );
@@ -305,7 +355,7 @@ function Hero() {
           fontWeight: 300, fontSize: 76, lineHeight: 1.0,
           letterSpacing: '-0.025em', color: C.white, margin: 0, textWrap: 'balance',
         }}>
-          Designed for the way you <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.bege }}>live.</em>
+          Designed for <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.bege }}>Living.</em>
         </h1>
 
         <p style={{
@@ -314,7 +364,7 @@ function Hero() {
           color: C.bege, marginTop: 32, marginBottom: 0, maxWidth: 520,
           opacity: 0.9,
         }}>
-          Homes shaped by clarity, light, and purpose — built by a family of architects, engineers and craftspeople in northern Portugal.
+          Spaces shaped around how you live, designed with clarity, light and purpose.
         </p>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 28, marginTop: 44 }}>
@@ -387,7 +437,7 @@ function Promise() {
           fontWeight: 300, fontSize: 38, lineHeight: 1.5,
           letterSpacing: '-0.015em', color: C.ink, margin: 0, textWrap: 'balance',
         }}>
-          We don't just build homes. We design the foundation for how your family <em style={{ fontStyle: 'italic', color: C.green, fontWeight: 300 }}>grows</em>.
+          Each project is designed with a focus on natural light, spatial clarity and the connection between indoor and outdoor living — creating spaces that feel intuitive, balanced and easy to <em style={{ fontStyle: 'italic', color: C.green, fontWeight: 300 }}>live in.</em>
         </h2>
       </div>
     </section>
@@ -424,9 +474,9 @@ function PillarIcon({ kind }) {
 function Pillars() {
   const [ref, visible] = useReveal();
   const items = [
-    { kind: 'land', title: 'Land Vision', body: 'We identify locations where city convenience meets natural surroundings. Every site is chosen for its balance between access, quality of life, and long-term value.' },
-    { kind: 'design', title: 'Thoughtful Design', body: 'We collaborate with architects to create layouts that feel intuitive, balanced, and filled with natural light. Spaces shaped by how families actually live.' },
-    { kind: 'trust', title: 'Trusted Construction', body: '40+ years of building experience. We work with partners who share our respect for quality, integrity, and responsible execution.' },
+    { kind: 'land', title: 'Land Vision & Opportunity', body: 'We begin by identifying strategic urban zones with strong potential for long-term living and value. Each location is chosen for its balance between city convenience, quality of life and access to nature.' },
+    { kind: 'design', title: 'Architectural Design & Planning', body: 'Once a location is secured, we collaborate closely with architect studios to design spaces that feel intuitive, balanced and filled with natural light. Homes where families can grow at their own pace, surrounded by green areas and practical layouts.' },
+    { kind: 'trust', title: 'Construction & Delivery', body: 'We work with experienced engineering and construction partners who share our respect for quality, integrity and responsible execution. Every project is monitored closely to ensure that what we build matches what we promised.' },
   ];
   return (
     <section ref={ref} data-screen-label="03 Pillars" style={{
@@ -439,7 +489,7 @@ function Pillars() {
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
           textTransform: 'uppercase', fontWeight: 600, textAlign: 'center', marginBottom: 56,
-        }}>Our Approach</div>
+        }}>Our Service</div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
           {items.map((it, i) => (
@@ -472,13 +522,13 @@ function Projects() {
   const projects = [
     {
       code: 'ORMA / 01', name: 'Lir 725', location: 'Porto',
-      blurb: 'A residential building designed in response to its surrounding urban context. Clarity, light, and considered proportions.',
+      blurb: 'A residential building in Porto designed in response to its surrounding context. The project balances a clear relationship with the street with the inclusion of private outdoor spaces. The result is a well-resolved development that combines efficiency, comfort and careful spatial organization.',
       image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
       meta: '12 apartments · 2026 — 2027',
     },
     {
       code: 'ORMA / 02', name: 'Villas Sto. Tirso', location: 'Santo Tirso',
-      blurb: 'A residential project set within a low-density, naturally defined environment. Room to breathe, room to grow.',
+      blurb: 'A residential project in Santo Tirso set within a low-density and naturally defined environment. The design responds to the surrounding landscape, prioritising orientation, privacy and the relationship with outdoor space.',
       image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
       meta: '6 villas · 2026 — 2028',
     },
@@ -502,7 +552,7 @@ function Projects() {
             fontWeight: 300, fontSize: 44, lineHeight: 1.2,
             letterSpacing: '-0.02em', color: C.ink, margin: 0, textWrap: 'balance', maxWidth: 760, marginLeft: 'auto', marginRight: 'auto',
           }}>
-            Spaces conceived to support the future you're building.
+            Light, Space and Balance.
           </h2>
         </div>
 
@@ -579,9 +629,9 @@ function WhyOrma() {
         <div style={{ display: 'grid', gridTemplateColumns: '40fr 60fr', gap: 96, alignItems: 'start' }}>
           <div>
             {[
-              ['40+', 'years of construction experience'],
+              ['40+', 'years of experience'],
               ['2', 'projects in development'],
-              ['100%', 'net income reinvested in community'],
+              ['100%', 'net income reinvested locally'],
             ].map(([num, label], i) => (
               <div key={i} style={{
                 padding: '36px 0',
@@ -606,7 +656,7 @@ function WhyOrma() {
               fontFamily: '"General Sans", sans-serif',
               fontSize: 19, lineHeight: 1.8, color: C.white, margin: 0, fontWeight: 300,
             }}>
-              Led by a new generation that lives the realities of young families and active couples, we design with real life in mind. Our fresh perspective brings a clear understanding of modern routines, daily movement, and the desire for balance.
+              Our team brings thoughtful guidance and dependable execution to every project, standing by your vision with the confidence this moment calls for.
             </p>
             <div style={{ marginTop: 56 }}>
               <SiteImage
@@ -626,7 +676,7 @@ function WhyOrma() {
 // ============================================================
 function Visit() {
   const [ref, visible] = useReveal();
-  const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', project: '', message: '' });
   const [agree, setAgree] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -652,19 +702,19 @@ function Visit() {
             fontFamily: '"General Sans", sans-serif',
             fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
             textTransform: 'uppercase', fontWeight: 600, marginBottom: 24,
-          }}>Andar Modelo · Visit Us</div>
+          }}>Get In Touch</div>
           <h2 style={{
             fontFamily: '"General Sans", sans-serif',
             fontWeight: 300, fontSize: 44, lineHeight: 1.1,
             letterSpacing: '-0.02em', color: C.ink, margin: 0, textWrap: 'balance',
           }}>
-            Visit our model apartment.
+            Let's Talk About Your Next Step.
           </h2>
           <p style={{
             fontFamily: '"General Sans", sans-serif',
             fontSize: 17, lineHeight: 1.7, color: C.green, marginTop: 28, marginBottom: 0, maxWidth: 460,
           }}>
-            You're one step away from seeing your future home. Come experience the quality, the light, and the space in person.
+            If you'd like to know more about our projects or our approach, our team is here to assist you. Leave us a message and we'll respond with the information and support you need.
           </p>
 
           <div style={{ marginTop: 48, display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '20px 28px', alignItems: 'baseline' }}>
@@ -682,9 +732,11 @@ function Visit() {
             borderRadius: 12,
             display: 'grid', gap: 18,
           }}>
-            <input style={inputStyle} placeholder="Full name *" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
-            <input style={inputStyle} placeholder="Email *" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
-            <input style={inputStyle} placeholder="Phone *" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
+            <input style={inputStyle} placeholder="Full Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+            <input style={inputStyle} placeholder="Email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+            <input style={inputStyle} placeholder="Contact No" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
+            <input style={inputStyle} placeholder="Project" value={form.project} onChange={e => setForm({...form, project: e.target.value})} />
+            <textarea style={{ ...inputStyle, minHeight: 100, resize: 'vertical' }} placeholder="Message" value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
             <label style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontFamily: '"General Sans", sans-serif', fontSize: 12, color: C.green, lineHeight: 1.5, marginTop: 4 }}>
               <input type="checkbox" checked={agree} onChange={e => setAgree(e.target.checked)} style={{ marginTop: 3, accentColor: C.green }} />
               <span>I agree to the processing of my personal data in accordance with Orma's <a href="#" style={{ color: C.green, textDecoration: 'underline' }}>privacy policy</a>.</span>
@@ -695,7 +747,7 @@ function Visit() {
               fontWeight: 500, fontSize: 13, letterSpacing: '0.16em',
               textTransform: 'uppercase', borderRadius: 6, cursor: 'pointer',
               marginTop: 8,
-            }}>{sent ? 'Visit requested ✓' : 'Schedule a visit →'}</button>
+            }}>{sent ? 'Message sent ✓' : 'Get in touch →'}</button>
           </form>
 
           {/* photo strip */}
@@ -748,7 +800,7 @@ function Community() {
           fontFamily: '"General Sans", sans-serif',
           fontSize: 17, lineHeight: 1.7, color: C.green, marginTop: 28, marginBottom: 0,
         }}>
-          Every year, we reinvest part of our net income into the communities where our projects take shape. It's our way of ensuring the places families choose to live continue to grow with them.
+          Every year, we reinvest part of our net income into the communities where our projects take shape. It is our way of contributing to local well-being, supporting meaningful initiatives and ensuring that the places families choose to live continue to grow with them.
         </p>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 64 }}>
@@ -792,7 +844,7 @@ function FinalCTA() {
         fontWeight: 300, fontSize: 36, lineHeight: 1.2,
         letterSpacing: '-0.02em', color: C.ink, margin: 0,
       }}>
-        Ready to take the next step?
+        Let's Talk About Your Next Step!
       </h2>
       <button style={{
         marginTop: 36,
@@ -827,16 +879,19 @@ function Footer() {
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 56, paddingBottom: 64, borderBottom: `1px solid ${C.bege}22` }}>
           <div>
-            <Wordmark color={C.bege} size={32} withSubline />
+            <div>
+              <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="Orma" style={{ height: 28 }} />
+              <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 8, letterSpacing: '0.32em', color: C.bege, fontWeight: 500, textTransform: 'uppercase', marginTop: 8 }}>Designed for Living</div>
+            </div>
             <p style={{
               fontFamily: '"General Sans", sans-serif',
               fontSize: 14, lineHeight: 1.7, color: C.clearGreen, marginTop: 28, maxWidth: 320,
             }}>
-              Building residential projects in northern Portugal since 1985 — a family practice now run by its second generation.
+              Orma is a development company built on experience, thoughtful design and the belief that long-term value comes from balancing nature, space and urban convenience.
             </p>
           </div>
           {[
-            { title: 'Navigate', items: ['Home', 'About', 'Projects', 'Contact'] },
+            { title: 'Navigate', items: ['Home', 'About Us', 'Projects', 'Contact Us'] },
             { title: 'Contact', items: ['info@orma.pt', '+351 220 000 000', 'Rua de Cedofeita 123', 'Porto, Portugal'] },
             { title: 'Follow', items: ['Instagram', 'LinkedIn', 'Facebook'] },
           ].map(col => (
@@ -854,7 +909,7 @@ function Footer() {
           <div>© 2026 Orma. All rights reserved.</div>
           <div style={{ display: 'flex', gap: 28 }}>
             <a href="#" style={{ color: C.clearGreen, textDecoration: 'none' }}>Privacy Policy</a>
-            <a href="#" style={{ color: C.clearGreen, textDecoration: 'none' }}>Terms</a>
+            <a href="#" style={{ color: C.clearGreen, textDecoration: 'none' }}>Terms & Conditions</a>
           </div>
         </div>
       </div>
