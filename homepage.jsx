@@ -12,29 +12,51 @@ const C = {
 };
 
 // ============================================================
-// useReveal — scroll-triggered fade-in
+// useScrollReveal — scroll-DRIVEN fade + slide (like ScrollTrigger)
+// Directly manipulates DOM for 60fps, no React re-renders.
 // ============================================================
-function useReveal(threshold = 0.15) {
+function useScrollReveal() {
   const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setVisible(true); obs.disconnect(); }
-    }, { threshold });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return [ref, visible];
-}
 
-const revealStyle = (visible) => ({
-  opacity: visible ? 1 : 0,
-  transform: visible ? 'translateY(0)' : 'translateY(72px)',
-  transition: 'opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)',
-  willChange: 'opacity, transform',
-});
+    let raf = null;
+    const update = () => {
+      const rect = el.getBoundingClientRect();
+      const wh = window.innerHeight;
+      // Element enters at bottom of viewport, fully revealed at 35% from top
+      const enter = wh * 0.92;
+      const full  = wh * 0.35;
+
+      let p;
+      if (rect.top >= enter) p = 0;
+      else if (rect.top <= full) p = 1;
+      else p = (enter - rect.top) / (enter - full);
+
+      // Smoothstep for organic ease
+      p = p * p * (3 - 2 * p);
+
+      el.style.opacity = String(p);
+      el.style.transform = 'translateY(' + ((1 - p) * 54).toFixed(1) + 'px)';
+    };
+
+    const onScroll = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); // initial position
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return ref;
+}
 
 // ============================================================
 // SiteImage — real image via background-image
@@ -400,20 +422,19 @@ function Hero() {
 // 3. Brand Promise — symmetrical breath
 // ============================================================
 function Promise() {
-  const [ref, visible] = useReveal();
+  const contentRef = useScrollReveal();
   return (
-    <section ref={ref} data-screen-label="02 Promise" style={{
+    <section data-screen-label="02 Promise" style={{
       position: 'relative',
       background: C.bege,
       padding: '180px 64px 200px',
       overflow: 'hidden',
       textAlign: 'center',
-      ...revealStyle(visible),
     }}>
       <div style={{ position: 'absolute', left: '50%', top: '50%', width: 760, height: 760, transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
         <TreeMark opacity={0.07} />
       </div>
-      <div style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+      <div ref={contentRef} style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2, willChange: 'opacity, transform' }}>
         <h2 style={{
           fontFamily: '"General Sans", sans-serif',
           fontWeight: 300, fontSize: 38, lineHeight: 1.5,
@@ -454,19 +475,18 @@ function PillarIcon({ kind }) {
 }
 
 function Pillars() {
-  const [ref, visible] = useReveal();
+  const contentRef = useScrollReveal();
   const items = [
     { kind: 'land', title: 'Land Vision & Opportunity', body: 'We begin by identifying strategic urban zones with strong potential for long-term living and value. Each location is chosen for its balance between city convenience, quality of life and access to nature.' },
     { kind: 'design', title: 'Architectural Design & Planning', body: 'Once a location is secured, we collaborate closely with architect studios to design spaces that feel intuitive, balanced and filled with natural light. Homes where families can grow at their own pace, surrounded by green areas and practical layouts.' },
     { kind: 'trust', title: 'Construction & Delivery', body: 'We work with experienced engineering and construction partners who share our respect for quality, integrity and responsible execution. Every project is monitored closely to ensure that what we build matches what we promised.' },
   ];
   return (
-    <section ref={ref} data-screen-label="03 Pillars" style={{
+    <section data-screen-label="03 Pillars" style={{
       background: C.white,
       padding: '120px 64px 140px',
-      ...revealStyle(visible),
     }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <div ref={contentRef} style={{ maxWidth: 1280, margin: '0 auto', willChange: 'opacity, transform' }}>
         <div style={{
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
@@ -500,7 +520,7 @@ function Pillars() {
 // 5. Featured projects — editorial layout, image + text rows
 // ============================================================
 function Projects() {
-  const [ref, visible] = useReveal();
+  const contentRef = useScrollReveal();
   const projects = [
     {
       code: 'ORMA / 01', name: 'Lir 725', location: 'Porto',
@@ -517,12 +537,11 @@ function Projects() {
   ];
 
   return (
-    <section ref={ref} data-screen-label="04 Projects" style={{
+    <section data-screen-label="04 Projects" style={{
       background: `linear-gradient(180deg, ${C.white} 0%, ${C.white} 65%, ${C.green} 65%, ${C.green} 100%)`,
       padding: '140px 64px 0',
-      ...revealStyle(visible),
     }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <div ref={contentRef} style={{ maxWidth: 1280, margin: '0 auto', willChange: 'opacity, transform' }}>
         <div style={{ textAlign: 'center', marginBottom: 96 }}>
           <div style={{
             fontFamily: '"General Sans", sans-serif',
@@ -588,20 +607,19 @@ function Projects() {
 // 6. Why Orma — dark green, big stats
 // ============================================================
 function WhyOrma() {
-  const [ref, visible] = useReveal();
+  const contentRef = useScrollReveal();
   return (
-    <section ref={ref} data-screen-label="05 Why Orma" style={{
+    <section data-screen-label="05 Why Orma" style={{
       position: 'relative',
       background: C.green,
       padding: '160px 64px',
       overflow: 'hidden',
-      ...revealStyle(visible),
     }}>
       <div style={{ position: 'absolute', right: -240, bottom: -200, width: 800, height: 800, pointerEvents: 'none' }}>
         <TreeMark opacity={0.08} />
       </div>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+      <div ref={contentRef} style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2, willChange: 'opacity, transform' }}>
         <div style={{
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em', color: C.clearGreen,
@@ -657,7 +675,7 @@ function WhyOrma() {
 // 7. Visit / conversion
 // ============================================================
 function Visit() {
-  const [ref, visible] = useReveal();
+  const contentRef = useScrollReveal();
   const [form, setForm] = useState({ name: '', email: '', phone: '', project: '', message: '' });
   const [agree, setAgree] = useState(false);
   const [sent, setSent] = useState(false);
@@ -673,12 +691,11 @@ function Visit() {
   };
 
   return (
-    <section ref={ref} data-screen-label="06 Visit" style={{
+    <section data-screen-label="06 Visit" style={{
       background: C.bege,
       padding: '140px 64px',
-      ...revealStyle(visible),
     }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+      <div ref={contentRef} style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center', willChange: 'opacity, transform' }}>
         <div>
           <div style={{
             fontFamily: '"General Sans", sans-serif',
@@ -757,15 +774,14 @@ function Visit() {
 // 8. Community — compact, centered
 // ============================================================
 function Community() {
-  const [ref, visible] = useReveal();
+  const contentRef = useScrollReveal();
   return (
-    <section ref={ref} data-screen-label="07 Community" style={{
+    <section data-screen-label="07 Community" style={{
       background: C.white,
       padding: '140px 64px 120px',
       textAlign: 'center',
-      ...revealStyle(visible),
     }}>
-      <div style={{ maxWidth: 800, margin: '0 auto' }}>
+      <div ref={contentRef} style={{ maxWidth: 800, margin: '0 auto', willChange: 'opacity, transform' }}>
         <div style={{
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
@@ -813,14 +829,14 @@ function Community() {
 // 9. Final CTA banner
 // ============================================================
 function FinalCTA() {
-  const [ref, visible] = useReveal();
+  const contentRef = useScrollReveal();
   return (
-    <section ref={ref} data-screen-label="08 Final CTA" style={{
+    <section data-screen-label="08 Final CTA" style={{
       background: C.bege,
       padding: '120px 64px',
       textAlign: 'center',
-      ...revealStyle(visible),
     }}>
+      <div ref={contentRef} style={{ willChange: 'opacity, transform' }}>
       <h2 style={{
         fontFamily: '"General Sans", sans-serif',
         fontWeight: 300, fontSize: 36, lineHeight: 1.2,
@@ -840,6 +856,7 @@ function FinalCTA() {
         fontFamily: '"General Sans", sans-serif',
         fontSize: 14, color: C.green, letterSpacing: '0.04em',
       }}>info@orma.pt · +351 220 000 000</div>
+      </div>
     </section>
   );
 }
@@ -918,7 +935,7 @@ function DesktopHomepage() {
       {/* Spacer — occupies flow space for the fixed hero */}
       <div style={{ height: '100vh' }} />
       {/* Content wrapper — scrolls over the fixed hero */}
-      <div style={{ position: 'relative', zIndex: 2 }}>
+      <div style={{ position: 'relative', zIndex: 2, background: C.bege }}>
         <Promise />
         <Pillars />
         <Projects />
