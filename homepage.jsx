@@ -298,6 +298,106 @@ function LoadingScreen() {
 // ============================================================
 // 1. Nav — logo left, hamburger right, fullscreen overlay menu
 // ============================================================
+function MenuLink({ label, href, onClose, hasChildren, children }) {
+  const [hovered, setHovered] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const handleClick = (e) => {
+    if (hasChildren) {
+      e.preventDefault();
+      setExpanded(!expanded);
+    } else {
+      onClose();
+    }
+  };
+
+  return (
+    <div>
+      <a
+        href={href || '#'}
+        onClick={handleClick}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          fontFamily: '"General Sans", sans-serif',
+          fontWeight: 400, fontSize: 28, letterSpacing: '0.04em',
+          textTransform: 'uppercase',
+          color: C.bege, textDecoration: 'none',
+          padding: '16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          transition: 'opacity 0.3s',
+          opacity: hovered ? 0.7 : 1,
+          borderBottom: '1px solid rgba(238,232,218,0.15)',
+          position: 'relative',
+        }}
+      >
+        <span style={{ position: 'relative', display: 'inline-block' }}>
+          {label}
+          <span style={{
+            position: 'absolute', left: 0, bottom: -2, height: 1,
+            background: C.bege, width: hovered ? '100%' : '0%',
+            transition: 'width 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+          }} />
+        </span>
+        {hasChildren && (
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={C.bege} strokeWidth="1"
+            style={{ transition: 'transform 0.3s ease', transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', marginLeft: 12, flexShrink: 0 }}>
+            <polyline points="2,5 7,10 12,5" />
+          </svg>
+        )}
+      </a>
+      {hasChildren && (
+        <div style={{
+          maxHeight: expanded ? 200 : 0,
+          overflow: 'hidden',
+          transition: 'max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+          paddingLeft: 16,
+        }}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MenuSubLink({ label, subtitle, onClose }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <a
+      href="#"
+      onClick={(e) => { e.preventDefault(); onClose(); }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: 'block', textDecoration: 'none',
+        padding: '12px 0',
+        transition: 'opacity 0.3s',
+        opacity: hovered ? 0.7 : 1,
+      }}
+    >
+      <span style={{
+        fontFamily: '"General Sans", sans-serif',
+        fontWeight: 400, fontSize: 15, letterSpacing: '0.08em',
+        textTransform: 'uppercase', color: C.bege,
+        position: 'relative', display: 'inline-block',
+      }}>
+        {label}
+        <span style={{
+          position: 'absolute', left: 0, bottom: -1, height: 1,
+          background: C.bege, width: hovered ? '100%' : '0%',
+          transition: 'width 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
+        }} />
+      </span>
+      {subtitle && (
+        <span style={{
+          display: 'block', fontFamily: '"General Sans", sans-serif',
+          fontWeight: 300, fontSize: 12, letterSpacing: '0.06em',
+          color: 'rgba(238,232,218,0.5)', marginTop: 2,
+        }}>{subtitle}</span>
+      )}
+    </a>
+  );
+}
+
 function MenuDrawer({ open, onClose }) {
   return (
     <>
@@ -306,7 +406,7 @@ function MenuDrawer({ open, onClose }) {
         onClick={onClose}
         style={{
           position: 'fixed', inset: 0, zIndex: 199,
-          background: 'rgba(0,0,0,0.4)',
+          background: 'rgba(0,0,0,0.45)',
           opacity: open ? 1 : 0,
           pointerEvents: open ? 'auto' : 'none',
           transition: 'opacity 0.4s ease',
@@ -315,40 +415,56 @@ function MenuDrawer({ open, onClose }) {
       {/* Side drawer from right */}
       <div style={{
         position: 'fixed', top: 0, right: 0, bottom: 0,
-        width: 380,
+        width: 420,
         zIndex: 201,
-        background: C.white,
+        background: C.green,
         transform: open ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+        transition: 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
         display: 'flex', flexDirection: 'column',
-        justifyContent: 'center',
-        padding: '80px 56px',
+        justifyContent: 'space-between',
+        padding: '48px 56px 48px',
+        overflowY: 'auto',
       }}>
-        {/* Close button */}
-        <button onClick={onClose} style={{
-          position: 'absolute', top: 28, right: 28,
-          background: 'transparent', border: 'none',
-          cursor: 'pointer', padding: 8,
-        }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="1.2" strokeLinecap="round">
-            <line x1="5" y1="5" x2="19" y2="19" />
-            <line x1="19" y1="5" x2="5" y2="19" />
-          </svg>
-        </button>
+        {/* Top: close button + logo */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 72 }}>
+            <img
+              src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
+              alt="Orma" style={{ height: 22, width: 'auto', display: 'block', opacity: 0.8 }}
+            />
+            <button onClick={onClose} style={{
+              background: 'transparent', border: 'none',
+              cursor: 'pointer', padding: 8,
+            }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke={C.bege} strokeWidth="1" strokeLinecap="round">
+                <line x1="4" y1="4" x2="16" y2="16" />
+                <line x1="16" y1="4" x2="4" y2="16" />
+              </svg>
+            </button>
+          </div>
 
-        {/* Nav links */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {['Projects', 'Contact', 'About'].map((l) => (
-            <a key={l} href="#" onClick={onClose} style={{
-              fontFamily: '"General Sans", sans-serif',
-              fontWeight: 500, fontSize: 16, letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: C.ink, textDecoration: 'none',
-              padding: '14px 0',
-              transition: 'color 0.3s',
-            }}>{l}</a>
-          ))}
-        </nav>
+          {/* Nav links */}
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            <MenuLink label="Projects" onClose={onClose} hasChildren>
+              <MenuSubLink label="Lir 725" subtitle="Porto" onClose={onClose} />
+              <MenuSubLink label="Villas Sto. Tirso" subtitle="Santo Tirso" onClose={onClose} />
+            </MenuLink>
+            <MenuLink label="About" onClose={onClose} />
+            <MenuLink label="Contact" onClose={onClose} />
+          </nav>
+        </div>
+
+        {/* Bottom: contact info */}
+        <div style={{ borderTop: '1px solid rgba(238,232,218,0.15)', paddingTop: 32 }}>
+          <p style={{
+            fontFamily: '"General Sans", sans-serif', fontWeight: 300,
+            fontSize: 13, lineHeight: 1.7, letterSpacing: '0.03em',
+            color: 'rgba(238,232,218,0.6)', margin: 0,
+          }}>
+            Porto - Santo Tirso<br />
+            geral@orma.pt
+          </p>
+        </div>
       </div>
     </>
   );
