@@ -674,7 +674,7 @@ function Promise() {
 }
 
 // ============================================================
-// 4. Three Pillars — animated vertical timeline
+// 4. Three Pillars — animated vertical timeline (refined)
 // ============================================================
 const PILLAR_ICONS = {
   land: 'icons/icone-optmistic.png',
@@ -682,16 +682,109 @@ const PILLAR_ICONS = {
   trust: 'icons/icone-experience-driven-work.png',
 };
 
+function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRef, titleRef }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center',
+      justifyContent: isLeft ? 'flex-start' : 'flex-end',
+      position: 'relative',
+      marginBottom: index < 2 ? 140 : 0,
+    }}>
+      {/* Timeline dot */}
+      <div ref={dotRef} style={{
+        position: 'absolute', left: '50%', top: '50%',
+        width: 16, height: 16, borderRadius: '50%',
+        background: C.green, border: '3px solid ' + C.white,
+        transform: 'translate(-50%, -50%) scale(0)',
+        zIndex: 3,
+        boxShadow: '0 0 0 5px rgba(92,100,87,0.15)',
+      }} />
+
+      {/* Connector line (animated) */}
+      <div ref={connectorRef} style={{
+        position: 'absolute', top: '50%',
+        height: 1,
+        background: 'linear-gradient(' + (isLeft ? 'to right' : 'to left') + ', ' + C.clearGreen + ', ' + C.green + ')',
+        zIndex: 2,
+        transformOrigin: isLeft ? 'right center' : 'left center',
+        transform: 'scaleX(0)',
+        ...(isLeft
+          ? { left: 'calc(50% - 60px)', width: 60 }
+          : { right: 'calc(50% - 60px)', width: 60, left: 'auto' }
+        ),
+      }} />
+
+      {/* Content card */}
+      <div
+        ref={itemRef}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          width: 'calc(50% - 80px)',
+          opacity: 0,
+          padding: '48px 48px 44px',
+          background: C.bege,
+          borderRadius: 6,
+          position: 'relative',
+          boxShadow: hovered
+            ? '0 12px 40px rgba(31,32,34,0.08), 0 2px 8px rgba(31,32,34,0.04)'
+            : '0 4px 20px rgba(31,32,34,0.04), 0 1px 4px rgba(31,32,34,0.02)',
+          transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
+          transition: 'box-shadow 0.4s ease, transform 0.4s ease',
+          ...(isLeft ? { marginRight: 'auto' } : { marginLeft: 'auto' }),
+        }}
+      >
+        {/* Icon in circular badge */}
+        <div ref={iconRef} style={{
+          width: 72, height: 72, borderRadius: '50%',
+          background: C.white,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          marginBottom: 28,
+          boxShadow: '0 2px 12px rgba(92,100,87,0.1)',
+          transform: 'scale(0)',
+        }}>
+          <img src={PILLAR_ICONS[item.kind]} alt="" width="40" height="40"
+            style={{ display: 'block', objectFit: 'contain' }} />
+        </div>
+
+        {/* Title with clip reveal */}
+        <div style={{ overflow: 'hidden', marginBottom: 16 }}>
+          <h3 ref={titleRef} style={{
+            fontFamily: '"General Sans", sans-serif',
+            fontWeight: 600, fontSize: 24, color: C.ink,
+            margin: 0, letterSpacing: '-0.01em', lineHeight: 1.3,
+            transform: 'translateY(100%)',
+          }}>{item.title}</h3>
+        </div>
+
+        {/* Subtle divider */}
+        <div style={{ width: 32, height: 2, background: C.terracota, marginBottom: 18, borderRadius: 1, opacity: 0.6 }} />
+
+        {/* Description */}
+        <p style={{
+          fontFamily: '"General Sans", sans-serif',
+          fontSize: 15, lineHeight: 1.8, color: C.green, margin: 0,
+        }}>{item.body}</p>
+      </div>
+    </div>
+  );
+}
+
 function Pillars() {
   const sectionRef = useRef(null);
   const lineRef = useRef(null);
   const itemRefs = useRef([]);
   const dotRefs = useRef([]);
+  const connectorRefs = useRef([]);
+  const iconRefs = useRef([]);
+  const titleRefs = useRef([]);
+  const headingRef = useRef(null);
 
   const items = [
-    { kind: 'land', num: '01', title: 'Land Vision & Opportunity', body: 'We begin by identifying strategic urban zones with strong potential for long-term living and value. Each location is chosen for its balance between city convenience, quality of life and access to nature.' },
-    { kind: 'design', num: '02', title: 'Architectural Design & Planning', body: 'Once a location is secured, we collaborate closely with architect studios to design spaces that feel intuitive, balanced and filled with natural light. Homes where families can grow at their own pace, surrounded by green areas and practical layouts.' },
-    { kind: 'trust', num: '03', title: 'Construction & Delivery', body: 'We work with experienced engineering and construction partners who share our respect for quality, integrity and responsible execution. Every project is monitored closely to ensure that what we build matches what we promised.' },
+    { kind: 'land', title: 'Land Vision & Opportunity', body: 'We begin by identifying strategic urban zones with strong potential for long-term living and value. Each location is chosen for its balance between city convenience, quality of life and access to nature.' },
+    { kind: 'design', title: 'Architectural Design & Planning', body: 'Once a location is secured, we collaborate closely with architect studios to design spaces that feel intuitive, balanced and filled with natural light. Homes where families can grow at their own pace, surrounded by green areas and practical layouts.' },
+    { kind: 'trust', title: 'Construction & Delivery', body: 'We work with experienced engineering and construction partners who share our respect for quality, integrity and responsible execution. Every project is monitored closely to ensure that what we build matches what we promised.' },
   ];
 
   useEffect(() => {
@@ -702,80 +795,166 @@ function Pillars() {
     const line = lineRef.current;
     if (!section || !line) return;
 
+    const triggers = [];
+
     // Animate the vertical line drawing
-    gsap.fromTo(line,
+    const lineTween = gsap.fromTo(line,
       { scaleY: 0 },
       {
         scaleY: 1,
         ease: 'none',
         scrollTrigger: {
           trigger: section,
-          start: 'top 60%',
-          end: 'bottom 40%',
-          scrub: 0.8,
+          start: 'top 55%',
+          end: 'bottom 35%',
+          scrub: 0.6,
         },
       }
     );
+    triggers.push(lineTween.scrollTrigger);
 
-    // Animate each pillar item
+    // Animate each pillar card with staggered internal elements
     itemRefs.current.forEach((el, i) => {
       if (!el) return;
       const isLeft = i % 2 === 0;
-      gsap.fromTo(el,
-        { opacity: 0, x: isLeft ? -60 : 60 },
+      const connector = connectorRefs.current[i];
+      const icon = iconRefs.current[i];
+      const title = titleRefs.current[i];
+      const dot = dotRefs.current[i];
+
+      // Card slide in
+      const cardTween = gsap.fromTo(el,
+        { opacity: 0, x: isLeft ? -80 : 80, y: 30 },
         {
-          opacity: 1, x: 0,
-          duration: 1,
-          ease: 'power2.out',
+          opacity: 1, x: 0, y: 0,
+          duration: 1.1,
+          ease: 'power3.out',
           scrollTrigger: {
             trigger: el,
-            start: 'top 75%',
+            start: 'top 78%',
             toggleActions: 'play none none none',
           },
         }
       );
-    });
+      triggers.push(cardTween.scrollTrigger);
 
-    // Animate dots on the timeline
-    dotRefs.current.forEach((dot) => {
-      if (!dot) return;
-      gsap.fromTo(dot,
-        { scale: 0, opacity: 0 },
-        {
-          scale: 1, opacity: 1,
-          duration: 0.5,
-          ease: 'back.out(2)',
-          scrollTrigger: {
-            trigger: dot,
-            start: 'top 70%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
-    });
+      // Dot bounce
+      if (dot) {
+        const dotTween = gsap.fromTo(dot,
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1, opacity: 1,
+            duration: 0.6,
+            ease: 'back.out(3)',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 72%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(dotTween.scrollTrigger);
+      }
 
-    return () => ScrollTrigger.getAll().forEach(t => {
-      if (t.trigger === section || itemRefs.current.includes(t.trigger) || dotRefs.current.includes(t.trigger)) {
-        t.kill();
+      // Connector line draw
+      if (connector) {
+        const conTween = gsap.fromTo(connector,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            duration: 0.7,
+            delay: 0.2,
+            ease: 'power2.inOut',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 72%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(conTween.scrollTrigger);
+      }
+
+      // Icon scale in
+      if (icon) {
+        const iconTween = gsap.fromTo(icon,
+          { scale: 0 },
+          {
+            scale: 1,
+            duration: 0.7,
+            delay: 0.3,
+            ease: 'back.out(2)',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 75%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(iconTween.scrollTrigger);
+      }
+
+      // Title clip reveal
+      if (title) {
+        const titleTween = gsap.fromTo(title,
+          { y: '100%' },
+          {
+            y: '0%',
+            duration: 0.8,
+            delay: 0.45,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 75%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(titleTween.scrollTrigger);
       }
     });
+
+    return () => triggers.forEach(t => t && t.kill());
   }, []);
 
   return (
     <section ref={sectionRef} data-screen-label="03 Pillars" style={{
       background: C.white,
-      padding: '140px 64px 160px',
+      padding: '140px 64px 180px',
       position: 'relative',
+      overflow: 'hidden',
     }}>
-      {/* Section label */}
+      {/* Tree watermark behind timeline */}
       <div style={{
-        fontFamily: '"General Sans", sans-serif',
-        fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
-        textTransform: 'uppercase', fontWeight: 600, textAlign: 'center', marginBottom: 80,
-      }}>Our Service</div>
+        position: 'absolute', left: '50%', top: '50%',
+        width: 600, height: 600,
+        transform: 'translate(-50%, -50%)',
+        pointerEvents: 'none', zIndex: 0,
+      }}>
+        <TreeMark opacity={0.04} />
+      </div>
+
+      {/* Section heading — WordReveal */}
+      <div style={{ textAlign: 'center', marginBottom: 100, position: 'relative', zIndex: 1 }}>
+        <div style={{
+          fontFamily: '"General Sans", sans-serif',
+          fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
+          textTransform: 'uppercase', fontWeight: 600, marginBottom: 20,
+        }}>Our Service</div>
+        <WordReveal
+          text="From land to living - a process built on clarity, design and trust."
+          italic="clarity, design and trust."
+          style={{
+            fontFamily: '"General Sans", sans-serif',
+            fontWeight: 300, fontSize: 32, lineHeight: 1.5,
+            letterSpacing: '-0.01em', color: C.ink, margin: '0 auto',
+            maxWidth: 640, textWrap: 'balance',
+          }}
+        />
+      </div>
 
       {/* Timeline container */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         {/* Central vertical line */}
         <div style={{
           position: 'absolute', left: '50%', top: 0, bottom: 0,
@@ -783,7 +962,7 @@ function Pillars() {
         }}>
           <div ref={lineRef} style={{
             width: '100%', height: '100%',
-            background: C.clearGreen,
+            background: 'linear-gradient(to bottom, ' + C.clearGreen + ', ' + C.green + ', ' + C.clearGreen + ')',
             transformOrigin: 'top center',
             transform: 'scaleY(0)',
           }} />
@@ -793,69 +972,17 @@ function Pillars() {
         {items.map((it, i) => {
           const isLeft = i % 2 === 0;
           return (
-            <div key={it.num} style={{
-              display: 'flex', alignItems: 'center',
-              justifyContent: isLeft ? 'flex-start' : 'flex-end',
-              position: 'relative',
-              marginBottom: i < items.length - 1 ? 120 : 0,
-            }}>
-              {/* Timeline dot */}
-              <div ref={el => dotRefs.current[i] = el} style={{
-                position: 'absolute', left: '50%', top: '50%',
-                width: 14, height: 14, borderRadius: '50%',
-                background: C.green, border: `3px solid ${C.white}`,
-                transform: 'translate(-50%, -50%) scale(0)',
-                zIndex: 3,
-                boxShadow: '0 0 0 4px ' + C.clearGreen,
-              }} />
-
-              {/* Content card */}
-              <div
-                ref={el => itemRefs.current[i] = el}
-                style={{
-                  width: 'calc(50% - 60px)',
-                  opacity: 0,
-                  padding: '40px 44px',
-                  background: C.bege,
-                  borderRadius: 4,
-                  position: 'relative',
-                  ...(isLeft ? { marginRight: 'auto' } : { marginLeft: 'auto' }),
-                }}
-              >
-                {/* Step number */}
-                <span style={{
-                  fontFamily: '"General Sans", sans-serif',
-                  fontWeight: 300, fontSize: 56, color: C.clearGreen,
-                  lineHeight: 1, letterSpacing: '-0.03em',
-                  position: 'absolute', top: -12, right: isLeft ? 44 : 'auto', left: isLeft ? 'auto' : 44,
-                  opacity: 0.5,
-                }}>{it.num}</span>
-
-                {/* Icon */}
-                <img src={PILLAR_ICONS[it.kind]} alt="" width="52" height="52"
-                  style={{ display: 'block', objectFit: 'contain', opacity: 0.85, marginBottom: 24 }} />
-
-                {/* Title */}
-                <h3 style={{
-                  fontFamily: '"General Sans", sans-serif',
-                  fontWeight: 600, fontSize: 22, color: C.ink,
-                  margin: '0 0 16px', letterSpacing: '-0.005em', lineHeight: 1.3,
-                }}>{it.title}</h3>
-
-                {/* Description */}
-                <p style={{
-                  fontFamily: '"General Sans", sans-serif',
-                  fontSize: 15, lineHeight: 1.75, color: C.green, margin: 0,
-                }}>{it.body}</p>
-
-                {/* Connector line from card to central line */}
-                <div style={{
-                  position: 'absolute', top: '50%',
-                  width: 60, height: 1, background: C.clearGreen,
-                  ...(isLeft ? { right: -60 } : { left: -60 }),
-                }} />
-              </div>
-            </div>
+            <PillarCard
+              key={it.title}
+              item={it}
+              index={i}
+              isLeft={isLeft}
+              itemRef={el => itemRefs.current[i] = el}
+              dotRef={el => dotRefs.current[i] = el}
+              connectorRef={el => connectorRefs.current[i] = el}
+              iconRef={el => iconRefs.current[i] = el}
+              titleRef={el => titleRefs.current[i] = el}
+            />
           );
         })}
       </div>
