@@ -481,6 +481,8 @@ function Pillars() {
 function Projects() {
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
+  const stRef = useRef(null); // ScrollTrigger instance
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const projects = [
     {
@@ -504,14 +506,14 @@ function Projects() {
     },
   ];
 
+  const totalPanels = projects.length;
+
   useEffect(() => {
     const section = sectionRef.current;
     const track = trackRef.current;
     if (!section || !track || typeof gsap === 'undefined') return;
 
-    gsap.registerPlugin(ScrollTrigger);
-
-    const totalPanels = projects.length;
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
     const tween = gsap.to(track, {
       x: () => -(track.scrollWidth - window.innerWidth),
@@ -519,11 +521,22 @@ function Projects() {
       scrollTrigger: {
         trigger: section,
         pin: true,
-        scrub: 1,
+        scrub: 0.6,
+        snap: {
+          snapTo: 1 / (totalPanels - 1),
+          duration: { min: 0.3, max: 0.6 },
+          ease: 'power1.inOut',
+        },
         end: () => '+=' + (track.scrollWidth - window.innerWidth),
         invalidateOnRefresh: true,
+        onUpdate: function(self) {
+          const idx = Math.round(self.progress * (totalPanels - 1));
+          setActiveIndex(idx);
+        },
       },
     });
+
+    stRef.current = tween.scrollTrigger;
 
     return () => {
       if (tween.scrollTrigger) tween.scrollTrigger.kill();
@@ -531,11 +544,58 @@ function Projects() {
     };
   }, []);
 
+  const goToSlide = (idx) => {
+    const st = stRef.current;
+    if (!st) return;
+    const targetProgress = idx / (totalPanels - 1);
+    const targetScroll = st.start + targetProgress * (st.end - st.start);
+    gsap.to(window, {
+      scrollTo: targetScroll,
+      duration: 0.8,
+      ease: 'power2.inOut',
+    });
+  };
+
+  const goPrev = () => { if (activeIndex > 0) goToSlide(activeIndex - 1); };
+  const goNext = () => { if (activeIndex < totalPanels - 1) goToSlide(activeIndex + 1); };
+
+  const arrowStyle = (side) => ({
+    position: 'absolute',
+    top: '50%', [side]: 24,
+    transform: 'translateY(-50%)',
+    zIndex: 10,
+    width: 52, height: 52,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    background: 'transparent',
+    border: '1px solid rgba(255,255,255,0.35)',
+    borderRadius: 0,
+    cursor: 'pointer',
+    transition: 'background 0.3s, border-color 0.3s',
+    color: '#FFFFFF',
+  });
+
   return (
     <section ref={sectionRef} data-screen-label="04 Projects" style={{
       overflow: 'hidden',
       background: C.green,
+      position: 'relative',
     }}>
+      {/* Navigation arrows - fixed over the pinned section */}
+      {activeIndex > 0 && (
+        <button onClick={goPrev} style={arrowStyle('left')} aria-label="Previous project">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+      )}
+      {activeIndex < totalPanels - 1 && (
+        <button onClick={goNext} style={arrowStyle('right')} aria-label="Next project">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 6 15 12 9 18" />
+          </svg>
+        </button>
+      )}
+
       <div ref={trackRef} style={{
         display: 'flex',
         flexWrap: 'nowrap',
@@ -549,100 +609,77 @@ function Projects() {
             height: '100vh',
             flexShrink: 0,
             overflow: 'hidden',
+            background: C.green,
+            display: 'flex',
           }}>
-            {/* Background image or placeholder */}
-            {p.image ? (
-              <img
-                src={p.image}
-                alt={p.name}
-                style={{
-                  position: 'absolute', inset: 0,
-                  width: '100%', height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-            ) : (
-              <div style={{
-                position: 'absolute', inset: 0,
-                background: `linear-gradient(135deg, ${C.ink} 0%, ${C.green} 100%)`,
-              }} />
-            )}
-
-            {/* Dark overlay */}
+            {/* Left side - text content */}
             <div style={{
-              position: 'absolute', inset: 0,
-              background: p.isPlaceholder
-                ? 'rgba(31,32,34,0.5)'
-                : 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)',
-            }} />
-
-            {/* Content overlay */}
-            <div style={{
-              position: 'absolute', inset: 0,
-              display: 'flex', flexDirection: 'column',
-              justifyContent: 'flex-end',
-              padding: '0 80px 96px',
-              zIndex: 2,
+              width: '50%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              padding: '80px 72px 80px 80px',
+              position: 'relative',
             }}>
-              {/* Top label: project code */}
+              {/* Project code label at top */}
               <div style={{
-                position: 'absolute', top: 80, left: 80,
+                position: 'absolute', top: 48, left: 80,
                 fontFamily: '"General Sans", sans-serif',
-                fontSize: 12, letterSpacing: '0.3em',
-                color: 'rgba(255,255,255,0.6)',
+                fontSize: 11, letterSpacing: '0.3em',
+                color: C.clearGreen,
                 textTransform: 'uppercase', fontWeight: 500,
               }}>
                 {p.code}{p.location ? ' - ' + p.location : ''}
               </div>
 
-              {/* Slide counter */}
-              <div style={{
-                position: 'absolute', top: 80, right: 80,
-                fontFamily: '"General Sans", sans-serif',
-                fontSize: 13, color: 'rgba(255,255,255,0.5)',
-                fontWeight: 400, letterSpacing: '0.05em',
-              }}>
-                {String(i + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
-              </div>
-
-              {/* Project info */}
-              <div style={{ maxWidth: 640 }}>
+              {/* Main content */}
+              <div>
                 <h2 style={{
                   fontFamily: '"General Sans", sans-serif',
-                  fontWeight: 500, fontSize: p.isPlaceholder ? 56 : 64,
-                  lineHeight: 1.1, letterSpacing: '-0.03em',
-                  color: '#FFFFFF', margin: 0,
+                  fontWeight: 400, fontSize: p.isPlaceholder ? 44 : 52,
+                  lineHeight: 1.1, letterSpacing: '-0.02em',
+                  color: C.bege, margin: 0,
                 }}>
                   {p.name}
                 </h2>
 
-                <div style={{
-                  fontFamily: '"General Sans", sans-serif',
-                  fontSize: 13, letterSpacing: '0.12em',
-                  textTransform: 'uppercase', fontWeight: 500,
-                  color: C.bege, marginTop: 16, opacity: 0.85,
-                }}>
-                  {p.meta}
-                </div>
-
                 <p style={{
                   fontFamily: '"General Sans", sans-serif',
-                  fontSize: 17, lineHeight: 1.7,
-                  color: 'rgba(255,255,255,0.8)',
-                  margin: '20px 0 32px', maxWidth: 520,
+                  fontSize: 16, lineHeight: 1.8,
+                  color: C.clearGreen,
+                  margin: '32px 0 0', maxWidth: 480,
                 }}>
                   {p.blurb}
                 </p>
+              </div>
+
+              {/* Meta + CTA at bottom */}
+              <div style={{ marginTop: 56 }}>
+                <div style={{
+                  borderTop: '1px solid ' + C.clearGreen + '44',
+                  paddingTop: 20,
+                }}>
+                  <div style={{
+                    fontFamily: '"General Sans", sans-serif',
+                    fontSize: 12, letterSpacing: '0.2em',
+                    textTransform: 'uppercase', fontWeight: 500,
+                    color: C.bege, opacity: 0.9,
+                  }}>
+                    {p.meta}
+                  </div>
+                </div>
 
                 {!p.isPlaceholder && (
                   <a href="#" style={{
                     display: 'inline-block',
                     fontFamily: '"General Sans", sans-serif',
-                    fontSize: 13, letterSpacing: '0.16em',
+                    fontSize: 12, letterSpacing: '0.2em',
                     textTransform: 'uppercase', fontWeight: 600,
-                    color: '#FFFFFF', textDecoration: 'none',
-                    padding: '14px 36px',
-                    border: '1px solid rgba(255,255,255,0.4)',
+                    color: C.bege, textDecoration: 'none',
+                    padding: '16px 40px',
+                    border: '1px solid ' + C.bege + '66',
+                    marginTop: 32,
                     transition: 'background 0.3s, border-color 0.3s',
                   }}>
                     Explore this project
@@ -651,15 +688,46 @@ function Projects() {
               </div>
             </div>
 
-            {/* Vertical divider line between panels */}
-            {i < projects.length - 1 && (
-              <div style={{
-                position: 'absolute', right: 0, top: '15%', bottom: '15%',
-                width: 1, background: 'rgba(255,255,255,0.15)',
-              }} />
-            )}
+            {/* Right side - image */}
+            <div style={{
+              width: '50%',
+              height: '100%',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              {p.image ? (
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  style={{
+                    position: 'absolute', inset: 0,
+                    width: '100%', height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              ) : (
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: `linear-gradient(135deg, ${C.ink} 0%, ${C.green} 60%)`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <TreeMark opacity={0.12} />
+                </div>
+              )}
+            </div>
           </div>
         ))}
+      </div>
+
+      {/* Slide counter */}
+      <div style={{
+        position: 'absolute', bottom: 40, right: 48,
+        fontFamily: '"General Sans", sans-serif',
+        fontSize: 13, color: C.clearGreen,
+        fontWeight: 400, letterSpacing: '0.08em',
+        zIndex: 10,
+      }}>
+        {String(activeIndex + 1).padStart(2, '0')} / {String(totalPanels).padStart(2, '0')}
       </div>
     </section>
   );
