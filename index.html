@@ -1,21 +1,23 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt">
 <head>
 <meta charset="utf-8" />
-<title>Orma — Homepage</title>
+<title>Orma. — Designed for Living</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Orma — Homes shaped by clarity, light, and purpose. Residential projects in Porto and Santo Tirso, northern Portugal." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  html, body { margin: 0; padding: 0; background: #1F2022; font-family: "General Sans", system-ui, sans-serif; }
-  * { box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; padding: 0; font-family: "General Sans", system-ui, sans-serif; background: #FFFFFF; color: #1F2022; }
+  img { max-width: 100%; display: block; }
+  button { cursor: pointer; }
   button:hover { opacity: 0.92; }
   a { transition: opacity 180ms; }
-  a:hover { opacity: 0.7; }
+  a:hover { opacity: 0.78; }
   input::placeholder, textarea::placeholder { color: #5C645799; }
-  /* hide scrollbars on artboard previews */
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-thumb { background: #5C645744; border-radius: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -24,34 +26,17 @@
 <body>
   <div id="root"></div>
 
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 
-  <script type="text/babel" src="design-canvas.jsx"></script>
   <script type="text/babel" src="homepage.jsx"></script>
-  <script type="text/babel" src="mobile.jsx"></script>
 
   <script type="text/babel">
-    const { DesignCanvas, DCSection, DCArtboard } = window;
-    const Desktop = window.DesktopHomepage;
-    const Mobile = window.MobileHomepage;
+    const Homepage = window.DesktopHomepage;
 
     function App() {
-      return (
-        <DesignCanvas title="Orma — Homepage" subtitle="Designed for Living · v2">
-          <DCSection id="desktop" title="Desktop — 1440px">
-            <DCArtboard id="desktop-full" label="Full homepage · 10 sections · scroll inside" width={1440} height={3600}>
-              <Desktop />
-            </DCArtboard>
-          </DCSection>
-          <DCSection id="mobile" title="Mobile — 375px">
-            <DCArtboard id="mobile-hero" label="Nav · hero · promise · project · stats · visit form" width={375} height={1700}>
-              <Mobile />
-            </DCArtboard>
-          </DCSection>
-        </DesignCanvas>
-      );
+      return <Homepage />;
     }
 
     ReactDOM.createRoot(document.getElementById('root')).render(<App />);

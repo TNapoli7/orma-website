@@ -140,7 +140,7 @@ function Hero() {
   return (
     <section data-screen-label="01 Hero" style={{
       position: 'relative',
-      height: 880,
+      minHeight: '100vh',
       background: C.white,
       display: 'grid',
       gridTemplateColumns: '35fr 65fr',
@@ -717,9 +717,9 @@ function Footer() {
 function DesktopHomepage() {
   return (
     <div style={{
-      width: 1440,
-      height: 3600,
-      overflow: 'auto',
+      width: '100%',
+      minHeight: '100vh',
+      overflow: 'hidden',
       background: C.white,
       position: 'relative',
       fontFamily: '"General Sans", system-ui, sans-serif',
