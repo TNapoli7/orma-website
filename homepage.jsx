@@ -490,12 +490,14 @@ function Projects() {
       blurb: 'A residential building in Porto designed in response to its surrounding context. The project balances a clear relationship with the street with the inclusion of private outdoor spaces.',
       image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
       meta: '12 apartments - 2026 - 2027',
+      bg: '#7A6E5D',
     },
     {
       code: 'ORMA / 02', name: 'Villas Sto. Tirso', location: 'Santo Tirso',
       blurb: 'A residential project in Santo Tirso set within a low-density and naturally defined environment. The design responds to the surrounding landscape, prioritising orientation, privacy and the relationship with outdoor space.',
       image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
       meta: '6 villas - 2026 - 2028',
+      bg: '#4A5463',
     },
     {
       code: 'ORMA / 03', name: 'Coming Soon', location: '',
@@ -503,6 +505,7 @@ function Projects() {
       image: null,
       meta: 'Brevemente',
       isPlaceholder: true,
+      bg: C.green,
     },
   ];
 
@@ -561,36 +564,36 @@ function Projects() {
 
   const arrowStyle = (side) => ({
     position: 'absolute',
-    top: '50%', [side]: 24,
+    top: '50%', [side]: 20,
     transform: 'translateY(-50%)',
     zIndex: 10,
-    width: 52, height: 52,
+    width: 48, height: 64,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     background: 'transparent',
-    border: '1px solid rgba(255,255,255,0.35)',
-    borderRadius: 0,
+    border: 'none',
     cursor: 'pointer',
-    transition: 'background 0.3s, border-color 0.3s',
-    color: '#FFFFFF',
+    color: 'rgba(255,255,255,0.7)',
+    transition: 'color 0.3s',
+    padding: 0,
   });
 
   return (
     <section ref={sectionRef} data-screen-label="04 Projects" style={{
       overflow: 'hidden',
-      background: C.green,
+      background: projects[0].bg,
       position: 'relative',
     }}>
-      {/* Navigation arrows - fixed over the pinned section */}
+      {/* Navigation arrows */}
       {activeIndex > 0 && (
         <button onClick={goPrev} style={arrowStyle('left')} aria-label="Previous project">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
       )}
       {activeIndex < totalPanels - 1 && (
         <button onClick={goNext} style={arrowStyle('right')} aria-label="Next project">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="9 6 15 12 9 18" />
           </svg>
         </button>
@@ -609,37 +612,34 @@ function Projects() {
             height: '100vh',
             flexShrink: 0,
             overflow: 'hidden',
-            background: C.green,
-            display: 'flex',
+            background: p.bg,
           }}>
-            {/* Left side - text content */}
+            {/* Inner container - matches Verium's boxed layout */}
             <div style={{
-              width: '50%',
+              maxWidth: 1660,
+              width: '100%',
               height: '100%',
+              margin: '0 auto',
+              padding: '0 130px',
               display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              padding: '80px 72px 80px 80px',
-              position: 'relative',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 48,
             }}>
-              {/* Project code label at top */}
+              {/* Left column - text */}
               <div style={{
-                position: 'absolute', top: 48, left: 80,
-                fontFamily: '"General Sans", sans-serif',
-                fontSize: 11, letterSpacing: '0.3em',
-                color: C.clearGreen,
-                textTransform: 'uppercase', fontWeight: 500,
+                flex: '1 1 50%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                minHeight: 0,
               }}>
-                {p.code}{p.location ? ' - ' + p.location : ''}
-              </div>
-
-              {/* Main content */}
-              <div>
+                {/* Project name */}
                 <h2 style={{
                   fontFamily: '"General Sans", sans-serif',
-                  fontWeight: 400, fontSize: p.isPlaceholder ? 44 : 52,
-                  lineHeight: 1.1, letterSpacing: '-0.02em',
-                  color: C.bege, margin: 0,
+                  fontWeight: 300, fontSize: p.isPlaceholder ? 40 : 48,
+                  lineHeight: 1.15, letterSpacing: '-0.01em',
+                  color: '#FFFFFF', margin: 0,
                 }}>
                   {p.name}
                 </h2>
@@ -647,83 +647,90 @@ function Projects() {
                 <p style={{
                   fontFamily: '"General Sans", sans-serif',
                   fontSize: 16, lineHeight: 1.8,
-                  color: C.clearGreen,
-                  margin: '32px 0 0', maxWidth: 480,
+                  color: 'rgba(255,255,255,0.75)',
+                  margin: '36px 0 0', maxWidth: 520,
                 }}>
                   {p.blurb}
                 </p>
-              </div>
 
-              {/* Meta + CTA at bottom */}
-              <div style={{ marginTop: 56 }}>
-                <div style={{
-                  borderTop: '1px solid ' + C.clearGreen + '44',
-                  paddingTop: 20,
-                }}>
+                {/* Meta info with divider lines */}
+                <div style={{ marginTop: 48 }}>
                   <div style={{
-                    fontFamily: '"General Sans", sans-serif',
-                    fontSize: 12, letterSpacing: '0.2em',
-                    textTransform: 'uppercase', fontWeight: 500,
-                    color: C.bege, opacity: 0.9,
+                    borderTop: '1px solid rgba(255,255,255,0.2)',
+                    padding: '18px 0',
                   }}>
-                    {p.meta}
+                    <div style={{
+                      fontFamily: '"General Sans", sans-serif',
+                      fontSize: 12, letterSpacing: '0.2em',
+                      textTransform: 'uppercase', fontWeight: 500,
+                      color: 'rgba(255,255,255,0.7)',
+                    }}>
+                      {p.meta}
+                    </div>
                   </div>
+                  <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)' }} />
                 </div>
 
+                {/* CTA button */}
                 {!p.isPlaceholder && (
                   <a href="#" style={{
                     display: 'inline-block',
                     fontFamily: '"General Sans", sans-serif',
                     fontSize: 12, letterSpacing: '0.2em',
                     textTransform: 'uppercase', fontWeight: 600,
-                    color: C.bege, textDecoration: 'none',
+                    color: 'rgba(255,255,255,0.85)', textDecoration: 'none',
                     padding: '16px 40px',
-                    border: '1px solid ' + C.bege + '66',
-                    marginTop: 32,
+                    border: '1px solid rgba(255,255,255,0.35)',
+                    marginTop: 40,
                     transition: 'background 0.3s, border-color 0.3s',
+                    alignSelf: 'flex-end',
                   }}>
                     Explore this project
                   </a>
                 )}
               </div>
-            </div>
 
-            {/* Right side - image */}
-            <div style={{
-              width: '50%',
-              height: '100%',
-              position: 'relative',
-              overflow: 'hidden',
-            }}>
-              {p.image ? (
-                <img
-                  src={p.image}
-                  alt={p.name}
-                  style={{
-                    position: 'absolute', inset: 0,
-                    width: '100%', height: '100%',
-                    objectFit: 'cover',
-                  }}
-                />
-              ) : (
-                <div style={{
-                  position: 'absolute', inset: 0,
-                  background: `linear-gradient(135deg, ${C.ink} 0%, ${C.green} 60%)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <TreeMark opacity={0.12} />
-                </div>
-              )}
+              {/* Right column - image */}
+              <div style={{
+                flex: '1 1 50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: 0,
+                height: '100%',
+                paddingTop: 60,
+                paddingBottom: 60,
+              }}>
+                {p.image ? (
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    style={{
+                      width: '100%',
+                      maxHeight: '80vh',
+                      objectFit: 'contain',
+                    }}
+                  />
+                ) : (
+                  <div style={{
+                    width: '100%', height: '60%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    opacity: 0.15,
+                  }}>
+                    <TreeMark />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Slide counter */}
+      {/* Slide counter - bottom right */}
       <div style={{
-        position: 'absolute', bottom: 40, right: 48,
+        position: 'absolute', bottom: 36, right: 48,
         fontFamily: '"General Sans", sans-serif',
-        fontSize: 13, color: C.clearGreen,
+        fontSize: 13, color: 'rgba(255,255,255,0.5)',
         fontWeight: 400, letterSpacing: '0.08em',
         zIndex: 10,
       }}>
