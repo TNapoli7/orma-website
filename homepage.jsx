@@ -12,8 +12,9 @@ const C = {
 };
 
 // ============================================================
-// useScrollReveal — scroll-DRIVEN fade + slide (like ScrollTrigger)
-// Directly manipulates DOM for 60fps, no React re-renders.
+// useScrollReveal — IntersectionObserver-triggered fade + slide
+// Elements start invisible, animate in when entering viewport.
+// One-shot animation (like El Amigo / Elementor fadeIn).
 // ============================================================
 function useScrollReveal() {
   const ref = useRef(null);
@@ -22,37 +23,26 @@ function useScrollReveal() {
     const el = ref.current;
     if (!el) return;
 
-    let raf = null;
-    const update = () => {
-      const rect = el.getBoundingClientRect();
-      const wh = window.innerHeight;
-      // Element enters at bottom of viewport, fully revealed at 35% from top
-      const enter = wh * 0.92;
-      const full  = wh * 0.35;
+    // Start invisible
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(48px)';
+    el.style.transition = 'opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1)';
 
-      let p;
-      if (rect.top >= enter) p = 0;
-      else if (rect.top <= full) p = 1;
-      else p = (enter - rect.top) / (enter - full);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+            observer.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
 
-      // Smoothstep for organic ease
-      p = p * p * (3 - 2 * p);
-
-      el.style.opacity = String(p);
-      el.style.transform = 'translateY(' + ((1 - p) * 54).toFixed(1) + 'px)';
-    };
-
-    const onScroll = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(update);
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); // initial position
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   return ref;
@@ -209,11 +199,60 @@ function LoadingScreen() {
 }
 
 // ============================================================
-// 1. Nav — hides on scroll down, shows on scroll up
+// 1. Nav — logo left, hamburger right, fullscreen overlay menu
 // ============================================================
+function MenuOverlay({ open, onClose }) {
+  if (!open) return null;
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 200,
+      background: C.green,
+      display: 'flex', flexDirection: 'column',
+      justifyContent: 'center', alignItems: 'center',
+      opacity: open ? 1 : 0,
+      transition: 'opacity 0.4s ease',
+    }}>
+      {/* Close button */}
+      <button onClick={onClose} style={{
+        position: 'absolute', top: 32, right: 48,
+        background: 'transparent', border: 'none',
+        cursor: 'pointer', padding: 12,
+      }}>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C.bege} strokeWidth="1.2" strokeLinecap="round">
+          <line x1="4" y1="4" x2="20" y2="20" />
+          <line x1="20" y1="4" x2="4" y2="20" />
+        </svg>
+      </button>
+
+      {/* Nav links */}
+      <nav style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 36 }}>
+        {['Home', 'About Us', 'Projects', 'Contact Us'].map((l) => (
+          <a key={l} href="#" onClick={onClose} style={{
+            fontFamily: '"General Sans", sans-serif',
+            fontWeight: 300, fontSize: 36, letterSpacing: '-0.01em',
+            color: C.bege, textDecoration: 'none',
+            transition: 'opacity 0.3s',
+          }}>{l}</a>
+        ))}
+      </nav>
+
+      {/* Contact info at bottom */}
+      <div style={{
+        position: 'absolute', bottom: 48, left: 0, right: 0,
+        textAlign: 'center',
+        fontFamily: '"General Sans", sans-serif',
+        fontSize: 13, color: C.clearGreen, letterSpacing: '0.06em',
+      }}>
+        info@orma.pt - +351 220 000 000
+      </div>
+    </div>
+  );
+}
+
 function Nav() {
   const [visible, setVisible] = useState(true);
   const [inHero, setInHero] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
   const lastScroll = useRef(0);
 
   useEffect(() => {
@@ -235,50 +274,48 @@ function Nav() {
   }, []);
 
   return (
-    <nav style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0,
-      height: 68,
-      padding: '0 56px',
-      background: inHero ? 'transparent' : C.green,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      zIndex: 100,
-      transform: visible ? 'translateY(0)' : 'translateY(-100%)',
-      transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease',
-    }}>
-      {/* O mark only — clip the wordmark to the first character */}
-      <div style={{ width: 24, height: 22, overflow: 'hidden' }}>
-        <img
-          src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
-          alt="Orma"
-          style={{ height: 22, width: 'auto', display: 'block' }}
-        />
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
-        {['Home', 'About Us', 'Projects', 'Contact Us'].map((l, i) => (
-          <a key={l} href="#" style={{
-            fontFamily: '"General Sans", sans-serif',
-            fontWeight: 500, fontSize: 12, letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            color: C.bege, textDecoration: 'none',
-            opacity: i === 0 ? 1 : 0.78,
-          }}>{l}</a>
-        ))}
-        <button style={{
-          background: C.terracota,
-          color: C.white,
-          border: 'none',
-          padding: '12px 22px',
-          fontFamily: '"General Sans", sans-serif',
-          fontWeight: 500, fontSize: 12, letterSpacing: '0.16em',
-          textTransform: 'uppercase',
-          borderRadius: 6, cursor: 'pointer',
-          marginLeft: 8,
-        }}>Contact Us</button>
-      </div>
-    </nav>
+    <>
+      <MenuOverlay open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <nav style={{
+        position: 'fixed',
+        top: 0, left: 0, right: 0,
+        height: 80,
+        padding: '0 48px',
+        background: inHero ? 'transparent' : C.green,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        zIndex: 150,
+        transform: visible || menuOpen ? 'translateY(0)' : 'translateY(-100%)',
+        transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease',
+      }}>
+        {/* Logo wordmark */}
+        <a href="#" style={{ display: 'block', lineHeight: 0 }}>
+          <img
+            src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
+            alt="Orma"
+            style={{ height: 28, width: 'auto', display: 'block' }}
+          />
+        </a>
+
+        {/* Hamburger icon */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          style={{
+            background: 'transparent', border: 'none',
+            cursor: 'pointer', padding: 8,
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'flex-end', justifyContent: 'center',
+            gap: 7, width: 48, height: 48,
+          }}
+          aria-label="Menu"
+        >
+          <span style={{ display: 'block', width: 32, height: 1.5, background: C.bege, transition: 'all 0.3s' }} />
+          <span style={{ display: 'block', width: 24, height: 1.5, background: C.bege, transition: 'all 0.3s' }} />
+          <span style={{ display: 'block', width: 32, height: 1.5, background: C.bege, transition: 'all 0.3s' }} />
+        </button>
+      </nav>
+    </>
   );
 }
 
