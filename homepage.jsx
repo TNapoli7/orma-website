@@ -139,39 +139,6 @@ function Placeholder({ label, tone = 'green', style = {}, captionPos = 'bottom-l
   );
 }
 
-// ============================================================
-// Sticky CTA Bar
-// ============================================================
-function StickyBar() {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const handler = () => setShow(window.scrollY > window.innerHeight * 0.8);
-    window.addEventListener('scroll', handler, { passive: true });
-    return () => window.removeEventListener('scroll', handler);
-  }, []);
-  return (
-    <div style={{
-      position: 'fixed', bottom: 0, left: 0, right: 0,
-      background: C.green,
-      padding: '14px 56px',
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      transform: show ? 'translateY(0)' : 'translateY(100%)',
-      transition: 'transform 0.4s ease',
-      zIndex: 90,
-      boxShadow: '0 -2px 20px rgba(0,0,0,0.1)',
-    }}>
-      <span style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: C.bege, fontWeight: 300 }}>
-        Designed for Living - Discover our projects
-      </span>
-      <button style={{
-        background: C.terracota, color: C.white, border: 'none',
-        padding: '12px 28px', fontFamily: '"General Sans", sans-serif',
-        fontWeight: 500, fontSize: 12, letterSpacing: '0.16em',
-        textTransform: 'uppercase', borderRadius: 6, cursor: 'pointer',
-      }}>Contact Us →</button>
-    </div>
-  );
-}
 
 // ============================================================
 // Loading Screen - smooth clip-path logo reveal
@@ -450,28 +417,19 @@ function Promise() {
 // ============================================================
 // 4. Three Pillars — vertical dividers
 // ============================================================
+const PILLAR_ICONS = {
+  land: 'icons/icone-optmistic.png',
+  design: 'icons/icone-thoughtful-design.png',
+  trust: 'icons/icone-experience-driven-work.png',
+};
+
 function PillarIcon({ kind }) {
-  const props = { fill: 'none', stroke: C.green, strokeWidth: 1.2, strokeLinecap: 'round', strokeLinejoin: 'round' };
-  if (kind === 'land') return (
-    <svg viewBox="0 0 56 56" width="44" height="44">
-      <path {...props} d="M6 42 L 22 30 L 34 38 L 50 22" />
-      <circle cx="50" cy="22" r="2.5" {...props} />
-      <path {...props} d="M6 50 L 50 50" opacity="0.4" />
-    </svg>
+  const src = PILLAR_ICONS[kind];
+  if (!src) return null;
+  return (
+    <img src={src} alt="" width="48" height="48"
+      style={{ display: 'block', objectFit: 'contain', opacity: 0.85 }} />
   );
-  if (kind === 'design') return (
-    <svg viewBox="0 0 56 56" width="44" height="44">
-      <rect x="8" y="8" width="40" height="40" {...props} />
-      <path {...props} d="M8 22 L 48 22 M 22 8 L 22 48 M 34 22 L 34 48" />
-    </svg>
-  );
-  if (kind === 'trust') return (
-    <svg viewBox="0 0 56 56" width="44" height="44">
-      <path {...props} d="M28 8 L 44 18 L 44 32 C 44 42, 36 48, 28 50 C 20 48, 12 42, 12 32 L 12 18 Z" />
-      <path {...props} d="M20 30 L 26 36 L 36 24" />
-    </svg>
-  );
-  return null;
 }
 
 function Pillars() {
@@ -945,7 +903,6 @@ function DesktopHomepage() {
         <FinalCTA />
         <Footer />
       </div>
-      <StickyBar />
     </div>
   );
 }
