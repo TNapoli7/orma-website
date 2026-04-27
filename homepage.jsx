@@ -475,87 +475,191 @@ function Pillars() {
 }
 
 // ============================================================
-// 5. Featured projects — editorial layout, image + text rows
+// 5. Featured projects — full-screen horizontal scroll (Verium style)
+//    Uses GSAP ScrollTrigger to pin + translate horizontally
 // ============================================================
 function Projects() {
-  const contentRef = useScrollReveal();
+  const sectionRef = useRef(null);
+  const trackRef = useRef(null);
+
   const projects = [
     {
       code: 'ORMA / 01', name: 'Lir 725', location: 'Porto',
-      blurb: 'A residential building in Porto designed in response to its surrounding context. The project balances a clear relationship with the street with the inclusion of private outdoor spaces. The result is a well-resolved development that combines efficiency, comfort and careful spatial organization.',
+      blurb: 'A residential building in Porto designed in response to its surrounding context. The project balances a clear relationship with the street with the inclusion of private outdoor spaces.',
       image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
-      meta: '12 apartments · 2026 - 2027',
+      meta: '12 apartments - 2026 - 2027',
     },
     {
       code: 'ORMA / 02', name: 'Villas Sto. Tirso', location: 'Santo Tirso',
       blurb: 'A residential project in Santo Tirso set within a low-density and naturally defined environment. The design responds to the surrounding landscape, prioritising orientation, privacy and the relationship with outdoor space.',
       image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
-      meta: '6 villas · 2026 - 2028',
+      meta: '6 villas - 2026 - 2028',
+    },
+    {
+      code: 'ORMA / 03', name: 'Coming Soon', location: '',
+      blurb: 'A new project is on the horizon. Stay tuned for more details about our next development.',
+      image: null,
+      meta: 'Brevemente',
+      isPlaceholder: true,
     },
   ];
 
-  return (
-    <section data-screen-label="04 Projects" style={{
-      background: `linear-gradient(180deg, ${C.white} 0%, ${C.white} 65%, ${C.green} 65%, ${C.green} 100%)`,
-      padding: '140px 64px 0',
-    }}>
-      <div ref={contentRef} style={{ maxWidth: 1280, margin: '0 auto', willChange: 'opacity, transform' }}>
-        <div style={{ textAlign: 'center', marginBottom: 96 }}>
-          <div style={{
-            fontFamily: '"General Sans", sans-serif',
-            fontSize: 12, letterSpacing: '0.3em', color: C.green,
-            textTransform: 'uppercase', fontWeight: 600, marginBottom: 22,
-          }}>Our Projects</div>
-          <h2 style={{
-            fontFamily: '"General Sans", sans-serif',
-            fontWeight: 300, fontSize: 44, lineHeight: 1.2,
-            letterSpacing: '-0.02em', color: C.ink, margin: 0, textWrap: 'balance', maxWidth: 760, marginLeft: 'auto', marginRight: 'auto',
-          }}>
-            Light, Space and Balance.
-          </h2>
-        </div>
+  useEffect(() => {
+    const section = sectionRef.current;
+    const track = trackRef.current;
+    if (!section || !track || typeof gsap === 'undefined') return;
 
-        <div style={{ display: 'grid', gap: 80 }}>
-          {projects.map((p, i) => (
-            <article key={p.name} style={{
-              background: C.white,
-              borderRadius: 12,
-              boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-              overflow: 'hidden',
-              display: 'grid',
-              gridTemplateColumns: i === 0 ? '60fr 40fr' : '40fr 60fr',
+    gsap.registerPlugin(ScrollTrigger);
+
+    const totalPanels = projects.length;
+
+    const tween = gsap.to(track, {
+      x: () => -(track.scrollWidth - window.innerWidth),
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        pin: true,
+        scrub: 1,
+        end: () => '+=' + (track.scrollWidth - window.innerWidth),
+        invalidateOnRefresh: true,
+      },
+    });
+
+    return () => {
+      if (tween.scrollTrigger) tween.scrollTrigger.kill();
+      tween.kill();
+    };
+  }, []);
+
+  return (
+    <section ref={sectionRef} data-screen-label="04 Projects" style={{
+      overflow: 'hidden',
+      background: C.green,
+    }}>
+      <div ref={trackRef} style={{
+        display: 'flex',
+        flexWrap: 'nowrap',
+        width: (projects.length * 100) + 'vw',
+        height: '100vh',
+      }}>
+        {projects.map((p, i) => (
+          <div key={p.name} style={{
+            position: 'relative',
+            width: '100vw',
+            height: '100vh',
+            flexShrink: 0,
+            overflow: 'hidden',
+          }}>
+            {/* Background image or placeholder */}
+            {p.image ? (
+              <img
+                src={p.image}
+                alt={p.name}
+                style={{
+                  position: 'absolute', inset: 0,
+                  width: '100%', height: '100%',
+                  objectFit: 'cover',
+                }}
+              />
+            ) : (
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: `linear-gradient(135deg, ${C.ink} 0%, ${C.green} 100%)`,
+              }} />
+            )}
+
+            {/* Dark overlay */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: p.isPlaceholder
+                ? 'rgba(31,32,34,0.5)'
+                : 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)',
+            }} />
+
+            {/* Content overlay */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', flexDirection: 'column',
+              justifyContent: 'flex-end',
+              padding: '0 80px 96px',
+              zIndex: 2,
             }}>
-              {i === 0 && (
-                <SiteImage
-                  src={p.image}
-                  style={{ width: '100%', minHeight: 420 }}
-                />
-              )}
-              <div style={{ padding: '48px 44px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: 11, color: C.green, letterSpacing: '0.16em', marginBottom: 14, textTransform: 'uppercase' }}>
-                  {p.code} - {p.location}
-                </div>
-                <h3 style={{ fontFamily: '"General Sans", sans-serif', fontWeight: 600, fontSize: 26, color: C.ink, margin: 0, letterSpacing: '-0.01em' }}>{p.name}</h3>
-                <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 12, color: C.green, marginTop: 8, letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 500 }}>
+              {/* Top label: project code */}
+              <div style={{
+                position: 'absolute', top: 80, left: 80,
+                fontFamily: '"General Sans", sans-serif',
+                fontSize: 12, letterSpacing: '0.3em',
+                color: 'rgba(255,255,255,0.6)',
+                textTransform: 'uppercase', fontWeight: 500,
+              }}>
+                {p.code}{p.location ? ' - ' + p.location : ''}
+              </div>
+
+              {/* Slide counter */}
+              <div style={{
+                position: 'absolute', top: 80, right: 80,
+                fontFamily: '"General Sans", sans-serif',
+                fontSize: 13, color: 'rgba(255,255,255,0.5)',
+                fontWeight: 400, letterSpacing: '0.05em',
+              }}>
+                {String(i + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
+              </div>
+
+              {/* Project info */}
+              <div style={{ maxWidth: 640 }}>
+                <h2 style={{
+                  fontFamily: '"General Sans", sans-serif',
+                  fontWeight: 500, fontSize: p.isPlaceholder ? 56 : 64,
+                  lineHeight: 1.1, letterSpacing: '-0.03em',
+                  color: '#FFFFFF', margin: 0,
+                }}>
+                  {p.name}
+                </h2>
+
+                <div style={{
+                  fontFamily: '"General Sans", sans-serif',
+                  fontSize: 13, letterSpacing: '0.12em',
+                  textTransform: 'uppercase', fontWeight: 500,
+                  color: C.bege, marginTop: 16, opacity: 0.85,
+                }}>
                   {p.meta}
                 </div>
-                <p style={{ fontFamily: '"General Sans", sans-serif', fontSize: 16, lineHeight: 1.7, color: C.green, margin: '20px 0 28px' }}>{p.blurb}</p>
-                <a href="#" style={{
+
+                <p style={{
                   fontFamily: '"General Sans", sans-serif',
-                  fontSize: 13, letterSpacing: '0.16em', textTransform: 'uppercase',
-                  color: C.terracota, textDecoration: 'none', fontWeight: 600,
-                }}>Learn more →</a>
+                  fontSize: 17, lineHeight: 1.7,
+                  color: 'rgba(255,255,255,0.8)',
+                  margin: '20px 0 32px', maxWidth: 520,
+                }}>
+                  {p.blurb}
+                </p>
+
+                {!p.isPlaceholder && (
+                  <a href="#" style={{
+                    display: 'inline-block',
+                    fontFamily: '"General Sans", sans-serif',
+                    fontSize: 13, letterSpacing: '0.16em',
+                    textTransform: 'uppercase', fontWeight: 600,
+                    color: '#FFFFFF', textDecoration: 'none',
+                    padding: '14px 36px',
+                    border: '1px solid rgba(255,255,255,0.4)',
+                    transition: 'background 0.3s, border-color 0.3s',
+                  }}>
+                    Explore this project
+                  </a>
+                )}
               </div>
-              {i === 1 && (
-                <SiteImage
-                  src={p.image}
-                  style={{ width: '100%', minHeight: 420 }}
-                />
-              )}
-            </article>
-          ))}
-        </div>
-        <div style={{ height: 200 }} />
+            </div>
+
+            {/* Vertical divider line between panels */}
+            {i < projects.length - 1 && (
+              <div style={{
+                position: 'absolute', right: 0, top: '15%', bottom: '15%',
+                width: 1, background: 'rgba(255,255,255,0.15)',
+              }} />
+            )}
+          </div>
+        ))}
       </div>
     </section>
   );
