@@ -18,9 +18,8 @@
   a { transition: opacity 180ms; }
   a:hover { opacity: 0.78; }
   input::placeholder, textarea::placeholder { color: #5C645799; }
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-thumb { background: #5C645744; border-radius: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
+  html { scrollbar-width: none; -ms-overflow-style: none; }
+  ::-webkit-scrollbar { display: none; }
 </style>
 </head>
 <body>

@@ -674,7 +674,7 @@ function Promise() {
 }
 
 // ============================================================
-// 4. Three Pillars — vertical dividers
+// 4. Three Pillars — animated vertical timeline
 // ============================================================
 const PILLAR_ICONS = {
   land: 'icons/icone-optmistic.png',
@@ -682,52 +682,182 @@ const PILLAR_ICONS = {
   trust: 'icons/icone-experience-driven-work.png',
 };
 
-function PillarIcon({ kind }) {
-  const src = PILLAR_ICONS[kind];
-  if (!src) return null;
-  return (
-    <img src={src} alt="" width="48" height="48"
-      style={{ display: 'block', objectFit: 'contain', opacity: 0.85 }} />
-  );
-}
-
 function Pillars() {
-  const contentRef = useScrollReveal();
-  const items = [
-    { kind: 'land', title: 'Land Vision & Opportunity', body: 'We begin by identifying strategic urban zones with strong potential for long-term living and value. Each location is chosen for its balance between city convenience, quality of life and access to nature.' },
-    { kind: 'design', title: 'Architectural Design & Planning', body: 'Once a location is secured, we collaborate closely with architect studios to design spaces that feel intuitive, balanced and filled with natural light. Homes where families can grow at their own pace, surrounded by green areas and practical layouts.' },
-    { kind: 'trust', title: 'Construction & Delivery', body: 'We work with experienced engineering and construction partners who share our respect for quality, integrity and responsible execution. Every project is monitored closely to ensure that what we build matches what we promised.' },
-  ];
-  return (
-    <section data-screen-label="03 Pillars" style={{
-      background: C.white,
-      padding: '120px 64px 140px',
-    }}>
-      <div ref={contentRef} style={{ maxWidth: 1280, margin: '0 auto', willChange: 'opacity, transform' }}>
-        <div style={{
-          fontFamily: '"General Sans", sans-serif',
-          fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
-          textTransform: 'uppercase', fontWeight: 600, textAlign: 'center', marginBottom: 56,
-        }}>Our Service</div>
+  const sectionRef = useRef(null);
+  const lineRef = useRef(null);
+  const itemRefs = useRef([]);
+  const dotRefs = useRef([]);
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
-          {items.map((it, i) => (
-            <div key={it.title} style={{
-              padding: '0 56px',
-              borderLeft: i === 0 ? 'none' : `1px solid ${C.grey}`,
-            }}>
-              <PillarIcon kind={it.kind} />
-              <h3 style={{
-                fontFamily: '"General Sans", sans-serif',
-                fontWeight: 600, fontSize: 22, color: C.ink, margin: '40px 0 18px', letterSpacing: '-0.005em',
-              }}>{it.title}</h3>
-              <p style={{
-                fontFamily: '"General Sans", sans-serif',
-                fontSize: 16, lineHeight: 1.7, color: C.green, margin: 0,
-              }}>{it.body}</p>
-            </div>
-          ))}
+  const items = [
+    { kind: 'land', num: '01', title: 'Land Vision & Opportunity', body: 'We begin by identifying strategic urban zones with strong potential for long-term living and value. Each location is chosen for its balance between city convenience, quality of life and access to nature.' },
+    { kind: 'design', num: '02', title: 'Architectural Design & Planning', body: 'Once a location is secured, we collaborate closely with architect studios to design spaces that feel intuitive, balanced and filled with natural light. Homes where families can grow at their own pace, surrounded by green areas and practical layouts.' },
+    { kind: 'trust', num: '03', title: 'Construction & Delivery', body: 'We work with experienced engineering and construction partners who share our respect for quality, integrity and responsible execution. Every project is monitored closely to ensure that what we build matches what we promised.' },
+  ];
+
+  useEffect(() => {
+    if (typeof gsap === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    const section = sectionRef.current;
+    const line = lineRef.current;
+    if (!section || !line) return;
+
+    // Animate the vertical line drawing
+    gsap.fromTo(line,
+      { scaleY: 0 },
+      {
+        scaleY: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 60%',
+          end: 'bottom 40%',
+          scrub: 0.8,
+        },
+      }
+    );
+
+    // Animate each pillar item
+    itemRefs.current.forEach((el, i) => {
+      if (!el) return;
+      const isLeft = i % 2 === 0;
+      gsap.fromTo(el,
+        { opacity: 0, x: isLeft ? -60 : 60 },
+        {
+          opacity: 1, x: 0,
+          duration: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 75%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    });
+
+    // Animate dots on the timeline
+    dotRefs.current.forEach((dot) => {
+      if (!dot) return;
+      gsap.fromTo(dot,
+        { scale: 0, opacity: 0 },
+        {
+          scale: 1, opacity: 1,
+          duration: 0.5,
+          ease: 'back.out(2)',
+          scrollTrigger: {
+            trigger: dot,
+            start: 'top 70%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    });
+
+    return () => ScrollTrigger.getAll().forEach(t => {
+      if (t.trigger === section || itemRefs.current.includes(t.trigger) || dotRefs.current.includes(t.trigger)) {
+        t.kill();
+      }
+    });
+  }, []);
+
+  return (
+    <section ref={sectionRef} data-screen-label="03 Pillars" style={{
+      background: C.white,
+      padding: '140px 64px 160px',
+      position: 'relative',
+    }}>
+      {/* Section label */}
+      <div style={{
+        fontFamily: '"General Sans", sans-serif',
+        fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
+        textTransform: 'uppercase', fontWeight: 600, textAlign: 'center', marginBottom: 80,
+      }}>Our Service</div>
+
+      {/* Timeline container */}
+      <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }}>
+        {/* Central vertical line */}
+        <div style={{
+          position: 'absolute', left: '50%', top: 0, bottom: 0,
+          width: 1, marginLeft: -0.5,
+        }}>
+          <div ref={lineRef} style={{
+            width: '100%', height: '100%',
+            background: C.clearGreen,
+            transformOrigin: 'top center',
+            transform: 'scaleY(0)',
+          }} />
         </div>
+
+        {/* Pillar items */}
+        {items.map((it, i) => {
+          const isLeft = i % 2 === 0;
+          return (
+            <div key={it.num} style={{
+              display: 'flex', alignItems: 'center',
+              justifyContent: isLeft ? 'flex-start' : 'flex-end',
+              position: 'relative',
+              marginBottom: i < items.length - 1 ? 120 : 0,
+            }}>
+              {/* Timeline dot */}
+              <div ref={el => dotRefs.current[i] = el} style={{
+                position: 'absolute', left: '50%', top: '50%',
+                width: 14, height: 14, borderRadius: '50%',
+                background: C.green, border: `3px solid ${C.white}`,
+                transform: 'translate(-50%, -50%) scale(0)',
+                zIndex: 3,
+                boxShadow: '0 0 0 4px ' + C.clearGreen,
+              }} />
+
+              {/* Content card */}
+              <div
+                ref={el => itemRefs.current[i] = el}
+                style={{
+                  width: 'calc(50% - 60px)',
+                  opacity: 0,
+                  padding: '40px 44px',
+                  background: C.bege,
+                  borderRadius: 4,
+                  position: 'relative',
+                  ...(isLeft ? { marginRight: 'auto' } : { marginLeft: 'auto' }),
+                }}
+              >
+                {/* Step number */}
+                <span style={{
+                  fontFamily: '"General Sans", sans-serif',
+                  fontWeight: 300, fontSize: 56, color: C.clearGreen,
+                  lineHeight: 1, letterSpacing: '-0.03em',
+                  position: 'absolute', top: -12, right: isLeft ? 44 : 'auto', left: isLeft ? 'auto' : 44,
+                  opacity: 0.5,
+                }}>{it.num}</span>
+
+                {/* Icon */}
+                <img src={PILLAR_ICONS[it.kind]} alt="" width="52" height="52"
+                  style={{ display: 'block', objectFit: 'contain', opacity: 0.85, marginBottom: 24 }} />
+
+                {/* Title */}
+                <h3 style={{
+                  fontFamily: '"General Sans", sans-serif',
+                  fontWeight: 600, fontSize: 22, color: C.ink,
+                  margin: '0 0 16px', letterSpacing: '-0.005em', lineHeight: 1.3,
+                }}>{it.title}</h3>
+
+                {/* Description */}
+                <p style={{
+                  fontFamily: '"General Sans", sans-serif',
+                  fontSize: 15, lineHeight: 1.75, color: C.green, margin: 0,
+                }}>{it.body}</p>
+
+                {/* Connector line from card to central line */}
+                <div style={{
+                  position: 'absolute', top: '50%',
+                  width: 60, height: 1, background: C.clearGreen,
+                  ...(isLeft ? { right: -60 } : { left: -60 }),
+                }} />
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
@@ -1341,6 +1471,28 @@ function DesktopHomepage() {
         <FinalCTA />
         <Footer />
       </div>
+
+      {/* WhatsApp floating button — always visible */}
+      <a
+        href="https://wa.me/351XXXXXXXXX"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp"
+        style={{
+          position: 'fixed', bottom: 28, right: 28, zIndex: 180,
+          width: 52, height: 52, borderRadius: '50%',
+          background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
+          transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+          textDecoration: 'none',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.22)'; }}
+        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)'; }}
+      >
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+      </a>
     </div>
   );
 }
