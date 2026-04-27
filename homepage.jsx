@@ -31,8 +31,9 @@ function useReveal(threshold = 0.15) {
 
 const revealStyle = (visible) => ({
   opacity: visible ? 1 : 0,
-  transform: visible ? 'none' : 'translateY(40px)',
-  transition: 'opacity 0.7s ease, transform 0.7s ease',
+  transform: visible ? 'translateY(0)' : 'translateY(72px)',
+  transition: 'opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)',
+  willChange: 'opacity, transform',
 });
 
 // ============================================================
@@ -151,46 +152,49 @@ function StickyBar() {
 }
 
 // ============================================================
-// Loading Screen - logo revealed by horizontal strokes
+// Loading Screen - smooth clip-path logo reveal
 // ============================================================
 function LoadingScreen() {
-  const [phase, setPhase] = useState('strokes'); // strokes -> solid -> reveal -> done
-  const lines = 12;
+  const [phase, setPhase] = useState('reveal'); // reveal -> hold -> exit -> done
 
   useEffect(() => {
     if (!document.getElementById('orma-loader-css')) {
       const style = document.createElement('style');
       style.id = 'orma-loader-css';
-      style.textContent = Array.from({ length: lines }, (_, i) => {
-        const delay = (i * 0.08).toFixed(2);
-        return `
-          .orma-stroke-${i} {
-            animation: ormaStroke 0.6s ${delay}s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      style.textContent = `
+        @keyframes ormaReveal {
+          0% {
+            clip-path: inset(0 100% 0 0);
+            opacity: 0.4;
+            transform: scale(0.97);
           }
-        `;
-      }).join('') + `
-        @keyframes ormaStroke {
-          0%   { transform: scaleX(0); }
-          100% { transform: scaleX(1); }
+          20% {
+            opacity: 1;
+          }
+          100% {
+            clip-path: inset(0 0% 0 0);
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        .orma-logo-reveal {
+          animation: ormaReveal 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
       `;
       document.head.appendChild(style);
     }
-    const t1 = setTimeout(() => setPhase('solid'), 1800);
-    const t2 = setTimeout(() => setPhase('reveal'), 2800);
+    const t1 = setTimeout(() => setPhase('hold'), 1700);
+    const t2 = setTimeout(() => setPhase('exit'), 2500);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   if (phase === 'done') return null;
 
-  const isSolid = phase === 'solid' || phase === 'reveal';
-  const lineH = 100 / lines;
-
   return (
     <div style={{
       position: 'fixed',
       top: 0, left: 0, width: '100%',
-      height: phase === 'reveal' ? '0vh' : '100vh',
+      height: phase === 'exit' ? '0vh' : '100vh',
       background: C.green,
       zIndex: 9999,
       overflow: 'hidden',
@@ -199,56 +203,18 @@ function LoadingScreen() {
       justifyContent: 'center',
       transition: 'height 1s cubic-bezier(0.65, 0, 0.35, 1)',
     }}
-      onTransitionEnd={() => { if (phase === 'reveal') setPhase('done'); }}
+      onTransitionEnd={() => { if (phase === 'exit') setPhase('done'); }}
     >
-      <div style={{ position: 'relative', width: 220, height: 65 }}>
-        {/* Hidden real image used as source */}
-        <img
-          src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-bege-slogan-2.png"
-          alt="Orma"
-          style={{
-            position: 'absolute', top: 0, left: 0,
-            width: '100%', height: '100%',
-            objectFit: 'contain',
-            opacity: isSolid ? 1 : 0,
-            transition: 'opacity 0.4s ease',
-          }}
-        />
-
-        {/* Stroke lines that reveal the logo slice by slice */}
-        {!isSolid && Array.from({ length: lines }, (_, i) => (
-          <div key={i} style={{
-            position: 'absolute',
-            left: 0, width: '100%',
-            top: `${i * lineH}%`,
-            height: `${lineH + 0.5}%`,
-            overflow: 'hidden',
-          }}>
-            {/* Each line contains a slice of the logo */}
-            <div
-              className={`orma-stroke-${i}`}
-              style={{
-                width: '100%', height: '100%',
-                transformOrigin: i % 2 === 0 ? 'left center' : 'right center',
-                transform: 'scaleX(0)',
-              }}
-            >
-              <img
-                src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-bege-slogan-2.png"
-                alt=""
-                style={{
-                  position: 'absolute',
-                  top: 0, left: 0,
-                  width: 220, height: 65,
-                  objectFit: 'contain',
-                  marginTop: `${-i * lineH}%`,
-                  pointerEvents: 'none',
-                }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
+      <img
+        className="orma-logo-reveal"
+        src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-bege-slogan-2.png"
+        alt="Orma"
+        style={{
+          width: 220,
+          height: 65,
+          objectFit: 'contain',
+        }}
+      />
     </div>
   );
 }
@@ -258,20 +224,19 @@ function LoadingScreen() {
 // ============================================================
 function Nav() {
   const [visible, setVisible] = useState(true);
+  const [inHero, setInHero] = useState(true);
   const lastScroll = useRef(0);
 
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
       const heroH = window.innerHeight;
+      setInHero(y < heroH * 0.85);
       if (y < heroH * 0.5) {
-        // Always show nav in hero area
         setVisible(true);
       } else if (y < lastScroll.current) {
-        // Scrolling UP → show
         setVisible(true);
       } else if (y > lastScroll.current + 10) {
-        // Scrolling DOWN (with threshold) → hide
         setVisible(false);
       }
       lastScroll.current = y;
@@ -286,19 +251,22 @@ function Nav() {
       top: 0, left: 0, right: 0,
       height: 68,
       padding: '0 56px',
-      background: C.green,
+      background: inHero ? 'transparent' : C.green,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       zIndex: 100,
       transform: visible ? 'translateY(0)' : 'translateY(-100%)',
-      transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+      transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease',
     }}>
-      <img
-        src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
-        alt="Orma"
-        style={{ height: 22 }}
-      />
+      {/* O mark only — clip the wordmark to the first character */}
+      <div style={{ width: 24, height: 22, overflow: 'hidden' }}>
+        <img
+          src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
+          alt="Orma"
+          style={{ height: 22, width: 'auto', display: 'block' }}
+        />
+      </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
         {['Home', 'About Us', 'Projects', 'Contact Us'].map((l, i) => (
           <a key={l} href="#" style={{
@@ -333,9 +301,12 @@ function Hero() {
 
   return (
     <section data-screen-label="01 Hero" style={{
-      position: 'relative',
+      position: 'fixed',
+      top: 0, left: 0,
+      width: '100%',
       height: '100vh',
       overflow: 'hidden',
+      zIndex: 1,
     }}>
       {/* Video background */}
       <video
@@ -944,14 +915,19 @@ function DesktopHomepage() {
       <LoadingScreen />
       <Nav />
       <Hero />
-      <Promise />
-      <Pillars />
-      <Projects />
-      <WhyOrma />
-      <Visit />
-      <Community />
-      <FinalCTA />
-      <Footer />
+      {/* Spacer — occupies flow space for the fixed hero */}
+      <div style={{ height: '100vh' }} />
+      {/* Content wrapper — scrolls over the fixed hero */}
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        <Promise />
+        <Pillars />
+        <Projects />
+        <WhyOrma />
+        <Visit />
+        <Community />
+        <FinalCTA />
+        <Footer />
+      </div>
       <StickyBar />
     </div>
   );
