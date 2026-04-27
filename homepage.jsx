@@ -151,6 +151,49 @@ function StickyBar() {
 }
 
 // ============================================================
+// Loading Screen — Antas Atrium style curtain reveal
+// ============================================================
+function LoadingScreen() {
+  const [phase, setPhase] = useState('logo-in'); // logo-in → hold → reveal → done
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase('hold'), 800);
+    const t2 = setTimeout(() => setPhase('reveal'), 2200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
+  if (phase === 'done') return null;
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0, left: 0, width: '100%',
+      height: phase === 'reveal' ? '0vh' : '100vh',
+      background: C.green,
+      zIndex: 9999,
+      overflow: 'hidden',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      transition: 'height 1s cubic-bezier(0.65, 0, 0.35, 1)',
+    }}
+      onTransitionEnd={() => { if (phase === 'reveal') setPhase('done'); }}
+    >
+      <img
+        src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
+        alt="Orma"
+        style={{
+          width: 180,
+          opacity: phase === 'logo-in' ? 0 : 1,
+          transform: phase === 'logo-in' ? 'translateY(16px)' : 'translateY(0)',
+          transition: 'opacity 0.8s ease, transform 0.8s ease',
+        }}
+      />
+    </div>
+  );
+}
+
+// ============================================================
 // 1. Nav — Green, sticky, with Schedule a visit button
 // ============================================================
 function Nav() {
@@ -166,7 +209,11 @@ function Nav() {
       justifyContent: 'space-between',
       zIndex: 100,
     }}>
-      <Wordmark color={C.bege} size={24} />
+      <img
+        src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
+        alt="Orma"
+        style={{ height: 22 }}
+      />
       <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
         {['Home', 'About', 'Projects', 'Contact'].map((l, i) => (
           <a key={l} href="#" style={{
@@ -194,55 +241,78 @@ function Nav() {
 }
 
 // ============================================================
-// 2. Hero — 35/65 split, image dominates
+// 2. Hero — Full-bleed video background
 // ============================================================
 function Hero() {
+  const [loaded, setLoaded] = useState(false);
+
   return (
     <section data-screen-label="01 Hero" style={{
       position: 'relative',
-      minHeight: '100vh',
-      background: C.white,
-      display: 'grid',
-      gridTemplateColumns: '35fr 65fr',
+      height: '100vh',
       overflow: 'hidden',
     }}>
-      {/* tree watermark behind text */}
-      <div style={{ position: 'absolute', left: -160, top: 80, width: 720, height: 720, pointerEvents: 'none', zIndex: 1 }}>
-        <TreeMark opacity={0.32} />
+      {/* Video background */}
+      <video
+        autoPlay muted loop playsInline
+        onCanPlay={() => setLoaded(true)}
+        style={{
+          position: 'absolute', inset: 0,
+          width: '100%', height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+        }}
+      >
+        <source src="https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/iStock-1463851868.mp4" type="video/mp4" />
+      </video>
+
+      {/* Dark overlay for text legibility */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(180deg, rgba(31,32,34,0.35) 0%, rgba(31,32,34,0.55) 100%)',
+        zIndex: 1,
+      }} />
+
+      {/* Tree watermark */}
+      <div style={{ position: 'absolute', right: -120, bottom: -80, width: 600, height: 600, pointerEvents: 'none', zIndex: 1 }}>
+        <TreeMark opacity={0.08} style={{ filter: 'brightness(10)' }} />
       </div>
 
-      {/* left: text */}
+      {/* Content */}
       <div style={{
-        padding: '0 48px 0 64px',
+        position: 'relative', zIndex: 2,
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        position: 'relative',
-        zIndex: 2,
+        padding: '0 64px',
+        maxWidth: 800,
       }}>
         <div style={{
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em',
-          color: C.green, textTransform: 'uppercase', fontWeight: 600,
+          color: C.bege, textTransform: 'uppercase', fontWeight: 600,
           marginBottom: 36,
           display: 'flex', alignItems: 'center', gap: 14,
+          opacity: 0.85,
         }}>
-          <span style={{ width: 32, height: 1, background: C.green }} />
+          <span style={{ width: 32, height: 1, background: C.bege }} />
           Porto · Santo Tirso
         </div>
 
         <h1 style={{
           fontFamily: '"General Sans", sans-serif',
           fontWeight: 300, fontSize: 76, lineHeight: 1.0,
-          letterSpacing: '-0.025em', color: C.ink, margin: 0, textWrap: 'balance',
+          letterSpacing: '-0.025em', color: C.white, margin: 0, textWrap: 'balance',
         }}>
-          Designed for the way you <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.green }}>live.</em>
+          Designed for the way you <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.bege }}>live.</em>
         </h1>
 
         <p style={{
           fontFamily: '"General Sans", sans-serif',
-          fontWeight: 400, fontSize: 17, lineHeight: 1.7,
-          color: C.green, marginTop: 32, marginBottom: 0, maxWidth: 420,
+          fontWeight: 400, fontSize: 18, lineHeight: 1.7,
+          color: C.bege, marginTop: 32, marginBottom: 0, maxWidth: 520,
+          opacity: 0.9,
         }}>
           Homes shaped by clarity, light, and purpose — built by a family of architects, engineers and craftspeople in northern Portugal.
         </p>
@@ -260,24 +330,17 @@ function Hero() {
           </button>
           <a href="#" style={{
             fontFamily: '"General Sans", sans-serif',
-            fontSize: 13, color: C.green, textDecoration: 'none',
-            fontWeight: 500, borderBottom: `1px solid ${C.green}66`, paddingBottom: 2,
+            fontSize: 13, color: C.bege, textDecoration: 'none',
+            fontWeight: 500, borderBottom: `1px solid ${C.bege}66`, paddingBottom: 2,
           }}>Our story →</a>
         </div>
       </div>
 
-      {/* right: full bleed image */}
-      <div style={{ position: 'relative' }}>
-        <SiteImage
-          src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/ee66e43983e1f35750e3d6d88040a7a8a3015d35.png"
-          style={{ position: 'absolute', inset: 0 }}
-        />
-      </div>
-
-      {/* stats strip at bottom */}
+      {/* Stats strip at bottom */}
       <div style={{
         position: 'absolute', left: 0, right: 0, bottom: 0,
-        background: C.grey,
+        background: `${C.green}ee`,
+        backdropFilter: 'blur(8px)',
         height: 64,
         display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
         zIndex: 3,
@@ -289,11 +352,11 @@ function Hero() {
         ].map(([k, v], i) => (
           <div key={k} style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14,
-            borderLeft: i === 0 ? 'none' : `1px solid ${C.clearGreen}66`,
+            borderLeft: i === 0 ? 'none' : `1px solid ${C.clearGreen}44`,
             fontFamily: '"General Sans", sans-serif',
           }}>
-            <span style={{ fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.green, fontWeight: 600 }}>{k}</span>
-            <span style={{ fontSize: 13, color: C.ink, fontWeight: 500, letterSpacing: '0.04em' }}>{v}</span>
+            <span style={{ fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600 }}>{k}</span>
+            <span style={{ fontSize: 13, color: C.bege, fontWeight: 500, letterSpacing: '0.04em' }}>{v}</span>
           </div>
         ))}
       </div>
@@ -812,6 +875,7 @@ function DesktopHomepage() {
       position: 'relative',
       fontFamily: '"General Sans", system-ui, sans-serif',
     }}>
+      <LoadingScreen />
       <Nav />
       <Hero />
       <Promise />
