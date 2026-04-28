@@ -320,7 +320,12 @@ function MenuLink({ label, href, onClose, hasChildren, children }) {
       e.preventDefault();
       setExpanded(!expanded);
     } else {
+      e.preventDefault();
       onClose();
+      if (href) {
+        const el = document.querySelector(href);
+        if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 350);
+      }
     }
   };
 
@@ -428,7 +433,8 @@ function MenuDrawer({ open, onClose }) {
       {/* Side drawer from right */}
       <div style={{
         position: 'fixed', top: 0, right: 0, bottom: 0,
-        width: 420,
+        width: Math.min(420, window.innerWidth),
+        maxWidth: '100vw',
         zIndex: 201,
         background: C.green,
         transform: open ? 'translateX(0)' : 'translateX(100%)',
@@ -458,12 +464,12 @@ function MenuDrawer({ open, onClose }) {
 
           {/* Nav links */}
           <nav style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            <MenuLink label="Projects" onClose={onClose} hasChildren>
+            <MenuLink label="Projects" href="#projects" onClose={onClose} hasChildren>
               <MenuSubLink label="Lir 725" subtitle="Porto" onClose={onClose} />
               <MenuSubLink label="Villas Sto. Tirso" subtitle="Santo Tirso" onClose={onClose} />
             </MenuLink>
-            <MenuLink label="About" onClose={onClose} />
-            <MenuLink label="Contact" onClose={onClose} />
+            <MenuLink label="About" href="#about" onClose={onClose} />
+            <MenuLink label="Contact" href="#contact" onClose={onClose} />
           </nav>
         </div>
 
@@ -525,7 +531,7 @@ function Nav() {
         transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease',
       }}>
         {/* Logo wordmark */}
-        <a href="#" style={{ display: 'block', lineHeight: 0 }}>
+        <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ display: 'block', lineHeight: 0 }}>
           <img
             src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
             alt="Orma"
@@ -625,7 +631,10 @@ function Hero() {
         </p>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 20 : 28, marginTop: isMobile ? 32 : 44, flexWrap: 'wrap' }}>
-          <button style={{
+          <button onClick={() => {
+            const el = document.getElementById('projects');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }} style={{
             background: C.terracota, color: C.white, border: 'none',
             padding: '16px 32px',
             fontFamily: '"General Sans", sans-serif',
@@ -1208,7 +1217,7 @@ function Projects() {
   });
 
   return (
-    <section ref={sectionRef} data-screen-label="04 Projects" style={{
+    <section ref={sectionRef} id="projects" data-screen-label="04 Projects" style={{
       overflow: 'hidden',
       background: projects[0].bg,
       position: 'relative',
@@ -1545,7 +1554,7 @@ function WhyOrma() {
   }, []);
 
   return (
-    <section ref={sectionRef} data-screen-label="05 Why Orma" style={{
+    <section ref={sectionRef} id="about" data-screen-label="05 Why Orma" style={{
       position: 'relative',
       background: C.green,
       padding: isMobile ? '80px 24px' : '140px 64px',
@@ -1643,197 +1652,7 @@ function WhyOrma() {
 }
 
 // ============================================================
-// 7. Visit / conversion
-// ============================================================
-function Visit() {
-  const contentRef = useScrollReveal();
-  const [form, setForm] = useState({ name: '', email: '', phone: '', project: '', message: '' });
-  const [agree, setAgree] = useState(false);
-  const [sent, setSent] = useState(false);
-
-  const inputStyle = {
-    width: '100%',
-    background: C.white,
-    border: `1px solid ${C.clearGreen}`,
-    padding: '14px 16px',
-    fontFamily: '"General Sans", sans-serif',
-    fontSize: 15,
-    color: C.ink, outline: 'none', borderRadius: 6,
-  };
-
-  return (
-    <section data-screen-label="06 Visit" style={{
-      background: C.bege,
-      padding: '140px 64px',
-    }}>
-      <div ref={contentRef} style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center', willChange: 'opacity, transform' }}>
-        <div>
-          <div style={{
-            fontFamily: '"General Sans", sans-serif',
-            fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
-            textTransform: 'uppercase', fontWeight: 600, marginBottom: 24,
-          }}>Get In Touch</div>
-          <h2 style={{
-            fontFamily: '"General Sans", sans-serif',
-            fontWeight: 300, fontSize: 44, lineHeight: 1.1,
-            letterSpacing: '-0.02em', color: C.ink, margin: 0, textWrap: 'balance',
-          }}>
-            Let's Talk About Your Next Step.
-          </h2>
-          <p style={{
-            fontFamily: '"General Sans", sans-serif',
-            fontSize: 17, lineHeight: 1.7, color: C.green, marginTop: 28, marginBottom: 0, maxWidth: 460,
-          }}>
-            If you'd like to know more about our projects or our approach, our team is here to assist you. Leave us a message and we'll respond with the information and support you need.
-          </p>
-
-          <div style={{ marginTop: 48, display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '20px 28px', alignItems: 'baseline' }}>
-            <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.green, fontWeight: 600 }}>Address</div>
-            <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: C.ink, lineHeight: 1.6 }}>Rua de Cedofeita 123, 4050-179 Porto</div>
-            <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.green, fontWeight: 600 }}>Hours</div>
-            <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: C.ink, lineHeight: 1.6 }}>Tue - Sat · 10:00 - 18:00</div>
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px', gap: 24, alignItems: 'stretch' }}>
-          <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} style={{
-            background: `${C.white}aa`,
-            padding: 36,
-            borderRadius: 12,
-            display: 'grid', gap: 18,
-          }}>
-            <input style={inputStyle} placeholder="Full Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
-            <input style={inputStyle} placeholder="Email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
-            <input style={inputStyle} placeholder="Contact No" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
-            <input style={inputStyle} placeholder="Project" value={form.project} onChange={e => setForm({...form, project: e.target.value})} />
-            <textarea style={{ ...inputStyle, minHeight: 100, resize: 'vertical' }} placeholder="Message" value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
-            <label style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontFamily: '"General Sans", sans-serif', fontSize: 12, color: C.green, lineHeight: 1.5, marginTop: 4 }}>
-              <input type="checkbox" checked={agree} onChange={e => setAgree(e.target.checked)} style={{ marginTop: 3, accentColor: C.green }} />
-              <span>I agree to the processing of my personal data in accordance with Orma's <a href="#" style={{ color: C.green, textDecoration: 'underline' }}>privacy policy</a>.</span>
-            </label>
-            <button type="submit" style={{
-              background: C.terracota, color: C.white, border: 'none',
-              padding: '16px 22px', fontFamily: '"General Sans", sans-serif',
-              fontWeight: 500, fontSize: 13, letterSpacing: '0.16em',
-              textTransform: 'uppercase', borderRadius: 6, cursor: 'pointer',
-              marginTop: 8,
-            }}>{sent ? 'Message sent ✓' : 'Get in touch →'}</button>
-          </form>
-
-          {/* photo strip */}
-          <div style={{ display: 'grid', gap: 12 }}>
-            <SiteImage
-              src="https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/1-scaled.jpg"
-              style={{ flex: 1, minHeight: 0, borderRadius: 6 }}
-            />
-            <SiteImage
-              src="https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/3-scaled.jpg"
-              style={{ flex: 1, minHeight: 0, borderRadius: 6 }}
-            />
-            <SiteImage
-              src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/ee66e43983e1f35750e3d6d88040a7a8a3015d35.png"
-              style={{ flex: 1, minHeight: 0, borderRadius: 6 }}
-            />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================================
-// 8. Community — compact, centered
-// ============================================================
-function Community() {
-  const contentRef = useScrollReveal();
-  return (
-    <section data-screen-label="07 Community" style={{
-      background: C.white,
-      padding: '140px 64px 120px',
-      textAlign: 'center',
-    }}>
-      <div ref={contentRef} style={{ maxWidth: 800, margin: '0 auto', willChange: 'opacity, transform' }}>
-        <div style={{
-          fontFamily: '"General Sans", sans-serif',
-          fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
-          textTransform: 'uppercase', fontWeight: 600, marginBottom: 22,
-        }}>Community</div>
-        <h2 style={{
-          fontFamily: '"General Sans", sans-serif',
-          fontWeight: 300, fontSize: 38, lineHeight: 1.2,
-          letterSpacing: '-0.02em', color: C.ink, margin: 0, textWrap: 'balance',
-        }}>
-          Giving Back to the Places We Build.
-        </h2>
-        <p style={{
-          fontFamily: '"General Sans", sans-serif',
-          fontSize: 17, lineHeight: 1.7, color: C.green, marginTop: 28, marginBottom: 0,
-        }}>
-          Every year, we reinvest part of our net income into the communities where our projects take shape. It is our way of contributing to local well-being, supporting meaningful initiatives and ensuring that the places families choose to live continue to grow with them.
-        </p>
-
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 64 }}>
-          {[
-            { label: 'Local school garden', src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/joel-muniz-qvzjG2pF4bE-unsplash-scaled.jpg' },
-            { label: 'Riverside walk', src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png' },
-            { label: 'Library renovation', src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg' },
-            { label: 'Youth football', src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/2.png' },
-          ].map((item) => (
-            <div key={item.label} style={{
-              width: 130, height: 130, borderRadius: '50%',
-              border: `1px solid ${C.green}66`,
-              padding: 4, overflow: 'hidden',
-            }}>
-              <SiteImage
-                src={item.src}
-                style={{ width: '100%', height: '100%', borderRadius: '50%' }}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================================
-// 9. Final CTA banner
-// ============================================================
-function FinalCTA() {
-  const contentRef = useScrollReveal();
-  return (
-    <section data-screen-label="08 Final CTA" style={{
-      background: C.bege,
-      padding: '120px 64px',
-      textAlign: 'center',
-    }}>
-      <div ref={contentRef} style={{ willChange: 'opacity, transform' }}>
-      <h2 style={{
-        fontFamily: '"General Sans", sans-serif',
-        fontWeight: 300, fontSize: 36, lineHeight: 1.2,
-        letterSpacing: '-0.02em', color: C.ink, margin: 0,
-      }}>
-        Let's Talk About Your Next Step!
-      </h2>
-      <button style={{
-        marginTop: 36,
-        background: C.terracota, color: C.white, border: 'none',
-        padding: '18px 36px', fontFamily: '"General Sans", sans-serif',
-        fontWeight: 500, fontSize: 13, letterSpacing: '0.16em',
-        textTransform: 'uppercase', borderRadius: 6, cursor: 'pointer',
-      }}>Get in touch →</button>
-      <div style={{
-        marginTop: 28,
-        fontFamily: '"General Sans", sans-serif',
-        fontSize: 14, color: C.green, letterSpacing: '0.04em',
-      }}>info@orma.pt · +351 220 000 000</div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================================
-// 10. Contact Form — background photo + Orma logo
+// 7. Contact Form — background photo + Orma logo
 // ============================================================
 function ContactForm() {
   const isMobile = useIsMobile();
@@ -1869,7 +1688,7 @@ function ContactForm() {
   };
 
   return (
-    <section data-screen-label="10 Contact" style={{
+    <section id="contact" data-screen-label="10 Contact" style={{
       position: 'relative',
       overflow: 'hidden',
       padding: isMobile ? '60px 24px' : '120px 64px',
@@ -2034,7 +1853,7 @@ function Footer() {
   const footerRef = useScrollReveal();
 
   return (
-    <footer data-screen-label="09 Footer" style={{
+    <footer id="footer" data-screen-label="09 Footer" style={{
       background: '#3D4239', color: C.bege,
       position: 'relative', overflow: 'hidden',
     }}>
@@ -2082,7 +1901,7 @@ function Footer() {
 
             {/* CTA buttons */}
             <div style={{ display: 'flex', gap: 16, marginTop: isMobile ? 32 : 44, flexWrap: 'wrap' }}>
-              <a href="#" style={{
+              <a href="#contact" onClick={e => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} style={{
                 position: 'relative', overflow: 'hidden',
                 display: 'inline-block', padding: '16px 36px',
                 background: C.terracota, color: C.white,
@@ -2107,7 +1926,7 @@ function Footer() {
                 }} />
                 <span style={{ position: 'relative', zIndex: 1 }}>Get in touch</span>
               </a>
-              <a href="#" style={{
+              <a href="#projects" onClick={e => { e.preventDefault(); const el = document.getElementById('projects'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} style={{
                 position: 'relative', overflow: 'hidden',
                 display: 'inline-block', padding: '16px 36px',
                 background: 'transparent', color: C.bege,
@@ -2141,8 +1960,8 @@ function Footer() {
           {/* Right — Contact details */}
           <div style={{ paddingTop: isMobile ? 0 : 16 }}>
             {[
-              { label: 'Email', value: 'info@orma.pt' },
-              { label: 'Phone', value: '+351 220 000 000' },
+              { label: 'Email', value: 'info@orma.pt', href: 'mailto:info@orma.pt' },
+              { label: 'Phone', value: '+351 220 000 000', href: 'tel:+351220000000' },
               { label: 'Address', value: 'Rua de Cedofeita 123\nPorto, Portugal' },
             ].map((item, i) => (
               <div key={item.label} style={{
@@ -2155,11 +1974,19 @@ function Footer() {
                   fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase',
                   color: C.clearGreen, fontWeight: 600, marginBottom: 6,
                 }}>{item.label}</div>
-                <div style={{
-                  fontFamily: '"General Sans", sans-serif',
-                  fontSize: 15, color: C.bege, lineHeight: 1.5,
-                  whiteSpace: 'pre-line',
-                }}>{item.value}</div>
+                {item.href ? (
+                  <a href={item.href} style={{
+                    fontFamily: '"General Sans", sans-serif',
+                    fontSize: 15, color: C.bege, lineHeight: 1.5,
+                    textDecoration: 'none', transition: 'opacity 0.3s',
+                  }}>{item.value}</a>
+                ) : (
+                  <div style={{
+                    fontFamily: '"General Sans", sans-serif',
+                    fontSize: 15, color: C.bege, lineHeight: 1.5,
+                    whiteSpace: 'pre-line',
+                  }}>{item.value}</div>
+                )}
               </div>
             ))}
 
