@@ -1447,13 +1447,14 @@ const STAT_ICONS = {
 
 function WhyOrma() {
   const isMobile = useIsMobile();
+  const sectionRef = useScrollReveal();
   const whyRevealText = 'Our team brings thoughtful guidance and dependable execution to every project, standing by your vision with the confidence this moment calls for.';
   const communityText = 'Every year, we reinvest part of our net income into the communities where our projects take shape — supporting local well-being and ensuring the places families choose to live continue to grow with them.';
 
   const stats = [
-    { num: '40', suffix: '+', label: 'years of experience', icon: 'years' },
-    { num: '2', suffix: '', label: 'projects in development', icon: 'projects' },
-    { num: '100', suffix: '%', label: 'net income reinvested locally', icon: 'reinvest' },
+    { num: '40', suffix: '+', label: 'Years of experience', icon: 'years' },
+    { num: '2', suffix: '', label: 'Projects in dev', icon: 'projects' },
+    { num: '100', suffix: '%', label: 'Net income reinvested locally', icon: 'reinvest' },
   ];
 
   const communityPhotos = [
@@ -1467,14 +1468,14 @@ function WhyOrma() {
     <section data-screen-label="05 Why Orma" style={{
       position: 'relative',
       background: C.green,
-      padding: isMobile ? '80px 24px' : '160px 64px',
+      padding: isMobile ? '80px 24px' : '140px 64px',
       overflow: 'hidden',
     }}>
       <div style={{ position: 'absolute', right: -240, bottom: -200, width: 800, height: 800, pointerEvents: 'none' }}>
         <TreeMark opacity={0.08} />
       </div>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+      <div ref={sectionRef} style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2, willChange: 'opacity, transform' }}>
         <div style={{
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em', color: C.clearGreen,
@@ -1483,80 +1484,101 @@ function WhyOrma() {
 
         <div style={isMobile
           ? { display: 'flex', flexDirection: 'column', gap: 40 }
-          : { display: 'grid', gridTemplateColumns: '300px 120px 1fr', gap: 56, alignItems: 'start' }
+          : { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'start' }
         }>
 
-          {/* Stats */}
-          <div style={isMobile ? { display: 'grid', gridTemplateColumns: '1fr', gap: 12 } : {}}>
-            {stats.map((stat, i) => {
-              const IconComp = STAT_ICONS[stat.icon];
-              return (
-                <div key={i} style={{
-                  padding: isMobile ? '20px 20px' : '28px 24px',
-                  marginBottom: isMobile ? 0 : 16,
-                  background: 'rgba(255,255,255,0.06)',
-                  borderRadius: 10,
-                  borderLeft: '3px solid ' + C.terracota,
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-                    {IconComp && React.createElement(IconComp)}
-                    <div style={{
-                      fontFamily: '"General Sans", sans-serif',
-                      fontSize: 11, letterSpacing: '0.18em', color: C.clearGreen,
-                      textTransform: 'uppercase', fontWeight: 600,
-                    }}>{stat.label}</div>
-                  </div>
-                  <div style={{
-                    fontFamily: '"General Sans", sans-serif',
-                    fontWeight: 500, fontSize: isMobile ? 48 : 64, lineHeight: 1, letterSpacing: '-0.03em',
-                    color: C.terracota,
-                  }}>
-                    <RollingNumber value={stat.num} suffix={stat.suffix} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Community photo strip */}
-          <div style={isMobile
-            ? { display: 'flex', flexDirection: 'row', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }
-            : { display: 'flex', flexDirection: 'column', gap: 14, paddingTop: 8 }
-          }>
-            {communityPhotos.map((src, i) => (
-              <div key={i} style={{
-                width: isMobile ? 72 : 100, height: isMobile ? 72 : 100, borderRadius: '50%',
-                border: '1px solid ' + C.clearGreen + '55',
-                padding: 3, overflow: 'hidden', flexShrink: 0,
-              }}>
-                <SiteImage src={src} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
-              </div>
-            ))}
-            <div style={{
-              fontFamily: '"General Sans", sans-serif',
-              fontSize: 9, letterSpacing: '0.18em', color: C.clearGreen,
-              textTransform: 'uppercase', fontWeight: 600, textAlign: 'center',
-              marginTop: 4, lineHeight: 1.5,
-              ...(isMobile ? { width: '100%' } : {}),
-            }}>Giving back</div>
-          </div>
-
-          {/* Narrative text with WordReveal */}
-          <div style={{ paddingTop: isMobile ? 0 : 8 }}>
+          {/* LEFT — Narrative text */}
+          <div>
             <WordReveal
               text={whyRevealText}
               style={{
                 fontFamily: '"General Sans", sans-serif',
-                fontSize: isMobile ? 18 : 22, lineHeight: 1.75, color: C.white, margin: 0, fontWeight: 300,
+                fontSize: isMobile ? 20 : 28, lineHeight: 1.55, color: C.white, margin: 0, fontWeight: 300,
+                letterSpacing: '-0.01em',
               }}
             />
             <p style={{
               fontFamily: '"General Sans", sans-serif',
-              fontSize: isMobile ? 14 : 15, lineHeight: 1.7, color: C.bege, margin: '36px 0 0', fontWeight: 400, opacity: 0.8,
+              fontSize: isMobile ? 14 : 15, lineHeight: 1.8, color: C.bege, margin: '36px 0 0', fontWeight: 400, opacity: 0.65,
+              maxWidth: 480,
             }}>
               {communityText}
             </p>
           </div>
+
+          {/* RIGHT — Stats grid + avatar stack */}
+          <div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+              gap: 16,
+            }}>
+              {stats.map((stat, i) => {
+                const IconComp = STAT_ICONS[stat.icon];
+                const isFullWidth = i === 2;
+                return (
+                  <div key={i} style={{
+                    padding: isMobile ? '24px 20px' : '28px 24px',
+                    background: 'rgba(238,232,218,0.08)',
+                    borderRadius: 8,
+                    borderLeft: '3px solid ' + C.terracota,
+                    ...(isFullWidth && !isMobile ? { gridColumn: '1 / -1' } : {}),
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                      {IconComp && React.createElement(IconComp)}
+                      <div style={{
+                        fontFamily: '"General Sans", sans-serif',
+                        fontSize: 10, letterSpacing: '0.2em', color: 'rgba(238,232,218,0.5)',
+                        textTransform: 'uppercase', fontWeight: 600,
+                      }}>{stat.label}</div>
+                    </div>
+                    <div style={{
+                      fontFamily: '"General Sans", sans-serif',
+                      fontWeight: 300, fontSize: isMobile ? 44 : 48, lineHeight: 1, letterSpacing: '-0.03em',
+                      color: C.terracota,
+                    }}>
+                      <RollingNumber value={stat.num} suffix={stat.suffix} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Avatar stack — Giving Back */}
+            <div style={{ marginTop: 28, display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{ display: 'flex' }}>
+                {communityPhotos.map((src, i) => (
+                  <div key={i} style={{
+                    width: 44, height: 44, borderRadius: '50%',
+                    border: '2px solid ' + C.green,
+                    overflow: 'hidden', flexShrink: 0,
+                    marginLeft: i > 0 ? -12 : 0,
+                    position: 'relative', zIndex: communityPhotos.length - i,
+                  }}>
+                    <SiteImage src={src} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                  </div>
+                ))}
+                <div style={{
+                  width: 44, height: 44, borderRadius: '50%',
+                  border: '2px solid ' + C.green,
+                  background: 'rgba(238,232,218,0.06)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  marginLeft: -12, position: 'relative', zIndex: 0,
+                }}>
+                  <span style={{
+                    fontFamily: '"General Sans", sans-serif',
+                    fontSize: 13, color: 'rgba(238,232,218,0.4)', fontWeight: 500,
+                  }}>+</span>
+                </div>
+              </div>
+              <div style={{
+                fontFamily: '"General Sans", sans-serif',
+                fontSize: 11, letterSpacing: '0.18em', color: 'rgba(238,232,218,0.4)',
+                textTransform: 'uppercase', fontWeight: 500,
+              }}>Giving back</div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
