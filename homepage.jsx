@@ -201,7 +201,7 @@ function Wordmark({ color = C.bege, size = 26, withSubline = false }) {
             <path d="M6 22 C 6 12, 16 6, 26 6 C 26 16, 20 26, 10 26 C 8 26, 6 24, 6 22 Z" fill={color} />
           </svg>
         </span>
-        <span style={{ fontFamily: '"General Sans", sans-serif', fontWeight: 500, fontSize: size, color, letterSpacing: '-0.02em', marginLeft: 2 }}>rma.</span>
+        <span style={{ fontWeight: 500, fontSize: size, color, letterSpacing: '-0.02em', marginLeft: 2 }}>rma.</span>
       </div>
       {withSubline && (
         <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: size * 0.28, letterSpacing: '0.32em', color, fontWeight: 500, textTransform: 'uppercase', marginLeft: size * 0.06 }}>Designed for Living</div>
@@ -294,16 +294,13 @@ function LoadingScreen() {
     }}
       onTransitionEnd={() => { if (phase === 'exit') setPhase('done'); }}
     >
-      <img
-        className="orma-logo-reveal"
-        src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-bege-slogan-2.png"
-        alt="Orma"
-        style={{
-          width: 220,
-          height: 65,
-          objectFit: 'contain',
-        }}
-      />
+      <div className="orma-logo-reveal" style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
+        <svg width="42" height="37" viewBox="0 0 151 131" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Orma">
+          <path d="M102.444 33.6952C98.3685 24.0446 92.3369 16.0219 84.3493 9.61549C76.3735 3.20907 66.3012 0 54.156 0C53.5469 0 52.9496 0.0117119 52.364 0.0351358C52.001 0.0351358 51.6379 0 51.2748 0C42.772 0 35.3583 1.85048 29.0105 5.56317C22.6626 9.27585 17.4039 14.148 13.2228 20.1914C11.0795 23.2833 9.21729 26.5861 7.60104 30.1114C7.02716 31.2826 6.48841 32.4772 5.9848 33.6952C1.99103 43.3459 0 53.828 0 65.1418C0 76.4555 1.99103 86.9377 5.9848 96.5883C9.97856 106.239 16.0102 114.273 24.0797 120.668C32.1492 127.074 42.1747 130.272 54.156 130.272C66.1373 130.272 76.1627 127.074 84.2322 120.668C92.3017 114.262 98.3334 106.239 102.327 96.5883C106.321 86.9377 108.359 76.4555 108.441 65.1418C108.523 53.828 106.532 43.3459 102.456 33.6952H102.444ZM41.7999 116.428C36.389 110.525 32.0204 103.124 28.6942 94.2225C25.368 85.3214 23.1193 75.6708 21.9599 65.2706C20.7887 54.8704 20.9175 45.2198 22.3347 36.3187C23.7518 27.4176 26.5392 20.0157 30.697 14.1129C34.761 8.33889 40.2539 5.3992 47.1874 5.27037C42.0224 7.30824 37.6304 11.1615 34.0466 16.8886C30.2168 22.9905 28.3077 31.2474 28.3077 41.6476C28.3077 49.3072 29.2681 55.7605 31.1772 61.0309C33.0862 66.3012 35.5106 70.541 38.4503 73.7734C41.3783 77.0059 44.517 79.3366 47.8667 80.7772C51.2163 82.2178 54.3316 82.9322 57.2011 82.9322C60.0705 82.9322 62.2489 82.3349 64.1111 81.1402C65.9616 79.9456 66.8868 78.3294 66.8868 76.2915C66.8868 73.305 66.0436 70.904 64.3805 69.1121C62.7057 67.3202 60.6092 65.7976 58.1029 64.5327C55.5965 63.2796 52.8677 62.1084 49.9397 61.0309C47.0117 59.9534 44.2828 58.5479 41.7765 56.8146C39.2701 55.0812 37.1737 52.8442 35.4989 50.0802C33.8241 47.3279 32.9808 43.7441 32.9808 39.3169C32.9808 29.8654 34.7727 22.604 38.3683 17.5093C41.9521 12.4264 46.3792 9.88487 51.6496 9.88487C54.4019 9.88487 57.3065 10.693 60.3516 12.3092C63.4084 13.9255 66.3598 16.4318 69.2292 19.8517C72.0986 23.2599 74.8158 27.5933 77.3924 32.8637C79.8871 37.9701 82.0655 43.9783 83.9394 50.8766C84.9935 55.5145 85.8016 60.3047 86.3638 65.2823C86.4692 66.2193 86.5512 67.1445 86.6331 68.0697C86.8674 71.0563 86.9962 74.0662 86.9962 77.0996C86.9962 85.7782 85.9421 93.6135 83.8574 100.605C81.761 107.609 78.587 113.313 74.3473 117.74C70.0959 122.167 64.6264 124.381 57.9272 124.381C55.983 124.381 54.1091 124.17 52.2938 123.807C48.4991 122.378 45.0089 119.93 41.8233 116.452L41.7999 116.428Z" fill={C.bege} />
+          <path d="M137.276 96.834C141.597 96.834 144.888 98.5791 147.137 102.069C149.386 105.559 150.51 109.354 150.51 113.43C150.51 117.506 149.386 121.288 147.137 124.79C144.888 128.281 141.609 130.026 137.276 130.026C132.942 130.026 129.698 128.281 127.543 124.79C125.376 121.3 124.299 117.517 124.299 113.43C124.299 109.342 125.376 105.571 127.543 102.069C129.698 98.5791 132.942 96.834 137.276 96.834Z" fill={C.bege} />
+        </svg>
+        <span style={{ fontWeight: 500, fontSize: 38, color: C.bege, letterSpacing: '-0.02em', marginLeft: 3 }}>rma.</span>
+      </div>
     </div>
   );
 }
@@ -337,7 +334,7 @@ function MenuLink({ label, href, onClose, hasChildren, children }) {
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{
-          fontFamily: '"General Sans", sans-serif',
+  
           fontWeight: 400, fontSize: 28, letterSpacing: '0.04em',
           textTransform: 'uppercase',
           color: C.bege, textDecoration: 'none',
@@ -393,7 +390,7 @@ function MenuSubLink({ label, subtitle, onClose }) {
       }}
     >
       <span style={{
-        fontFamily: '"General Sans", sans-serif',
+
         fontWeight: 400, fontSize: 15, letterSpacing: '0.08em',
         textTransform: 'uppercase', color: C.bege,
         position: 'relative', display: 'inline-block',
@@ -407,8 +404,7 @@ function MenuSubLink({ label, subtitle, onClose }) {
       </span>
       {subtitle && (
         <span style={{
-          display: 'block', fontFamily: '"General Sans", sans-serif',
-          fontWeight: 300, fontSize: 12, letterSpacing: '0.06em',
+          display: 'block',          fontWeight: 300, fontSize: 12, letterSpacing: '0.06em',
           color: 'rgba(238,232,218,0.5)', marginTop: 2,
         }}>{subtitle}</span>
       )}
@@ -476,7 +472,7 @@ function MenuDrawer({ open, onClose }) {
         {/* Bottom: contact info */}
         <div style={{ borderTop: '1px solid rgba(238,232,218,0.15)', paddingTop: 32 }}>
           <p style={{
-            fontFamily: '"General Sans", sans-serif', fontWeight: 300,
+            fontWeight: 300,
             fontSize: 13, lineHeight: 1.7, letterSpacing: '0.03em',
             color: 'rgba(238,232,218,0.6)', margin: 0,
           }}>
@@ -522,7 +518,9 @@ function Nav() {
         top: 0, left: 0, right: 0,
         height: 80,
         padding: isMobile ? '0 20px' : '0 48px',
-        background: inHero ? 'transparent' : C.green,
+        background: inHero ? 'transparent' : 'rgba(92,100,87,0.95)',
+        backdropFilter: inHero ? 'none' : 'blur(12px)',
+        WebkitBackdropFilter: inHero ? 'none' : 'blur(12px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -579,6 +577,7 @@ function Hero() {
       {/* Video background */}
       <video
         autoPlay muted loop playsInline
+        poster="https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png"
         onCanPlay={() => setLoaded(true)}
         style={{
           position: 'absolute', inset: 0,
@@ -614,7 +613,7 @@ function Hero() {
         maxWidth: 800,
       }}>
         <h1 style={{
-          fontFamily: '"General Sans", sans-serif',
+  
           fontWeight: 300, fontSize: isMobile ? 40 : 76, lineHeight: 1.0,
           letterSpacing: '-0.025em', color: C.white, margin: 0, textWrap: 'balance',
         }}>
@@ -622,7 +621,7 @@ function Hero() {
         </h1>
 
         <p style={{
-          fontFamily: '"General Sans", sans-serif',
+  
           fontWeight: 400, fontSize: 18, lineHeight: 1.7,
           color: C.bege, marginTop: 32, marginBottom: 0, maxWidth: 520,
           opacity: 0.9,
@@ -637,7 +636,7 @@ function Hero() {
           }} style={{
             background: C.terracota, color: C.white, border: 'none',
             padding: '16px 32px',
-            fontFamily: '"General Sans", sans-serif',
+    
             fontWeight: 500, fontSize: 13, letterSpacing: '0.16em',
             textTransform: 'uppercase', borderRadius: 6, cursor: 'pointer',
             display: 'inline-flex', alignItems: 'center', gap: 12,
@@ -672,7 +671,7 @@ function Promise() {
           text="Each project is designed with a focus on natural light, spatial clarity and the connection between indoor and outdoor living - creating spaces that feel intuitive, balanced and easy to live in."
           italic="live in."
           style={{
-            fontFamily: '"General Sans", sans-serif',
+    
             fontWeight: 300, fontSize: isMobile ? 24 : 38, lineHeight: 1.5,
             letterSpacing: '-0.015em', color: C.ink, margin: 0, textWrap: 'balance',
           }}
@@ -753,7 +752,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
         </div>
         <div style={{ overflow: 'hidden', marginBottom: 12 }}>
           <h3 ref={titleRef} style={{
-            fontFamily: '"General Sans", sans-serif',
+    
             fontWeight: 600, fontSize: 20, color: C.ink,
             margin: 0, letterSpacing: '-0.01em', lineHeight: 1.3,
             transform: 'translateY(100%)',
@@ -761,7 +760,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
         </div>
         <div style={{ width: 28, height: 2, background: C.terracota, marginBottom: 14, borderRadius: 1, opacity: 0.6 }} />
         <p style={{
-          fontFamily: '"General Sans", sans-serif',
+  
           fontSize: 14, lineHeight: 1.7, color: C.green, margin: 0,
         }}>{item.body}</p>
         {/* Hidden refs for GSAP compatibility */}
@@ -855,7 +854,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
         {/* Title with clip reveal */}
         <div style={{ overflow: 'hidden', marginBottom: 16 }}>
           <h3 ref={titleRef} style={{
-            fontFamily: '"General Sans", sans-serif',
+    
             fontWeight: 600, fontSize: 24, color: C.ink,
             margin: 0, letterSpacing: '-0.01em', lineHeight: 1.3,
             transform: 'translateY(100%)',
@@ -867,7 +866,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
 
         {/* Description */}
         <p style={{
-          fontFamily: '"General Sans", sans-serif',
+  
           fontSize: 15, lineHeight: 1.8, color: C.green, margin: 0,
         }}>{item.body}</p>
       </div>
@@ -1039,7 +1038,25 @@ function Pillars() {
         triggers.push(titleTween.scrollTrigger);
       }
 
-      // Tree on opposite side — no GSAP for now, static watermark
+      // Tree on opposite side — subtle fade + scale
+      const tree = treeRefs.current[i];
+      if (tree) {
+        const treeTween = gsap.fromTo(tree,
+          { opacity: 0, scale: 0.85 },
+          {
+            opacity: 1, scale: 1,
+            duration: 1.2,
+            delay: 0.5,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 80%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(treeTween.scrollTrigger);
+      }
     });
 
     return () => triggers.forEach(t => t && t.kill());
@@ -1055,7 +1072,7 @@ function Pillars() {
       {/* Section heading — WordReveal */}
       <div style={{ textAlign: 'center', marginBottom: isMobile ? 48 : 100, position: 'relative', zIndex: 1 }}>
         <div style={{
-          fontFamily: '"General Sans", sans-serif',
+  
           fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
           textTransform: 'uppercase', fontWeight: 600, marginBottom: 20,
         }}>Our Approach</div>
@@ -1063,7 +1080,7 @@ function Pillars() {
           text="From land to living - a process built on clarity, design and trust."
           italic="clarity, design and trust."
           style={{
-            fontFamily: '"General Sans", sans-serif',
+    
             fontWeight: 300, fontSize: isMobile ? 22 : 32, lineHeight: 1.5,
             letterSpacing: '-0.01em', color: C.ink, margin: '0 auto',
             maxWidth: 640, textWrap: 'balance',
@@ -1276,7 +1293,7 @@ function Projects() {
               }}>
                 {/* Project name */}
                 <h2 style={{
-                  fontFamily: '"General Sans", sans-serif',
+          
                   fontWeight: 300, fontSize: isMobile ? (p.isPlaceholder ? 28 : 32) : (p.isPlaceholder ? 40 : 48),
                   lineHeight: 1.15, letterSpacing: '-0.01em',
                   color: '#FFFFFF', margin: 0,
@@ -1285,7 +1302,7 @@ function Projects() {
                 </h2>
 
                 <p style={{
-                  fontFamily: '"General Sans", sans-serif',
+          
                   fontSize: 16, lineHeight: 1.8,
                   color: 'rgba(255,255,255,0.75)',
                   margin: '36px 0 0', maxWidth: 520,
@@ -1300,7 +1317,7 @@ function Projects() {
                     padding: '18px 0',
                   }}>
                     <div style={{
-                      fontFamily: '"General Sans", sans-serif',
+              
                       fontSize: 12, letterSpacing: '0.2em',
                       textTransform: 'uppercase', fontWeight: 500,
                       color: 'rgba(255,255,255,0.7)',
@@ -1315,7 +1332,7 @@ function Projects() {
                 {!p.isPlaceholder && (
                   <a href="#" style={{
                     display: 'inline-block',
-                    fontFamily: '"General Sans", sans-serif',
+            
                     fontSize: 12, letterSpacing: '0.2em',
                     textTransform: 'uppercase', fontWeight: 600,
                     color: 'rgba(255,255,255,0.85)', textDecoration: 'none',
@@ -1370,6 +1387,7 @@ function Projects() {
                     <img
                       src={p.image}
                       alt={p.name}
+                      loading="lazy"
                       style={{
                         width: '100%',
                         maxHeight: '80vh',
@@ -1566,8 +1584,8 @@ function WhyOrma() {
 
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
         <div ref={labelRef} style={{
-          fontFamily: '"General Sans", sans-serif',
-          fontSize: 12, letterSpacing: '0.3em', color: C.clearGreen,
+  
+          fontSize: 12, letterSpacing: '0.3em', color: C.bege,
           textTransform: 'uppercase', fontWeight: 600, marginBottom: isMobile ? 32 : 56,
           opacity: 0,
         }}>Why Orma</div>
@@ -1583,14 +1601,14 @@ function WhyOrma() {
               <WordReveal
                 text={whyRevealText}
                 style={{
-                  fontFamily: '"General Sans", sans-serif',
+          
                   fontSize: isMobile ? 20 : 28, lineHeight: 1.55, color: C.white, margin: 0, fontWeight: 300,
                   letterSpacing: '-0.01em',
                 }}
               />
             </div>
             <p ref={communityRef} style={{
-              fontFamily: '"General Sans", sans-serif',
+      
               fontSize: isMobile ? 14 : 15, lineHeight: 1.8, color: C.bege, margin: '36px 0 0', fontWeight: 400, opacity: 0,
               maxWidth: 480,
             }}>
@@ -1627,13 +1645,13 @@ function WhyOrma() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                       {IconComp && React.createElement(IconComp)}
                       <div style={{
-                        fontFamily: '"General Sans", sans-serif',
-                        fontSize: 10, letterSpacing: '0.2em', color: 'rgba(238,232,218,0.5)',
+                
+                        fontSize: 10, letterSpacing: '0.2em', color: 'rgba(238,232,218,0.7)',
                         textTransform: 'uppercase', fontWeight: 600,
                       }}>{stat.label}</div>
                     </div>
                     <div style={{
-                      fontFamily: '"General Sans", sans-serif',
+              
                       fontWeight: 500, fontSize: isMobile ? 48 : 56, lineHeight: 1, letterSpacing: '-0.03em',
                       color: C.bege,
                     }}>
@@ -1669,16 +1687,14 @@ function ContactForm() {
     borderBottom: `1.5px solid ${focused === field ? C.terracota : C.clearGreen}`,
     background: 'transparent',
     padding: '14px 0',
-    fontFamily: '"General Sans", sans-serif',
-    fontSize: 16,
+       fontSize: 16,
     color: C.ink,
     outline: 'none',
     transition: 'border-color 0.3s ease',
   });
 
   const labelStyle = {
-    fontFamily: '"General Sans", sans-serif',
-    fontSize: 11,
+       fontSize: 11,
     letterSpacing: '0.22em',
     textTransform: 'uppercase',
     color: C.green,
@@ -1717,7 +1733,7 @@ function ContactForm() {
 
         {/* Heading */}
         <h2 style={{
-          fontFamily: '"General Sans", sans-serif',
+  
           fontWeight: 300,
           fontSize: isMobile ? 32 : 48,
           lineHeight: 1.12,
@@ -1731,7 +1747,7 @@ function ContactForm() {
 
         {/* Subtitle */}
         <p style={{
-          fontFamily: '"General Sans", sans-serif',
+  
           fontSize: 16,
           lineHeight: 1.7,
           color: C.green,
@@ -1743,11 +1759,12 @@ function ContactForm() {
         </p>
 
         {/* Form grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '28px' : '44px 56px' }}>
+        <form onSubmit={e => { e.preventDefault(); setSent(true); }} style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '28px' : '44px 56px' }}>
           <div>
             <label style={labelStyle}>Name *</label>
             <input
               type="text"
+              required
               value={form.name}
               onChange={handleChange('name')}
               onFocus={() => setFocused('name')}
@@ -1759,6 +1776,7 @@ function ContactForm() {
             <label style={labelStyle}>Phone *</label>
             <input
               type="tel"
+              required
               value={form.phone}
               onChange={handleChange('phone')}
               onFocus={() => setFocused('phone')}
@@ -1770,6 +1788,7 @@ function ContactForm() {
             <label style={labelStyle}>Email *</label>
             <input
               type="email"
+              required
               value={form.email}
               onChange={handleChange('email')}
               onFocus={() => setFocused('email')}
@@ -1777,69 +1796,70 @@ function ContactForm() {
               style={inputStyle('email')}
             />
           </div>
-          <div>
-            <label style={labelStyle}>Questions / Comments *</label>
-            <input
-              type="text"
+          <div style={{ gridColumn: isMobile ? 'auto' : '1 / -1' }}>
+            <label style={labelStyle}>Questions / Comments</label>
+            <textarea
               value={form.message}
               onChange={handleChange('message')}
               onFocus={() => setFocused('message')}
               onBlur={() => setFocused(null)}
-              style={inputStyle('message')}
+              rows={3}
+              style={{ ...inputStyle('message'), resize: 'vertical', minHeight: 80 }}
             />
           </div>
-        </div>
 
-        {/* Consent */}
-        <div style={{
-          marginTop: 44,
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: 12,
-        }}>
-          <input type="checkbox" id="consent" style={{
-            marginTop: 3,
-            accentColor: C.terracota,
-            width: 16, height: 16,
-            cursor: 'pointer',
-            flexShrink: 0,
-          }} />
-          <label htmlFor="consent" style={{
-            fontFamily: '"General Sans", sans-serif',
-            fontSize: 12,
-            lineHeight: 1.6,
-            color: C.green,
-            cursor: 'pointer',
+          {/* Consent */}
+          <div style={{
+            gridColumn: isMobile ? 'auto' : '1 / -1',
+            marginTop: 12,
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 12,
           }}>
-            I agree to the processing of my personal data in accordance with Orma's <a href="#" style={{ color: C.green, textDecoration: 'underline' }}>privacy policy</a>.
-          </label>
-        </div>
-
-        {/* Submit */}
-        <div style={{ textAlign: 'center', marginTop: 52 }}>
-          <button
-            onClick={() => setSent(true)}
-            style={{
-              background: C.terracota,
-              color: C.white,
-              border: 'none',
-              padding: isMobile ? '18px 0' : '20px 56px',
-              width: isMobile ? '100%' : 'auto',
-              fontFamily: '"General Sans", sans-serif',
-              fontWeight: 600,
-              fontSize: 13,
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              borderRadius: 40,
+            <input type="checkbox" id="consent" required style={{
+              marginTop: 3,
+              accentColor: C.terracota,
+              width: 16, height: 16,
               cursor: 'pointer',
-              transition: 'background 0.3s ease, transform 0.2s ease',
-            }}
-            onMouseEnter={(e) => { e.target.style.background = '#7a3610'; e.target.style.transform = 'scale(1.03)'; }}
-            onMouseLeave={(e) => { e.target.style.background = C.terracota; e.target.style.transform = 'scale(1)'; }}
-          >
-            {sent ? 'Message Sent ✓' : 'Send Message →'}
-          </button>
-        </div>
+              flexShrink: 0,
+            }} />
+            <label htmlFor="consent" style={{
+      
+              fontSize: 12,
+              lineHeight: 1.6,
+              color: C.green,
+              cursor: 'pointer',
+            }}>
+              I agree to the processing of my personal data in accordance with Orma's <a href="#" style={{ color: C.green, textDecoration: 'underline' }}>privacy policy</a>.
+            </label>
+          </div>
+
+          {/* Submit */}
+          <div style={{ gridColumn: isMobile ? 'auto' : '1 / -1', textAlign: 'center', marginTop: 20 }}>
+            <button
+              type="submit"
+              style={{
+                background: C.terracota,
+                color: C.white,
+                border: 'none',
+                padding: isMobile ? '18px 0' : '20px 56px',
+                width: isMobile ? '100%' : 'auto',
+        
+                fontWeight: 600,
+                fontSize: 13,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                borderRadius: 40,
+                cursor: 'pointer',
+                transition: 'background 0.3s ease, transform 0.2s ease',
+              }}
+              onMouseEnter={(e) => { e.target.style.background = '#7a3610'; e.target.style.transform = 'scale(1.03)'; }}
+              onMouseLeave={(e) => { e.target.style.background = C.terracota; e.target.style.transform = 'scale(1)'; }}
+            >
+              {sent ? 'Message Sent ✓' : 'Send Message →'}
+            </button>
+          </div>
+        </form>
       </div>
     </section>
   );
@@ -1861,7 +1881,7 @@ function Footer() {
       <div style={{
         position: 'absolute', bottom: isMobile ? -30 : -40, left: '50%',
         transform: 'translateX(-50%)',
-        fontFamily: '"General Sans", sans-serif',
+
         fontWeight: 700, fontSize: isMobile ? 160 : 280,
         letterSpacing: '-0.04em', textTransform: 'uppercase',
         color: 'rgba(255,255,255,0.04)',
@@ -1887,12 +1907,12 @@ function Footer() {
           {/* Left — Big CTA */}
           <div>
             <div style={{
-              fontFamily: '"General Sans", sans-serif',
+      
               fontSize: 11, letterSpacing: '0.3em', color: C.clearGreen,
               textTransform: 'uppercase', fontWeight: 600, marginBottom: 28,
             }}>Contact</div>
             <h2 style={{
-              fontFamily: '"General Sans", sans-serif',
+      
               fontWeight: 300, fontSize: isMobile ? 36 : 56, lineHeight: 1.1,
               letterSpacing: '-0.02em', color: C.bege, margin: 0,
             }}>
@@ -1905,7 +1925,7 @@ function Footer() {
                 position: 'relative', overflow: 'hidden',
                 display: 'inline-block', padding: '16px 36px',
                 background: C.terracota, color: C.white,
-                fontFamily: '"General Sans", sans-serif', fontWeight: 600,
+                fontWeight: 600,
                 fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase',
                 textDecoration: 'none', borderRadius: 40,
               }}
@@ -1930,7 +1950,7 @@ function Footer() {
                 position: 'relative', overflow: 'hidden',
                 display: 'inline-block', padding: '16px 36px',
                 background: 'transparent', color: C.bege,
-                fontFamily: '"General Sans", sans-serif', fontWeight: 500,
+                fontWeight: 500,
                 fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase',
                 textDecoration: 'none', borderRadius: 40,
                 border: '1px solid rgba(238,232,218,0.25)',
@@ -1970,19 +1990,19 @@ function Footer() {
                 padding: '20px 0',
               }}>
                 <div style={{
-                  fontFamily: '"General Sans", sans-serif',
+          
                   fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase',
                   color: C.clearGreen, fontWeight: 600, marginBottom: 6,
                 }}>{item.label}</div>
                 {item.href ? (
                   <a href={item.href} style={{
-                    fontFamily: '"General Sans", sans-serif',
+            
                     fontSize: 15, color: C.bege, lineHeight: 1.5,
                     textDecoration: 'none', transition: 'opacity 0.3s',
                   }}>{item.value}</a>
                 ) : (
                   <div style={{
-                    fontFamily: '"General Sans", sans-serif',
+            
                     fontSize: 15, color: C.bege, lineHeight: 1.5,
                     whiteSpace: 'pre-line',
                   }}>{item.value}</div>
@@ -2018,11 +2038,11 @@ function Footer() {
           gap: isMobile ? 16 : 0,
           paddingTop: 20,
           borderTop: '1px solid rgba(238,232,218,0.08)',
-          fontFamily: '"General Sans", sans-serif', fontSize: 12, color: 'rgba(177,180,169,0.6)', letterSpacing: '0.04em',
+          fontSize: 12, color: 'rgba(177,180,169,0.6)', letterSpacing: '0.04em',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="Orma" style={{ height: 18, opacity: 0.5 }} />
-            <span>© 2026 Orma. All rights reserved.</span>
+            <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="Orma" loading="lazy" style={{ height: 18, opacity: 0.5 }} />
+            <span>© {new Date().getFullYear()} Orma. All rights reserved.</span>
           </div>
           <div style={{ display: 'flex', gap: 24 }}>
             <a href="#" style={{ color: 'rgba(177,180,169,0.6)', textDecoration: 'none' }}>Privacy Policy</a>
@@ -2038,6 +2058,12 @@ function Footer() {
 // Desktop full
 // ============================================================
 function DesktopHomepage() {
+  const [showTop, setShowTop] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 400);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
   return (
     <div style={{
       width: '100%',
@@ -2095,11 +2121,12 @@ function DesktopHomepage() {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             boxShadow: '0 3px 10px rgba(0,0,0,0.15)',
             cursor: 'pointer',
-            transition: 'transform 0.25s ease, opacity 0.25s ease',
-            opacity: 0.85,
+            transition: 'transform 0.25s ease, opacity 0.35s ease',
+            opacity: showTop ? 0.85 : 0,
+            pointerEvents: showTop ? 'auto' : 'none',
           }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.opacity = '1'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.opacity = '0.85'; }}
+          onMouseEnter={e => { if (showTop) { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.opacity = '1'; } }}
+          onMouseLeave={e => { if (showTop) { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.opacity = '0.85'; } }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="18 15 12 9 6 15" />
