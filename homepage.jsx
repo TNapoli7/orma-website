@@ -742,7 +742,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
             width: treeSizes[index], height: treeSizes[index],
             transform: 'rotate(' + treeRotations[index] + 'deg)',
           }}>
-            <TreeMark opacity={0.18} style={{ filter: 'sepia(1) saturate(0.5) hue-rotate(60deg) brightness(0.7)' }} />
+            <TreeMark opacity={0.7} style={{ filter: 'sepia(1) saturate(0.3) hue-rotate(60deg) brightness(0.85)' }} />
           </div>
         </div>
       )}
@@ -835,7 +835,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
             width: treeSizes[index], height: treeSizes[index],
             transform: 'rotate(' + treeRotations[index] + 'deg)',
           }}>
-            <TreeMark opacity={0.18} style={{ filter: 'sepia(1) saturate(0.5) hue-rotate(60deg) brightness(0.7)' }} />
+            <TreeMark opacity={0.7} style={{ filter: 'sepia(1) saturate(0.3) hue-rotate(60deg) brightness(0.85)' }} />
           </div>
         </div>
       )}
