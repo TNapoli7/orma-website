@@ -1371,17 +1371,57 @@ function WhyOrma() {
           </div>
 
           <div>
-            <p style={{
-              fontFamily: '"General Sans", sans-serif',
-              fontSize: 19, lineHeight: 1.8, color: C.white, margin: 0, fontWeight: 300,
-            }}>
-              Our team brings thoughtful guidance and dependable execution to every project, standing by your vision with the confidence this moment calls for.
-            </p>
-            <div style={{ marginTop: 56 }}>
-              <SiteImage
-                src="https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/2.png"
-                style={{ width: '100%', aspectRatio: '4 / 3', borderRadius: 8 }}
-              />
+            {/* Narrative text with 2 community photos inline */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 32, alignItems: 'start' }}>
+              <div>
+                <p style={{
+                  fontFamily: '"General Sans", sans-serif',
+                  fontSize: 19, lineHeight: 1.8, color: C.white, margin: 0, fontWeight: 300,
+                }}>
+                  Our team brings thoughtful guidance and dependable execution to every project, standing by your vision with the confidence this moment calls for.
+                </p>
+                <p style={{
+                  fontFamily: '"General Sans", sans-serif',
+                  fontSize: 15, lineHeight: 1.7, color: C.bege, margin: '28px 0 0', fontWeight: 400, opacity: 0.85,
+                }}>
+                  Every year, we reinvest part of our net income into the communities where our projects take shape — supporting local well-being and ensuring the places families choose to live continue to grow with them.
+                </p>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 4 }}>
+                {[
+                  { src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/joel-muniz-qvzjG2pF4bE-unsplash-scaled.jpg' },
+                  { src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png' },
+                ].map((item, i) => (
+                  <div key={i} style={{
+                    width: 90, height: 90, borderRadius: '50%',
+                    border: '1px solid ' + C.clearGreen + '66',
+                    padding: 3, overflow: 'hidden', flexShrink: 0,
+                  }}>
+                    <SiteImage src={item.src} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 2 more community photos below */}
+            <div style={{ display: 'flex', gap: 16, marginTop: 36, alignItems: 'center' }}>
+              {[
+                { src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg' },
+                { src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/2.png' },
+              ].map((item, i) => (
+                <div key={i} style={{
+                  width: 100, height: 100, borderRadius: '50%',
+                  border: '1px solid ' + C.clearGreen + '66',
+                  padding: 3, overflow: 'hidden', flexShrink: 0,
+                }}>
+                  <SiteImage src={item.src} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                </div>
+              ))}
+              <div style={{
+                fontFamily: '"General Sans", sans-serif',
+                fontSize: 11, letterSpacing: '0.2em', color: C.clearGreen,
+                textTransform: 'uppercase', fontWeight: 600, marginLeft: 8,
+              }}>Giving back to the places we build.</div>
             </div>
           </div>
         </div>
@@ -1660,8 +1700,7 @@ function DesktopHomepage() {
         <Projects />
         <WhyOrma />
         <Visit />
-        <Community />
-        <FinalCTA />
+        {/* Community and FinalCTA removed — content merged into WhyOrma */}
         <Footer />
       </div>
 
