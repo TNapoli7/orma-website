@@ -579,6 +579,7 @@ function Hero() {
           width: '100%', height: '100%',
           objectFit: 'cover',
           zIndex: 0,
+          filter: 'brightness(1.15)',
         }}
       >
         <source src="https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/iStock-1463851868.mp4" type="video/mp4" />
@@ -587,7 +588,7 @@ function Hero() {
       {/* Dark overlay for text legibility */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(180deg, rgba(31,32,34,0.35) 0%, rgba(31,32,34,0.55) 100%)',
+        background: 'linear-gradient(180deg, rgba(31,32,34,0.2) 0%, rgba(31,32,34,0.4) 100%)',
         zIndex: 1,
       }} />
 
@@ -1395,16 +1396,6 @@ function Projects() {
         ))}
       </div>
 
-      {/* Slide counter - bottom right */}
-      <div style={{
-        position: 'absolute', bottom: isMobile ? 20 : 36, right: isMobile ? 24 : 48,
-        fontFamily: '"General Sans", sans-serif',
-        fontSize: 13, color: 'rgba(255,255,255,0.5)',
-        fontWeight: 400, letterSpacing: '0.08em',
-        zIndex: 10,
-      }}>
-        {String(activeIndex + 1).padStart(2, '0')} / {String(totalPanels).padStart(2, '0')}
-      </div>
     </section>
   );
 }
@@ -1881,7 +1872,7 @@ function ContactForm() {
     <section data-screen-label="10 Contact" style={{
       position: 'relative',
       overflow: 'hidden',
-      padding: isMobile ? '80px 24px' : '160px 64px',
+      padding: isMobile ? '60px 24px' : '120px 64px',
       backgroundImage: 'url(https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/1-scaled.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center 30%',
@@ -1899,7 +1890,7 @@ function ContactForm() {
       }}>
         {/* Orma O. Symbol — official SVG logomarca */}
         <div style={{ textAlign: 'center', marginBottom: 52 }}>
-          <svg width="48" height="42" viewBox="0 0 151 131" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Orma">
+          <svg width="68" height="60" viewBox="0 0 151 131" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Orma" style={{ opacity: 0.35 }}>
             <path d="M102.444 33.6952C98.3685 24.0446 92.3369 16.0219 84.3493 9.61549C76.3735 3.20907 66.3012 0 54.156 0C53.5469 0 52.9496 0.0117119 52.364 0.0351358C52.001 0.0351358 51.6379 0 51.2748 0C42.772 0 35.3583 1.85048 29.0105 5.56317C22.6626 9.27585 17.4039 14.148 13.2228 20.1914C11.0795 23.2833 9.21729 26.5861 7.60104 30.1114C7.02716 31.2826 6.48841 32.4772 5.9848 33.6952C1.99103 43.3459 0 53.828 0 65.1418C0 76.4555 1.99103 86.9377 5.9848 96.5883C9.97856 106.239 16.0102 114.273 24.0797 120.668C32.1492 127.074 42.1747 130.272 54.156 130.272C66.1373 130.272 76.1627 127.074 84.2322 120.668C92.3017 114.262 98.3334 106.239 102.327 96.5883C106.321 86.9377 108.359 76.4555 108.441 65.1418C108.523 53.828 106.532 43.3459 102.456 33.6952H102.444ZM41.7999 116.428C36.389 110.525 32.0204 103.124 28.6942 94.2225C25.368 85.3214 23.1193 75.6708 21.9599 65.2706C20.7887 54.8704 20.9175 45.2198 22.3347 36.3187C23.7518 27.4176 26.5392 20.0157 30.697 14.1129C34.761 8.33889 40.2539 5.3992 47.1874 5.27037C42.0224 7.30824 37.6304 11.1615 34.0466 16.8886C30.2168 22.9905 28.3077 31.2474 28.3077 41.6476C28.3077 49.3072 29.2681 55.7605 31.1772 61.0309C33.0862 66.3012 35.5106 70.541 38.4503 73.7734C41.3783 77.0059 44.517 79.3366 47.8667 80.7772C51.2163 82.2178 54.3316 82.9322 57.2011 82.9322C60.0705 82.9322 62.2489 82.3349 64.1111 81.1402C65.9616 79.9456 66.8868 78.3294 66.8868 76.2915C66.8868 73.305 66.0436 70.904 64.3805 69.1121C62.7057 67.3202 60.6092 65.7976 58.1029 64.5327C55.5965 63.2796 52.8677 62.1084 49.9397 61.0309C47.0117 59.9534 44.2828 58.5479 41.7765 56.8146C39.2701 55.0812 37.1737 52.8442 35.4989 50.0802C33.8241 47.3279 32.9808 43.7441 32.9808 39.3169C32.9808 29.8654 34.7727 22.604 38.3683 17.5093C41.9521 12.4264 46.3792 9.88487 51.6496 9.88487C54.4019 9.88487 57.3065 10.693 60.3516 12.3092C63.4084 13.9255 66.3598 16.4318 69.2292 19.8517C72.0986 23.2599 74.8158 27.5933 77.3924 32.8637C79.8871 37.9701 82.0655 43.9783 83.9394 50.8766C84.9935 55.5145 85.8016 60.3047 86.3638 65.2823C86.4692 66.2193 86.5512 67.1445 86.6331 68.0697C86.8674 71.0563 86.9962 74.0662 86.9962 77.0996C86.9962 85.7782 85.9421 93.6135 83.8574 100.605C81.761 107.609 78.587 113.313 74.3473 117.74C70.0959 122.167 64.6264 124.381 57.9272 124.381C55.983 124.381 54.1091 124.17 52.2938 123.807C48.4991 122.378 45.0089 119.93 41.8233 116.452L41.7999 116.428Z" fill={C.ink} />
             <path d="M137.276 96.834C141.597 96.834 144.888 98.5791 147.137 102.069C149.386 105.559 150.51 109.354 150.51 113.43C150.51 117.506 149.386 121.288 147.137 124.79C144.888 128.281 141.609 130.026 137.276 130.026C132.942 130.026 129.698 128.281 127.543 124.79C125.376 121.3 124.299 117.517 124.299 113.43C124.299 109.342 125.376 105.571 127.543 102.069C129.698 98.5791 132.942 96.834 137.276 96.834Z" fill={C.ink} />
           </svg>
@@ -2092,22 +2083,58 @@ function Footer() {
             {/* CTA buttons */}
             <div style={{ display: 'flex', gap: 16, marginTop: isMobile ? 32 : 44, flexWrap: 'wrap' }}>
               <a href="#" style={{
+                position: 'relative', overflow: 'hidden',
                 display: 'inline-block', padding: '16px 36px',
                 background: C.terracota, color: C.white,
                 fontFamily: '"General Sans", sans-serif', fontWeight: 600,
                 fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase',
                 textDecoration: 'none', borderRadius: 40,
-                transition: 'background 0.3s, transform 0.2s',
-              }}>Get in touch</a>
+              }}
+              onMouseEnter={e => {
+                const fill = e.currentTarget.querySelector('.footer-btn-fill');
+                if (fill) fill.style.transform = 'translateX(0)';
+              }}
+              onMouseLeave={e => {
+                const fill = e.currentTarget.querySelector('.footer-btn-fill');
+                if (fill) fill.style.transform = 'translateX(-101%)';
+              }}
+              >
+                <span className="footer-btn-fill" style={{
+                  position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.15)',
+                  transform: 'translateX(-101%)',
+                  transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  borderRadius: 'inherit',
+                }} />
+                <span style={{ position: 'relative', zIndex: 1 }}>Get in touch</span>
+              </a>
               <a href="#" style={{
+                position: 'relative', overflow: 'hidden',
                 display: 'inline-block', padding: '16px 36px',
                 background: 'transparent', color: C.bege,
                 fontFamily: '"General Sans", sans-serif', fontWeight: 500,
                 fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase',
                 textDecoration: 'none', borderRadius: 40,
                 border: '1px solid rgba(238,232,218,0.25)',
-                transition: 'border-color 0.3s, background 0.3s',
-              }}>Our projects</a>
+              }}
+              onMouseEnter={e => {
+                const fill = e.currentTarget.querySelector('.footer-btn-fill');
+                if (fill) fill.style.transform = 'translateX(0)';
+                e.currentTarget.style.borderColor = 'rgba(238,232,218,0.5)';
+              }}
+              onMouseLeave={e => {
+                const fill = e.currentTarget.querySelector('.footer-btn-fill');
+                if (fill) fill.style.transform = 'translateX(-101%)';
+                e.currentTarget.style.borderColor = 'rgba(238,232,218,0.25)';
+              }}
+              >
+                <span className="footer-btn-fill" style={{
+                  position: 'absolute', inset: 0, background: 'rgba(238,232,218,0.08)',
+                  transform: 'translateX(-101%)',
+                  transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  borderRadius: 'inherit',
+                }} />
+                <span style={{ position: 'relative', zIndex: 1 }}>Our projects</span>
+              </a>
             </div>
           </div>
 
@@ -2136,14 +2163,20 @@ function Footer() {
               </div>
             ))}
 
-            {/* Social links */}
-            <div style={{ display: 'flex', gap: 24, marginTop: 24 }}>
-              {['Instagram', 'LinkedIn', 'Facebook'].map(name => (
-                <a key={name} href="#" style={{
-                  fontFamily: '"General Sans", sans-serif',
-                  fontSize: 13, color: C.clearGreen, textDecoration: 'none',
-                  transition: 'color 0.3s',
-                }}>{name}</a>
+            {/* Social links — icons */}
+            <div style={{ display: 'flex', gap: 20, marginTop: 24 }}>
+              {[
+                { name: 'Instagram', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" /></svg> },
+                { name: 'LinkedIn', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg> },
+                { name: 'Facebook', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg> },
+              ].map(s => (
+                <a key={s.name} href="#" aria-label={s.name} style={{
+                  color: C.clearGreen, transition: 'color 0.3s, opacity 0.3s',
+                  display: 'flex', alignItems: 'center',
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = C.bege}
+                onMouseLeave={e => e.currentTarget.style.color = C.clearGreen}
+                >{s.icon}</a>
               ))}
             </div>
           </div>
