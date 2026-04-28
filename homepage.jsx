@@ -721,7 +721,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
   const [hovered, setHovered] = useState(false);
   const IconComponent = PILLAR_SVG[item.kind];
   const treeRotations = [-8, 6, 12];
-  const treeSizes = [140, 120, 110];
+  const treeSizes = [220, 200, 190];
 
   return (
     <div style={{
@@ -742,7 +742,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
             width: treeSizes[index], height: treeSizes[index],
             transform: 'rotate(' + treeRotations[index] + 'deg)',
           }}>
-            <TreeMark opacity={0.12} />
+            <TreeMark opacity={0.18} style={{ filter: 'sepia(1) saturate(0.5) hue-rotate(60deg) brightness(0.7)' }} />
           </div>
         </div>
       )}
@@ -835,7 +835,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
             width: treeSizes[index], height: treeSizes[index],
             transform: 'rotate(' + treeRotations[index] + 'deg)',
           }}>
-            <TreeMark opacity={0.12} />
+            <TreeMark opacity={0.18} style={{ filter: 'sepia(1) saturate(0.5) hue-rotate(60deg) brightness(0.7)' }} />
           </div>
         </div>
       )}
