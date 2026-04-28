@@ -1679,7 +1679,166 @@ function FinalCTA() {
 }
 
 // ============================================================
-// 10. Footer
+// 10. Contact Form
+// ============================================================
+function ContactForm() {
+  const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' });
+  const [focused, setFocused] = useState(null);
+  const sectionRef = useScrollReveal();
+
+  const handleChange = (field) => (e) => setForm({ ...form, [field]: e.target.value });
+
+  const inputStyle = (field) => ({
+    width: '100%',
+    border: 'none',
+    borderBottom: `1.5px solid ${focused === field ? C.terracota : C.clearGreen}`,
+    background: 'transparent',
+    padding: '14px 0',
+    fontFamily: '"General Sans", sans-serif',
+    fontSize: 16,
+    color: C.ink,
+    outline: 'none',
+    transition: 'border-color 0.3s ease',
+  });
+
+  const labelStyle = {
+    fontFamily: '"General Sans", sans-serif',
+    fontSize: 11,
+    letterSpacing: '0.22em',
+    textTransform: 'uppercase',
+    color: C.green,
+    fontWeight: 600,
+  };
+
+  return (
+    <section data-screen-label="10 Contact" style={{
+      background: C.bege,
+      padding: '140px 64px',
+    }}>
+      <div ref={sectionRef} style={{ maxWidth: 880, margin: '0 auto', willChange: 'opacity, transform' }}>
+        {/* Tree icon */}
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          <div style={{ width: 80, height: 80, margin: '0 auto' }}>
+            <TreeMark opacity={0.3} style={{ filter: 'sepia(1) saturate(0.5) hue-rotate(20deg) brightness(0.7)' }} />
+          </div>
+        </div>
+
+        {/* Heading */}
+        <h2 style={{
+          fontFamily: '"General Sans", sans-serif',
+          fontWeight: 300,
+          fontSize: 44,
+          lineHeight: 1.15,
+          letterSpacing: '-0.02em',
+          color: C.ink,
+          textAlign: 'center',
+          margin: '0 0 72px',
+        }}>
+          YOUR HOME IS<br />JUST THE START
+        </h2>
+
+        {/* Form grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px 56px' }}>
+          <div>
+            <label style={labelStyle}>Name *</label>
+            <input
+              type="text"
+              value={form.name}
+              onChange={handleChange('name')}
+              onFocus={() => setFocused('name')}
+              onBlur={() => setFocused(null)}
+              style={inputStyle('name')}
+            />
+          </div>
+          <div>
+            <label style={labelStyle}>Phone *</label>
+            <input
+              type="tel"
+              value={form.phone}
+              onChange={handleChange('phone')}
+              onFocus={() => setFocused('phone')}
+              onBlur={() => setFocused(null)}
+              style={inputStyle('phone')}
+            />
+          </div>
+          <div>
+            <label style={labelStyle}>Email *</label>
+            <input
+              type="email"
+              value={form.email}
+              onChange={handleChange('email')}
+              onFocus={() => setFocused('email')}
+              onBlur={() => setFocused(null)}
+              style={inputStyle('email')}
+            />
+          </div>
+          <div>
+            <label style={labelStyle}>Questions / Comments *</label>
+            <input
+              type="text"
+              value={form.message}
+              onChange={handleChange('message')}
+              onFocus={() => setFocused('message')}
+              onBlur={() => setFocused(null)}
+              style={inputStyle('message')}
+            />
+          </div>
+        </div>
+
+        {/* Consent */}
+        <div style={{
+          marginTop: 48,
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: 12,
+        }}>
+          <input type="checkbox" id="consent" style={{
+            marginTop: 3,
+            accentColor: C.terracota,
+            width: 16, height: 16,
+            cursor: 'pointer',
+          }} />
+          <label htmlFor="consent" style={{
+            fontFamily: '"General Sans", sans-serif',
+            fontSize: 12,
+            lineHeight: 1.6,
+            color: C.green,
+            cursor: 'pointer',
+          }}>
+            I agree to be contacted by Orma via call, email, and text for real estate services. To opt out, you can reply 'stop' at any time or reply 'help' for assistance. Message and data rates may apply. <a href="#" style={{ color: C.green, textDecoration: 'underline' }}>Privacy Policy</a>.
+          </label>
+        </div>
+
+        {/* Submit */}
+        <div style={{ textAlign: 'center', marginTop: 56 }}>
+          <button
+            style={{
+              background: C.terracota,
+              color: C.white,
+              border: 'none',
+              padding: '20px 52px',
+              fontFamily: '"General Sans", sans-serif',
+              fontWeight: 600,
+              fontSize: 13,
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              borderRadius: 40,
+              cursor: 'pointer',
+              transition: 'background 0.3s ease, transform 0.2s ease',
+            }}
+            onMouseEnter={(e) => { e.target.style.background = '#7a3610'; e.target.style.transform = 'scale(1.03)'; }}
+            onMouseLeave={(e) => { e.target.style.background = C.terracota; e.target.style.transform = 'scale(1)'; }}
+          >
+            Send Message
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================
+// 11. Footer
 // ============================================================
 function Footer() {
   return (
@@ -1758,7 +1917,7 @@ function DesktopHomepage() {
         <Projects />
         <WhyOrma />
         <Visit />
-        {/* Community and FinalCTA removed — content merged into WhyOrma */}
+        <ContactForm />
         <Footer />
       </div>
 
