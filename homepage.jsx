@@ -734,38 +734,65 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
   if (isMobile) {
     return (
       <div ref={itemRef} style={{
-        marginBottom: index < 2 ? 32 : 0,
-        padding: '36px 28px 32px',
-        background: C.bege,
-        borderRadius: 6,
+        display: 'flex',
+        marginBottom: index < 2 ? 40 : 0,
         opacity: 0,
       }}>
-        <div ref={iconRef} style={{
-          width: 56, height: 56, borderRadius: '50%',
-          background: C.white,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          marginBottom: 20,
-          boxShadow: '0 2px 12px rgba(92,100,87,0.1)',
-          transform: 'scale(0)',
+        {/* Left: timeline rail */}
+        <div style={{
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          width: 32, flexShrink: 0, paddingTop: 4,
         }}>
-          {IconComponent && <IconComponent />}
+          {/* Dot */}
+          <div ref={dotRef} style={{
+            width: 12, height: 12, borderRadius: '50%',
+            background: C.green, border: '2.5px solid ' + C.white,
+            boxShadow: '0 0 0 3px rgba(92,100,87,0.15)',
+            flexShrink: 0,
+            transform: 'scale(0)',
+          }} />
+          {/* Vertical connector line */}
+          <div ref={connectorRef} style={{
+            width: 1, flex: 1,
+            background: index < 2 ? 'linear-gradient(to bottom, ' + C.green + ', ' + C.clearGreen + ')' : 'transparent',
+            marginTop: 6,
+            transformOrigin: 'top center',
+            transform: 'scaleY(0)',
+          }} />
         </div>
-        <div style={{ overflow: 'hidden', marginBottom: 12 }}>
-          <h3 ref={titleRef} style={{
-    
-            fontWeight: 600, fontSize: 20, color: C.ink,
-            margin: 0, letterSpacing: '-0.01em', lineHeight: 1.3,
-            transform: 'translateY(100%)',
-          }}>{item.title}</h3>
+
+        {/* Right: card content */}
+        <div style={{
+          flex: 1,
+          padding: '28px 24px 28px',
+          background: C.bege,
+          borderRadius: 6,
+          marginLeft: 12,
+        }}>
+          <div ref={iconRef} style={{
+            width: 48, height: 48, borderRadius: '50%',
+            background: C.white,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: 16,
+            boxShadow: '0 2px 12px rgba(92,100,87,0.1)',
+            transform: 'scale(0)',
+          }}>
+            {IconComponent && <IconComponent />}
+          </div>
+          <div style={{ overflow: 'hidden', marginBottom: 10 }}>
+            <h3 ref={titleRef} style={{
+              fontWeight: 600, fontSize: 18, color: C.ink,
+              margin: 0, letterSpacing: '-0.01em', lineHeight: 1.3,
+              transform: 'translateY(100%)',
+            }}>{item.title}</h3>
+          </div>
+          <div style={{ width: 24, height: 2, background: C.terracota, marginBottom: 12, borderRadius: 1, opacity: 0.6 }} />
+          <p style={{
+            fontSize: 13, lineHeight: 1.7, color: C.green, margin: 0,
+          }}>{item.body}</p>
         </div>
-        <div style={{ width: 28, height: 2, background: C.terracota, marginBottom: 14, borderRadius: 1, opacity: 0.6 }} />
-        <p style={{
-  
-          fontSize: 14, lineHeight: 1.7, color: C.green, margin: 0,
-        }}>{item.body}</p>
-        {/* Hidden refs for GSAP compatibility */}
-        <div ref={dotRef} style={{ display: 'none' }} />
-        <div ref={connectorRef} style={{ display: 'none' }} />
+
+        {/* Hidden ref for GSAP tree compatibility */}
         <div ref={treeRef} style={{ display: 'none' }} />
       </div>
     );
@@ -983,11 +1010,12 @@ function Pillars() {
 
       // Connector line draw
       if (connector) {
+        const conProp = isMob ? 'scaleY' : 'scaleX';
         const conTween = gsap.fromTo(connector,
-          { scaleX: 0 },
+          { [conProp]: 0 },
           {
-            scaleX: 1,
-            duration: 0.7,
+            [conProp]: 1,
+            duration: isMob ? 0.9 : 0.7,
             delay: 0.2,
             ease: 'power2.inOut',
             scrollTrigger: {
@@ -1270,31 +1298,83 @@ function Projects() {
             overflow: 'hidden',
             background: p.bg,
           }}>
-            {/* Inner container - matches Verium's boxed layout */}
+            {/* Inner container */}
             <div style={{
               maxWidth: 1660,
               width: '100%',
               height: '100%',
               margin: '0 auto',
-              padding: isMobile ? '0 24px' : '0 130px',
+              padding: isMobile ? '0' : '0 130px',
               display: 'flex',
               flexDirection: isMobile ? 'column' : 'row',
-              alignItems: 'center',
-              justifyContent: isMobile ? 'center' : 'flex-start',
-              gap: isMobile ? 24 : 48,
+              alignItems: isMobile ? 'stretch' : 'center',
+              justifyContent: isMobile ? 'flex-start' : 'flex-start',
+              gap: isMobile ? 0 : 48,
             }}>
-              {/* Left column - text */}
+              {/* Mobile: image on top */}
+              {isMobile && (
+                <div style={{
+                  flex: '0 0 44vh',
+                  width: '100%',
+                  overflow: 'hidden',
+                  position: 'relative',
+                }}>
+                  {p.image ? (
+                    <>
+                      <img
+                        src={p.image}
+                        alt={p.name}
+                        loading="lazy"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          clipPath: activeIndex === i ? 'inset(0 0 0 0)' : 'inset(0 0 100% 0)',
+                          transition: 'clip-path 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                          ...(p.isPlaceholder ? { filter: 'blur(6px) brightness(0.6) grayscale(0.3)', transform: 'scale(1.05)' } : {}),
+                        }}
+                      />
+                      {/* Bottom gradient for blending into text area */}
+                      <div style={{
+                        position: 'absolute', bottom: 0, left: 0, right: 0, height: 80,
+                        background: 'linear-gradient(to top, ' + p.bg + ', transparent)',
+                        pointerEvents: 'none',
+                      }} />
+                      {p.isPlaceholder && (
+                        <div style={{
+                          position: 'absolute', inset: 0,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                          <div style={{ width: 100, height: 100, opacity: 0.15 }}>
+                            <TreeMark />
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div style={{
+                      width: '100%', height: '100%',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      opacity: 0.15,
+                    }}>
+                      <TreeMark />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Text column */}
               <div style={{
-                flex: '1 1 50%',
+                flex: isMobile ? '1 1 auto' : '1 1 50%',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
+                justifyContent: isMobile ? 'flex-start' : 'center',
                 minHeight: 0,
+                padding: isMobile ? '0 24px 32px' : 0,
               }}>
                 {/* Project name */}
                 <h2 style={{
-          
-                  fontWeight: 300, fontSize: isMobile ? (p.isPlaceholder ? 28 : 32) : (p.isPlaceholder ? 40 : 48),
+                  fontWeight: 300, fontSize: isMobile ? (p.isPlaceholder ? 26 : 28) : (p.isPlaceholder ? 40 : 48),
                   lineHeight: 1.15, letterSpacing: '-0.01em',
                   color: '#FFFFFF', margin: 0,
                 }}>
@@ -1302,23 +1382,21 @@ function Projects() {
                 </h2>
 
                 <p style={{
-          
-                  fontSize: 16, lineHeight: 1.8,
+                  fontSize: isMobile ? 14 : 16, lineHeight: 1.8,
                   color: 'rgba(255,255,255,0.75)',
-                  margin: '36px 0 0', maxWidth: 520,
+                  margin: isMobile ? '16px 0 0' : '36px 0 0', maxWidth: 520,
                 }}>
                   {p.blurb}
                 </p>
 
                 {/* Meta info with divider lines */}
-                <div style={{ marginTop: 48 }}>
+                <div style={{ marginTop: isMobile ? 20 : 48 }}>
                   <div style={{
                     borderTop: '1px solid rgba(255,255,255,0.2)',
-                    padding: '18px 0',
+                    padding: isMobile ? '14px 0' : '18px 0',
                   }}>
                     <div style={{
-              
-                      fontSize: 12, letterSpacing: '0.2em',
+                      fontSize: 11, letterSpacing: '0.2em',
                       textTransform: 'uppercase', fontWeight: 500,
                       color: 'rgba(255,255,255,0.7)',
                     }}>
@@ -1332,13 +1410,12 @@ function Projects() {
                 {!p.isPlaceholder && (
                   <a href="#" style={{
                     display: 'inline-block',
-            
-                    fontSize: 12, letterSpacing: '0.2em',
+                    fontSize: isMobile ? 11 : 12, letterSpacing: '0.2em',
                     textTransform: 'uppercase', fontWeight: 600,
                     color: 'rgba(255,255,255,0.85)', textDecoration: 'none',
-                    padding: '16px 40px',
+                    padding: isMobile ? '14px 32px' : '16px 40px',
                     border: '1px solid rgba(255,255,255,0.35)',
-                    marginTop: 40,
+                    marginTop: isMobile ? 24 : 40,
                     alignSelf: 'flex-end',
                     position: 'relative', overflow: 'hidden',
                     transition: 'border-color 0.4s ease',
@@ -1366,58 +1443,58 @@ function Projects() {
                 )}
               </div>
 
-              {/* Right column - image */}
-              <div style={{
-                flex: isMobile ? '0 0 auto' : '1 1 50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: 0,
-                height: isMobile ? 'auto' : '100%',
-                maxHeight: isMobile ? '35vh' : 'none',
-                paddingTop: isMobile ? 0 : 60,
-                paddingBottom: isMobile ? 0 : 60,
-                width: isMobile ? '100%' : 'auto',
-              }}>
-                {p.image ? (
-                  <div style={{
-                    position: 'relative', width: '100%',
-                    overflow: 'hidden',
-                  }}>
-                    <img
-                      src={p.image}
-                      alt={p.name}
-                      loading="lazy"
-                      style={{
-                        width: '100%',
-                        maxHeight: '80vh',
-                        objectFit: 'contain',
-                        clipPath: activeIndex === i ? 'inset(0 0 0 0)' : 'inset(0 0 100% 0)',
-                        transition: 'clip-path 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                        ...(p.isPlaceholder ? { filter: 'blur(6px) brightness(0.6) grayscale(0.3)', transform: 'scale(1.05)' } : {}),
-                      }}
-                    />
-                    {p.isPlaceholder && (
-                      <div style={{
-                        position: 'absolute', inset: 0,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        <div style={{ width: 120, height: 120, opacity: 0.15 }}>
-                          <TreeMark />
+              {/* Desktop: image on right */}
+              {!isMobile && (
+                <div style={{
+                  flex: '1 1 50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: 0,
+                  height: '100%',
+                  paddingTop: 60,
+                  paddingBottom: 60,
+                }}>
+                  {p.image ? (
+                    <div style={{
+                      position: 'relative', width: '100%',
+                      overflow: 'hidden',
+                    }}>
+                      <img
+                        src={p.image}
+                        alt={p.name}
+                        loading="lazy"
+                        style={{
+                          width: '100%',
+                          maxHeight: '80vh',
+                          objectFit: 'contain',
+                          clipPath: activeIndex === i ? 'inset(0 0 0 0)' : 'inset(0 0 100% 0)',
+                          transition: 'clip-path 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                          ...(p.isPlaceholder ? { filter: 'blur(6px) brightness(0.6) grayscale(0.3)', transform: 'scale(1.05)' } : {}),
+                        }}
+                      />
+                      {p.isPlaceholder && (
+                        <div style={{
+                          position: 'absolute', inset: 0,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                          <div style={{ width: 120, height: 120, opacity: 0.15 }}>
+                            <TreeMark />
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div style={{
-                    width: '100%', height: '60%',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    opacity: 0.15,
-                  }}>
-                    <TreeMark />
-                  </div>
-                )}
-              </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{
+                      width: '100%', height: '60%',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      opacity: 0.15,
+                    }}>
+                      <TreeMark />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         ))}
