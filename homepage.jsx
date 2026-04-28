@@ -732,15 +732,17 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
     }}>
       {/* Tree on the OPPOSITE side — appears before card if card is on the right */}
       {!isLeft && (
-        <div ref={treeRef} style={{
+        <div ref={treeRef} className="pillar-tree" style={{
           width: 'calc(50% - 80px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          opacity: 0, transform: 'scale(0.7) rotate(' + (treeRotations[index] - 10) + 'deg)',
           marginRight: 'auto',
           pointerEvents: 'none',
         }}>
-          <div style={{ width: treeSizes[index], height: treeSizes[index] }}>
-            <TreeMark opacity={0.10} />
+          <div style={{
+            width: treeSizes[index], height: treeSizes[index],
+            transform: 'rotate(' + treeRotations[index] + 'deg)',
+          }}>
+            <TreeMark opacity={0.12} />
           </div>
         </div>
       )}
@@ -823,15 +825,17 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
 
       {/* Tree on the OPPOSITE side — appears after card if card is on the left */}
       {isLeft && (
-        <div ref={treeRef} style={{
+        <div ref={treeRef} className="pillar-tree" style={{
           width: 'calc(50% - 80px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          opacity: 0, transform: 'scale(0.7) rotate(' + (treeRotations[index] - 10) + 'deg)',
           marginLeft: 'auto',
           pointerEvents: 'none',
         }}>
-          <div style={{ width: treeSizes[index], height: treeSizes[index] }}>
-            <TreeMark opacity={0.10} />
+          <div style={{
+            width: treeSizes[index], height: treeSizes[index],
+            transform: 'rotate(' + treeRotations[index] + 'deg)',
+          }}>
+            <TreeMark opacity={0.12} />
           </div>
         </div>
       )}
@@ -982,14 +986,12 @@ function Pillars() {
         triggers.push(titleTween.scrollTrigger);
       }
 
-      // Tree on opposite side — fade + scale + gentle rotation
+      // Tree on opposite side — fade + scale entrance
       const tree = treeRefs.current[i];
       if (tree) {
-        const treeRotations = [-8, 6, 12];
-        const treeTween = gsap.fromTo(tree,
-          { opacity: 0, scale: 0.7, rotation: treeRotations[i] - 10 },
+        const treeTween = gsap.from(tree,
           {
-            opacity: 1, scale: 1, rotation: treeRotations[i],
+            opacity: 0, scale: 0.6,
             duration: 1.4,
             delay: 0.5,
             ease: 'power2.out',
