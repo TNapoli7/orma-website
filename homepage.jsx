@@ -1679,11 +1679,12 @@ function FinalCTA() {
 }
 
 // ============================================================
-// 10. Contact Form
+// 10. Contact Form — background photo + Orma logo
 // ============================================================
 function ContactForm() {
   const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' });
   const [focused, setFocused] = useState(null);
+  const [sent, setSent] = useState(false);
   const sectionRef = useScrollReveal();
 
   const handleChange = (field) => (e) => setForm({ ...form, [field]: e.target.value });
@@ -1708,37 +1709,74 @@ function ContactForm() {
     textTransform: 'uppercase',
     color: C.green,
     fontWeight: 600,
+    marginBottom: 4,
+    display: 'block',
   };
 
   return (
     <section data-screen-label="10 Contact" style={{
-      background: C.bege,
-      padding: '140px 64px',
+      position: 'relative',
+      overflow: 'hidden',
+      padding: '160px 64px',
     }}>
-      <div ref={sectionRef} style={{ maxWidth: 880, margin: '0 auto', willChange: 'opacity, transform' }}>
-        {/* Tree icon */}
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <div style={{ width: 80, height: 80, margin: '0 auto' }}>
-            <TreeMark opacity={0.3} style={{ filter: 'sepia(1) saturate(0.5) hue-rotate(20deg) brightness(0.7)' }} />
-          </div>
+      {/* Background photo */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+      }}>
+        <SiteImage
+          src="https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/1-scaled.jpg"
+          style={{ width: '100%', height: '100%', objectPosition: 'center 30%' }}
+        />
+      </div>
+      {/* Bege overlay */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 1,
+        background: `${C.bege}e8`,
+      }} />
+
+      <div ref={sectionRef} style={{
+        maxWidth: 880, margin: '0 auto',
+        position: 'relative', zIndex: 2,
+        willChange: 'opacity, transform',
+      }}>
+        {/* Orma Logo */}
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <img
+            src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-green-2.png"
+            alt="Orma"
+            style={{ height: 40 }}
+          />
         </div>
 
         {/* Heading */}
         <h2 style={{
           fontFamily: '"General Sans", sans-serif',
           fontWeight: 300,
-          fontSize: 44,
-          lineHeight: 1.15,
+          fontSize: 48,
+          lineHeight: 1.12,
           letterSpacing: '-0.02em',
           color: C.ink,
           textAlign: 'center',
-          margin: '0 0 72px',
+          margin: '0 0 20px',
         }}>
-          YOUR HOME IS<br />JUST THE START
+          Your Home Is<br />Just The Start
         </h2>
 
+        {/* Subtitle */}
+        <p style={{
+          fontFamily: '"General Sans", sans-serif',
+          fontSize: 16,
+          lineHeight: 1.7,
+          color: C.green,
+          textAlign: 'center',
+          maxWidth: 480,
+          margin: '0 auto 64px',
+        }}>
+          If you'd like to know more about our projects or our approach, our team is here to assist you.
+        </p>
+
         {/* Form grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px 56px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '44px 56px' }}>
           <div>
             <label style={labelStyle}>Name *</label>
             <input
@@ -1787,7 +1825,7 @@ function ContactForm() {
 
         {/* Consent */}
         <div style={{
-          marginTop: 48,
+          marginTop: 44,
           display: 'flex',
           alignItems: 'flex-start',
           gap: 12,
@@ -1797,6 +1835,7 @@ function ContactForm() {
             accentColor: C.terracota,
             width: 16, height: 16,
             cursor: 'pointer',
+            flexShrink: 0,
           }} />
           <label htmlFor="consent" style={{
             fontFamily: '"General Sans", sans-serif',
@@ -1805,18 +1844,19 @@ function ContactForm() {
             color: C.green,
             cursor: 'pointer',
           }}>
-            I agree to be contacted by Orma via call, email, and text for real estate services. To opt out, you can reply 'stop' at any time or reply 'help' for assistance. Message and data rates may apply. <a href="#" style={{ color: C.green, textDecoration: 'underline' }}>Privacy Policy</a>.
+            I agree to the processing of my personal data in accordance with Orma's <a href="#" style={{ color: C.green, textDecoration: 'underline' }}>privacy policy</a>.
           </label>
         </div>
 
         {/* Submit */}
-        <div style={{ textAlign: 'center', marginTop: 56 }}>
+        <div style={{ textAlign: 'center', marginTop: 52 }}>
           <button
+            onClick={() => setSent(true)}
             style={{
               background: C.terracota,
               color: C.white,
               border: 'none',
-              padding: '20px 52px',
+              padding: '20px 56px',
               fontFamily: '"General Sans", sans-serif',
               fontWeight: 600,
               fontSize: 13,
@@ -1829,7 +1869,7 @@ function ContactForm() {
             onMouseEnter={(e) => { e.target.style.background = '#7a3610'; e.target.style.transform = 'scale(1.03)'; }}
             onMouseLeave={(e) => { e.target.style.background = C.terracota; e.target.style.transform = 'scale(1)'; }}
           >
-            Send Message
+            {sent ? 'Message Sent ✓' : 'Send Message →'}
           </button>
         </div>
       </div>
@@ -1916,7 +1956,6 @@ function DesktopHomepage() {
         <Pillars />
         <Projects />
         <WhyOrma />
-        <Visit />
         <ContactForm />
         <Footer />
       </div>
