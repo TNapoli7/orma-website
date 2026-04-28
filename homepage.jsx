@@ -1733,14 +1733,14 @@ function ContactForm() {
         position: 'relative', zIndex: 2,
         willChange: 'opacity, transform',
       }}>
-        {/* Orma Logo — bege PNG inverted to dark via CSS filter */}
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+        {/* Orma O. Logo — bege slogan PNG inverted to dark via CSS filter */}
+        <div style={{ textAlign: 'center', marginBottom: 52 }}>
           <img
-            src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
+            src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-bege-slogan-2.png"
             alt="Orma"
             style={{
-              height: 36,
-              filter: 'invert(1) brightness(0.25) sepia(0.4) hue-rotate(30deg)',
+              height: 100,
+              filter: 'invert(1) brightness(0.2)',
             }}
           />
         </div>
