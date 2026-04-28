@@ -12,6 +12,19 @@ const C = {
 };
 
 // ============================================================
+// useIsMobile — responsive breakpoint hook
+// ============================================================
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [breakpoint]);
+  return isMobile;
+}
+
+// ============================================================
 // useScrollReveal — IntersectionObserver-triggered fade + slide
 // Elements start invisible, animate in when entering viewport.
 // ============================================================
@@ -471,6 +484,7 @@ function MenuDrawer({ open, onClose }) {
 }
 
 function Nav() {
+  const isMobile = useIsMobile();
   const [visible, setVisible] = useState(true);
   const [inHero, setInHero] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -501,7 +515,7 @@ function Nav() {
         position: 'fixed',
         top: 0, left: 0, right: 0,
         height: 80,
-        padding: '0 48px',
+        padding: isMobile ? '0 20px' : '0 48px',
         background: inHero ? 'transparent' : C.green,
         display: 'flex',
         alignItems: 'center',
@@ -544,6 +558,7 @@ function Nav() {
 // 2. Hero — Full-bleed video background
 // ============================================================
 function Hero() {
+  const isMobile = useIsMobile();
   const [loaded, setLoaded] = useState(false);
 
   return (
@@ -588,7 +603,7 @@ function Hero() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        padding: '0 64px',
+        padding: isMobile ? '0 24px' : '0 64px',
         maxWidth: 800,
       }}>
         <div style={{
@@ -605,7 +620,7 @@ function Hero() {
 
         <h1 style={{
           fontFamily: '"General Sans", sans-serif',
-          fontWeight: 300, fontSize: 76, lineHeight: 1.0,
+          fontWeight: 300, fontSize: isMobile ? 40 : 76, lineHeight: 1.0,
           letterSpacing: '-0.025em', color: C.white, margin: 0, textWrap: 'balance',
         }}>
           Designed for <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.bege }}>Living.</em>
@@ -620,7 +635,7 @@ function Hero() {
           Spaces shaped around how you live, designed with clarity, light and purpose.
         </p>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 28, marginTop: 44 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 20 : 28, marginTop: isMobile ? 32 : 44, flexWrap: 'wrap' }}>
           <button style={{
             background: C.terracota, color: C.white, border: 'none',
             padding: '16px 32px',
@@ -647,15 +662,16 @@ function Hero() {
 // 3. Brand Promise — symmetrical breath
 // ============================================================
 function Promise() {
+  const isMobile = useIsMobile();
   return (
     <section data-screen-label="02 Promise" style={{
       position: 'relative',
       background: C.bege,
-      padding: '180px 64px 200px',
+      padding: isMobile ? '80px 24px 100px' : '180px 64px 200px',
       overflow: 'hidden',
       textAlign: 'center',
     }}>
-      <div style={{ position: 'absolute', left: '50%', top: '50%', width: 760, height: 760, transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
+      <div style={{ position: 'absolute', left: '50%', top: '50%', width: isMobile ? 400 : 760, height: isMobile ? 400 : 760, transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
         <TreeMark opacity={0.07} />
       </div>
       <div style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -664,7 +680,7 @@ function Promise() {
           italic="live in."
           style={{
             fontFamily: '"General Sans", sans-serif',
-            fontWeight: 300, fontSize: 38, lineHeight: 1.5,
+            fontWeight: 300, fontSize: isMobile ? 24 : 38, lineHeight: 1.5,
             letterSpacing: '-0.015em', color: C.ink, margin: 0, textWrap: 'balance',
           }}
         />
@@ -717,11 +733,51 @@ function PillarIconTrust() {
 
 const PILLAR_SVG = { land: PillarIconLand, design: PillarIconDesign, trust: PillarIconTrust };
 
-function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRef, titleRef, treeRef }) {
+function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRef, titleRef, treeRef, isMobile }) {
   const [hovered, setHovered] = useState(false);
   const IconComponent = PILLAR_SVG[item.kind];
   const treeRotations = [-8, 6, 12];
   const treeSizes = [220, 200, 190];
+
+  if (isMobile) {
+    return (
+      <div ref={itemRef} style={{
+        marginBottom: index < 2 ? 32 : 0,
+        padding: '36px 28px 32px',
+        background: C.bege,
+        borderRadius: 6,
+        opacity: 0,
+      }}>
+        <div ref={iconRef} style={{
+          width: 56, height: 56, borderRadius: '50%',
+          background: C.white,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          marginBottom: 20,
+          boxShadow: '0 2px 12px rgba(92,100,87,0.1)',
+          transform: 'scale(0)',
+        }}>
+          {IconComponent && <IconComponent />}
+        </div>
+        <div style={{ overflow: 'hidden', marginBottom: 12 }}>
+          <h3 ref={titleRef} style={{
+            fontFamily: '"General Sans", sans-serif',
+            fontWeight: 600, fontSize: 20, color: C.ink,
+            margin: 0, letterSpacing: '-0.01em', lineHeight: 1.3,
+            transform: 'translateY(100%)',
+          }}>{item.title}</h3>
+        </div>
+        <div style={{ width: 28, height: 2, background: C.terracota, marginBottom: 14, borderRadius: 1, opacity: 0.6 }} />
+        <p style={{
+          fontFamily: '"General Sans", sans-serif',
+          fontSize: 14, lineHeight: 1.7, color: C.green, margin: 0,
+        }}>{item.body}</p>
+        {/* Hidden refs for GSAP compatibility */}
+        <div ref={dotRef} style={{ display: 'none' }} />
+        <div ref={connectorRef} style={{ display: 'none' }} />
+        <div ref={treeRef} style={{ display: 'none' }} />
+      </div>
+    );
+  }
 
   return (
     <div style={{
@@ -844,6 +900,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
 }
 
 function Pillars() {
+  const isMobile = useIsMobile();
   const sectionRef = useRef(null);
   const lineRef = useRef(null);
   const itemRefs = useRef([]);
@@ -995,12 +1052,12 @@ function Pillars() {
   return (
     <section ref={sectionRef} data-screen-label="03 Pillars" style={{
       background: C.white,
-      padding: '140px 64px 180px',
+      padding: isMobile ? '80px 24px 80px' : '140px 64px 180px',
       position: 'relative',
       overflow: 'hidden',
     }}>
       {/* Section heading — WordReveal */}
-      <div style={{ textAlign: 'center', marginBottom: 100, position: 'relative', zIndex: 1 }}>
+      <div style={{ textAlign: 'center', marginBottom: isMobile ? 48 : 100, position: 'relative', zIndex: 1 }}>
         <div style={{
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
@@ -1011,7 +1068,7 @@ function Pillars() {
           italic="clarity, design and trust."
           style={{
             fontFamily: '"General Sans", sans-serif',
-            fontWeight: 300, fontSize: 32, lineHeight: 1.5,
+            fontWeight: 300, fontSize: isMobile ? 22 : 32, lineHeight: 1.5,
             letterSpacing: '-0.01em', color: C.ink, margin: '0 auto',
             maxWidth: 640, textWrap: 'balance',
           }}
@@ -1020,18 +1077,20 @@ function Pillars() {
 
       {/* Timeline container */}
       <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        {/* Central vertical line */}
-        <div style={{
-          position: 'absolute', left: '50%', top: 0, bottom: 0,
-          width: 1, marginLeft: -0.5,
-        }}>
-          <div ref={lineRef} style={{
-            width: '100%', height: '100%',
-            background: 'linear-gradient(to bottom, ' + C.clearGreen + ', ' + C.green + ', ' + C.clearGreen + ')',
-            transformOrigin: 'top center',
-            transform: 'scaleY(0)',
-          }} />
-        </div>
+        {/* Central vertical line — hidden on mobile */}
+        {!isMobile && (
+          <div style={{
+            position: 'absolute', left: '50%', top: 0, bottom: 0,
+            width: 1, marginLeft: -0.5,
+          }}>
+            <div ref={lineRef} style={{
+              width: '100%', height: '100%',
+              background: 'linear-gradient(to bottom, ' + C.clearGreen + ', ' + C.green + ', ' + C.clearGreen + ')',
+              transformOrigin: 'top center',
+              transform: 'scaleY(0)',
+            }} />
+          </div>
+        )}
 
         {/* Pillar items */}
         {items.map((it, i) => {
@@ -1042,6 +1101,7 @@ function Pillars() {
               item={it}
               index={i}
               isLeft={isLeft}
+              isMobile={isMobile}
               itemRef={el => itemRefs.current[i] = el}
               dotRef={el => dotRefs.current[i] = el}
               connectorRef={el => connectorRefs.current[i] = el}
@@ -1061,6 +1121,7 @@ function Pillars() {
 //    Uses GSAP ScrollTrigger to pin + translate horizontally
 // ============================================================
 function Projects() {
+  const isMobile = useIsMobile();
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
   const stRef = useRef(null); // ScrollTrigger instance
@@ -1202,11 +1263,12 @@ function Projects() {
               width: '100%',
               height: '100%',
               margin: '0 auto',
-              padding: '0 130px',
+              padding: isMobile ? '0 24px' : '0 130px',
               display: 'flex',
-              flexDirection: 'row',
+              flexDirection: isMobile ? 'column' : 'row',
               alignItems: 'center',
-              gap: 48,
+              justifyContent: isMobile ? 'center' : 'flex-start',
+              gap: isMobile ? 24 : 48,
             }}>
               {/* Left column - text */}
               <div style={{
@@ -1219,7 +1281,7 @@ function Projects() {
                 {/* Project name */}
                 <h2 style={{
                   fontFamily: '"General Sans", sans-serif',
-                  fontWeight: 300, fontSize: p.isPlaceholder ? 40 : 48,
+                  fontWeight: 300, fontSize: isMobile ? (p.isPlaceholder ? 28 : 32) : (p.isPlaceholder ? 40 : 48),
                   lineHeight: 1.15, letterSpacing: '-0.01em',
                   color: '#FFFFFF', margin: 0,
                 }}>
@@ -1274,14 +1336,16 @@ function Projects() {
 
               {/* Right column - image */}
               <div style={{
-                flex: '1 1 50%',
+                flex: isMobile ? '0 0 auto' : '1 1 50%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 minHeight: 0,
-                height: '100%',
-                paddingTop: 60,
-                paddingBottom: 60,
+                height: isMobile ? 'auto' : '100%',
+                maxHeight: isMobile ? '35vh' : 'none',
+                paddingTop: isMobile ? 0 : 60,
+                paddingBottom: isMobile ? 0 : 60,
+                width: isMobile ? '100%' : 'auto',
               }}>
                 {p.image ? (
                   <img
@@ -1310,7 +1374,7 @@ function Projects() {
 
       {/* Slide counter - bottom right */}
       <div style={{
-        position: 'absolute', bottom: 36, right: 48,
+        position: 'absolute', bottom: isMobile ? 20 : 36, right: isMobile ? 24 : 48,
         fontFamily: '"General Sans", sans-serif',
         fontSize: 13, color: 'rgba(255,255,255,0.5)',
         fontWeight: 400, letterSpacing: '0.08em',
@@ -1379,6 +1443,7 @@ const STAT_ICONS = {
 };
 
 function WhyOrma() {
+  const isMobile = useIsMobile();
   const whyRevealText = 'Our team brings thoughtful guidance and dependable execution to every project, standing by your vision with the confidence this moment calls for.';
   const communityText = 'Every year, we reinvest part of our net income into the communities where our projects take shape — supporting local well-being and ensuring the places families choose to live continue to grow with them.';
 
@@ -1399,7 +1464,7 @@ function WhyOrma() {
     <section data-screen-label="05 Why Orma" style={{
       position: 'relative',
       background: C.green,
-      padding: '160px 64px',
+      padding: isMobile ? '80px 24px' : '160px 64px',
       overflow: 'hidden',
     }}>
       <div style={{ position: 'absolute', right: -240, bottom: -200, width: 800, height: 800, pointerEvents: 'none' }}>
@@ -1410,19 +1475,22 @@ function WhyOrma() {
         <div style={{
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em', color: C.clearGreen,
-          textTransform: 'uppercase', fontWeight: 600, marginBottom: 56,
+          textTransform: 'uppercase', fontWeight: 600, marginBottom: isMobile ? 32 : 56,
         }}>Why Orma</div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '300px 120px 1fr', gap: 56, alignItems: 'start' }}>
+        <div style={isMobile
+          ? { display: 'flex', flexDirection: 'column', gap: 40 }
+          : { display: 'grid', gridTemplateColumns: '300px 120px 1fr', gap: 56, alignItems: 'start' }
+        }>
 
-          {/* LEFT — Stats with cards and icons */}
-          <div>
+          {/* Stats */}
+          <div style={isMobile ? { display: 'grid', gridTemplateColumns: '1fr', gap: 12 } : {}}>
             {stats.map((stat, i) => {
               const IconComp = STAT_ICONS[stat.icon];
               return (
                 <div key={i} style={{
-                  padding: '28px 24px',
-                  marginBottom: 16,
+                  padding: isMobile ? '20px 20px' : '28px 24px',
+                  marginBottom: isMobile ? 0 : 16,
                   background: 'rgba(255,255,255,0.06)',
                   borderRadius: 10,
                   borderLeft: '3px solid ' + C.terracota,
@@ -1437,7 +1505,7 @@ function WhyOrma() {
                   </div>
                   <div style={{
                     fontFamily: '"General Sans", sans-serif',
-                    fontWeight: 500, fontSize: 64, lineHeight: 1, letterSpacing: '-0.03em',
+                    fontWeight: 500, fontSize: isMobile ? 48 : 64, lineHeight: 1, letterSpacing: '-0.03em',
                     color: C.terracota,
                   }}>
                     <RollingNumber value={stat.num} suffix={stat.suffix} />
@@ -1447,13 +1515,16 @@ function WhyOrma() {
             })}
           </div>
 
-          {/* MIDDLE — Community photo strip */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, paddingTop: 8 }}>
+          {/* Community photo strip */}
+          <div style={isMobile
+            ? { display: 'flex', flexDirection: 'row', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }
+            : { display: 'flex', flexDirection: 'column', gap: 14, paddingTop: 8 }
+          }>
             {communityPhotos.map((src, i) => (
               <div key={i} style={{
-                width: 100, height: 100, borderRadius: '50%',
+                width: isMobile ? 72 : 100, height: isMobile ? 72 : 100, borderRadius: '50%',
                 border: '1px solid ' + C.clearGreen + '55',
-                padding: 3, overflow: 'hidden',
+                padding: 3, overflow: 'hidden', flexShrink: 0,
               }}>
                 <SiteImage src={src} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
               </div>
@@ -1463,21 +1534,22 @@ function WhyOrma() {
               fontSize: 9, letterSpacing: '0.18em', color: C.clearGreen,
               textTransform: 'uppercase', fontWeight: 600, textAlign: 'center',
               marginTop: 4, lineHeight: 1.5,
+              ...(isMobile ? { width: '100%' } : {}),
             }}>Giving back</div>
           </div>
 
-          {/* RIGHT — Narrative text with WordReveal */}
-          <div style={{ paddingTop: 8 }}>
+          {/* Narrative text with WordReveal */}
+          <div style={{ paddingTop: isMobile ? 0 : 8 }}>
             <WordReveal
               text={whyRevealText}
               style={{
                 fontFamily: '"General Sans", sans-serif',
-                fontSize: 22, lineHeight: 1.75, color: C.white, margin: 0, fontWeight: 300,
+                fontSize: isMobile ? 18 : 22, lineHeight: 1.75, color: C.white, margin: 0, fontWeight: 300,
               }}
             />
             <p style={{
               fontFamily: '"General Sans", sans-serif',
-              fontSize: 15, lineHeight: 1.7, color: C.bege, margin: '36px 0 0', fontWeight: 400, opacity: 0.8,
+              fontSize: isMobile ? 14 : 15, lineHeight: 1.7, color: C.bege, margin: '36px 0 0', fontWeight: 400, opacity: 0.8,
             }}>
               {communityText}
             </p>
@@ -1682,6 +1754,7 @@ function FinalCTA() {
 // 10. Contact Form — background photo + Orma logo
 // ============================================================
 function ContactForm() {
+  const isMobile = useIsMobile();
   const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' });
   const [focused, setFocused] = useState(null);
   const [sent, setSent] = useState(false);
@@ -1717,7 +1790,7 @@ function ContactForm() {
     <section data-screen-label="10 Contact" style={{
       position: 'relative',
       overflow: 'hidden',
-      padding: '160px 64px',
+      padding: isMobile ? '80px 24px' : '160px 64px',
       backgroundImage: 'url(https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/1-scaled.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center 30%',
@@ -1749,7 +1822,7 @@ function ContactForm() {
         <h2 style={{
           fontFamily: '"General Sans", sans-serif',
           fontWeight: 300,
-          fontSize: 48,
+          fontSize: isMobile ? 32 : 48,
           lineHeight: 1.12,
           letterSpacing: '-0.02em',
           color: C.ink,
@@ -1767,13 +1840,13 @@ function ContactForm() {
           color: C.green,
           textAlign: 'center',
           maxWidth: 480,
-          margin: '0 auto 64px',
+          margin: isMobile ? '0 auto 40px' : '0 auto 64px',
         }}>
           If you'd like to know more about our projects or our approach, our team is here to assist you.
         </p>
 
         {/* Form grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '44px 56px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '28px' : '44px 56px' }}>
           <div>
             <label style={labelStyle}>Name *</label>
             <input
@@ -1853,7 +1926,8 @@ function ContactForm() {
               background: C.terracota,
               color: C.white,
               border: 'none',
-              padding: '20px 56px',
+              padding: isMobile ? '18px 0' : '20px 56px',
+              width: isMobile ? '100%' : 'auto',
               fontFamily: '"General Sans", sans-serif',
               fontWeight: 600,
               fontSize: 13,
@@ -1878,10 +1952,11 @@ function ContactForm() {
 // 11. Footer
 // ============================================================
 function Footer() {
+  const isMobile = useIsMobile();
   return (
     <footer data-screen-label="09 Footer" style={{
       background: C.ink, color: C.bege,
-      padding: '88px 64px 36px',
+      padding: isMobile ? '56px 24px 28px' : '88px 64px 36px',
       position: 'relative', overflow: 'hidden',
     }}>
       <div style={{ position: 'absolute', right: -200, bottom: -200, width: 540, height: 540, pointerEvents: 'none' }}>
@@ -1889,7 +1964,13 @@ function Footer() {
       </div>
 
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 56, paddingBottom: 64, borderBottom: `1px solid ${C.bege}22` }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1fr 1fr 1fr',
+          gap: isMobile ? 36 : 56,
+          paddingBottom: isMobile ? 36 : 64,
+          borderBottom: `1px solid ${C.bege}22`,
+        }}>
           <div>
             <div>
               <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="Orma" style={{ height: 28 }} />
@@ -1902,24 +1983,58 @@ function Footer() {
               Orma is a development company built on experience, thoughtful design and the belief that long-term value comes from balancing nature, space and urban convenience.
             </p>
           </div>
-          {[
-            { title: 'Navigate', items: ['Home', 'About Us', 'Projects', 'Contact Us'] },
-            { title: 'Contact', items: ['info@orma.pt', '+351 220 000 000', 'Rua de Cedofeita 123', 'Porto, Portugal'] },
-            { title: 'Follow', items: ['Instagram', 'LinkedIn', 'Facebook'] },
-          ].map(col => (
-            <div key={col.title}>
-              <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 22 }}>{col.title}</div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 12 }}>
-                {col.items.map(it => (
-                  <li key={it} style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: col.title === 'Contact' ? C.clearGreen : C.bege }}>{it}</li>
-                ))}
-              </ul>
+          {isMobile ? (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28 }}>
+              {[
+                { title: 'Navigate', items: ['Home', 'About Us', 'Projects', 'Contact Us'] },
+                { title: 'Contact', items: ['info@orma.pt', '+351 220 000 000', 'Rua de Cedofeita 123', 'Porto, Portugal'] },
+              ].map(col => (
+                <div key={col.title}>
+                  <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 16 }}>{col.title}</div>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 10 }}>
+                    {col.items.map(it => (
+                      <li key={it} style={{ fontFamily: '"General Sans", sans-serif', fontSize: 13, color: col.title === 'Contact' ? C.clearGreen : C.bege }}>{it}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              <div>
+                <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 16 }}>Follow</div>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 10 }}>
+                  {['Instagram', 'LinkedIn', 'Facebook'].map(it => (
+                    <li key={it} style={{ fontFamily: '"General Sans", sans-serif', fontSize: 13, color: C.bege }}>{it}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          ))}
+          ) : (
+            [
+              { title: 'Navigate', items: ['Home', 'About Us', 'Projects', 'Contact Us'] },
+              { title: 'Contact', items: ['info@orma.pt', '+351 220 000 000', 'Rua de Cedofeita 123', 'Porto, Portugal'] },
+              { title: 'Follow', items: ['Instagram', 'LinkedIn', 'Facebook'] },
+            ].map(col => (
+              <div key={col.title}>
+                <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 22 }}>{col.title}</div>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 12 }}>
+                  {col.items.map(it => (
+                    <li key={it} style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: col.title === 'Contact' ? C.clearGreen : C.bege }}>{it}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          )}
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 28, fontFamily: '"General Sans", sans-serif', fontSize: 12, color: C.clearGreen, letterSpacing: '0.04em' }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          justifyContent: 'space-between',
+          alignItems: isMobile ? 'flex-start' : 'center',
+          gap: isMobile ? 16 : 0,
+          paddingTop: isMobile ? 20 : 28,
+          fontFamily: '"General Sans", sans-serif', fontSize: 12, color: C.clearGreen, letterSpacing: '0.04em',
+        }}>
           <div>© 2026 Orma. All rights reserved.</div>
-          <div style={{ display: 'flex', gap: 28 }}>
+          <div style={{ display: 'flex', gap: isMobile ? 20 : 28 }}>
             <a href="#" style={{ color: C.clearGreen, textDecoration: 'none' }}>Privacy Policy</a>
             <a href="#" style={{ color: C.clearGreen, textDecoration: 'none' }}>Terms & Conditions</a>
           </div>
