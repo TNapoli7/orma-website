@@ -676,14 +676,53 @@ function Promise() {
 // ============================================================
 // 4. Three Pillars — animated vertical timeline (refined)
 // ============================================================
-const PILLAR_ICONS = {
-  land: 'icons/icone-optmistic.png',
-  design: 'icons/icone-thoughtful-design.png',
-  trust: 'icons/icone-experience-driven-work.png',
-};
+function PillarIconLand() {
+  return (
+    <svg width="38" height="38" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 3L15 5" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="15" cy="9" r="4" stroke={C.green} strokeWidth="1.5"/>
+      <path d="M15 13L15 27" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M6 27H24" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M9 24C9 20 15 18 15 18C15 18 21 20 21 24" stroke={C.green} strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
+    </svg>
+  );
+}
 
-function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRef, titleRef }) {
+function PillarIconDesign() {
+  return (
+    <svg width="38" height="38" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="8" width="22" height="18" rx="1.5" stroke={C.green} strokeWidth="1.5"/>
+      <path d="M4 12H26" stroke={C.green} strokeWidth="1.2"/>
+      <path d="M10 8V5" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M20 8V5" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <rect x="8" y="16" width="6" height="3" rx="0.5" stroke={C.green} strokeWidth="1" opacity="0.6"/>
+      <rect x="16" y="16" width="6" height="3" rx="0.5" stroke={C.green} strokeWidth="1" opacity="0.6"/>
+      <rect x="8" y="21" width="6" height="3" rx="0.5" stroke={C.green} strokeWidth="1" opacity="0.4"/>
+    </svg>
+  );
+}
+
+function PillarIconTrust() {
+  return (
+    <svg width="38" height="38" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 27L6 13L15 6L24 13L24 27" stroke={C.green} strokeWidth="1.5" strokeLinejoin="round"/>
+      <rect x="12" y="19" width="6" height="8" rx="0.5" stroke={C.green} strokeWidth="1.3"/>
+      <circle cx="16.5" cy="23" r="0.8" fill={C.green}/>
+      <path d="M3 27H27" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <rect x="10" y="15" width="3" height="2.5" rx="0.5" stroke={C.green} strokeWidth="1" opacity="0.5"/>
+      <rect x="17" y="15" width="3" height="2.5" rx="0.5" stroke={C.green} strokeWidth="1" opacity="0.5"/>
+    </svg>
+  );
+}
+
+const PILLAR_SVG = { land: PillarIconLand, design: PillarIconDesign, trust: PillarIconTrust };
+
+function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRef, titleRef, treeRef }) {
   const [hovered, setHovered] = useState(false);
+  const IconComponent = PILLAR_SVG[item.kind];
+  const treeRotations = [-8, 6, 12];
+  const treeSizes = [140, 120, 110];
+
   return (
     <div style={{
       display: 'flex', alignItems: 'center',
@@ -691,6 +730,21 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
       position: 'relative',
       marginBottom: index < 2 ? 140 : 0,
     }}>
+      {/* Tree on the OPPOSITE side — appears before card if card is on the right */}
+      {!isLeft && (
+        <div ref={treeRef} style={{
+          width: 'calc(50% - 80px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          opacity: 0, transform: 'scale(0.7) rotate(' + (treeRotations[index] - 10) + 'deg)',
+          marginRight: 'auto',
+          pointerEvents: 'none',
+        }}>
+          <div style={{ width: treeSizes[index], height: treeSizes[index] }}>
+            <TreeMark opacity={0.10} />
+          </div>
+        </div>
+      )}
+
       {/* Timeline dot */}
       <div ref={dotRef} style={{
         position: 'absolute', left: '50%', top: '50%',
@@ -735,7 +789,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
           ...(isLeft ? { marginRight: 'auto' } : { marginLeft: 'auto' }),
         }}
       >
-        {/* Icon in circular badge */}
+        {/* Icon in circular badge — inline SVG */}
         <div ref={iconRef} style={{
           width: 72, height: 72, borderRadius: '50%',
           background: C.white,
@@ -744,8 +798,7 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
           boxShadow: '0 2px 12px rgba(92,100,87,0.1)',
           transform: 'scale(0)',
         }}>
-          <img src={PILLAR_ICONS[item.kind]} alt="" width="40" height="40"
-            style={{ display: 'block', objectFit: 'contain' }} />
+          {IconComponent && <IconComponent />}
         </div>
 
         {/* Title with clip reveal */}
@@ -767,6 +820,21 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
           fontSize: 15, lineHeight: 1.8, color: C.green, margin: 0,
         }}>{item.body}</p>
       </div>
+
+      {/* Tree on the OPPOSITE side — appears after card if card is on the left */}
+      {isLeft && (
+        <div ref={treeRef} style={{
+          width: 'calc(50% - 80px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          opacity: 0, transform: 'scale(0.7) rotate(' + (treeRotations[index] - 10) + 'deg)',
+          marginLeft: 'auto',
+          pointerEvents: 'none',
+        }}>
+          <div style={{ width: treeSizes[index], height: treeSizes[index] }}>
+            <TreeMark opacity={0.10} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -779,12 +847,13 @@ function Pillars() {
   const connectorRefs = useRef([]);
   const iconRefs = useRef([]);
   const titleRefs = useRef([]);
+  const treeRefs = useRef([]);
   const headingRef = useRef(null);
 
   const items = [
-    { kind: 'land', title: 'Land Vision & Opportunity', body: 'We begin by identifying strategic urban zones with strong potential for long-term living and value. Each location is chosen for its balance between city convenience, quality of life and access to nature.' },
-    { kind: 'design', title: 'Architectural Design & Planning', body: 'Once a location is secured, we collaborate closely with architect studios to design spaces that feel intuitive, balanced and filled with natural light. Homes where families can grow at their own pace, surrounded by green areas and practical layouts.' },
-    { kind: 'trust', title: 'Construction & Delivery', body: 'We work with experienced engineering and construction partners who share our respect for quality, integrity and responsible execution. Every project is monitored closely to ensure that what we build matches what we promised.' },
+    { kind: 'land', title: 'Land Vision', body: 'We identify locations where city convenience meets natural surroundings. Every site is chosen for its balance between access, quality of life, and long-term value.' },
+    { kind: 'design', title: 'Thoughtful Design', body: 'We collaborate with architects to create layouts that feel intuitive, balanced, and filled with natural light. Spaces shaped by how families actually live.' },
+    { kind: 'trust', title: 'Trusted Construction', body: 'We work with experienced engineering and construction partners who share our respect for quality, integrity and responsible execution. Every project is monitored closely to ensure that what we build matches what we promised.' },
   ];
 
   useEffect(() => {
@@ -912,6 +981,27 @@ function Pillars() {
         );
         triggers.push(titleTween.scrollTrigger);
       }
+
+      // Tree on opposite side — fade + scale + gentle rotation
+      const tree = treeRefs.current[i];
+      if (tree) {
+        const treeRotations = [-8, 6, 12];
+        const treeTween = gsap.fromTo(tree,
+          { opacity: 0, scale: 0.7, rotation: treeRotations[i] - 10 },
+          {
+            opacity: 1, scale: 1, rotation: treeRotations[i],
+            duration: 1.4,
+            delay: 0.5,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 75%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(treeTween.scrollTrigger);
+      }
     });
 
     return () => triggers.forEach(t => t && t.kill());
@@ -924,23 +1014,13 @@ function Pillars() {
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Tree watermark behind timeline */}
-      <div style={{
-        position: 'absolute', left: '50%', top: '50%',
-        width: 600, height: 600,
-        transform: 'translate(-50%, -50%)',
-        pointerEvents: 'none', zIndex: 0,
-      }}>
-        <TreeMark opacity={0.04} />
-      </div>
-
       {/* Section heading — WordReveal */}
       <div style={{ textAlign: 'center', marginBottom: 100, position: 'relative', zIndex: 1 }}>
         <div style={{
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
           textTransform: 'uppercase', fontWeight: 600, marginBottom: 20,
-        }}>Our Service</div>
+        }}>Our Approach</div>
         <WordReveal
           text="From land to living - a process built on clarity, design and trust."
           italic="clarity, design and trust."
@@ -982,6 +1062,7 @@ function Pillars() {
               connectorRef={el => connectorRefs.current[i] = el}
               iconRef={el => iconRefs.current[i] = el}
               titleRef={el => titleRefs.current[i] = el}
+              treeRef={el => treeRefs.current[i] = el}
             />
           );
         })}
