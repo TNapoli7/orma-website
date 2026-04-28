@@ -635,12 +635,31 @@ function Hero() {
           }} style={{
             background: C.terracota, color: C.white, border: 'none',
             padding: '16px 32px',
-    
             fontWeight: 500, fontSize: 13, letterSpacing: '0.16em',
             textTransform: 'uppercase', borderRadius: 6, cursor: 'pointer',
             display: 'inline-flex', alignItems: 'center', gap: 12,
-          }}>
-            Explore our projects <span>→</span>
+            position: 'relative', overflow: 'hidden',
+            transition: 'opacity 0.3s',
+          }}
+            onMouseEnter={e => {
+              const fill = e.currentTarget.querySelector('.hero-btn-fill');
+              if (fill) fill.style.transform = 'translateX(0)';
+            }}
+            onMouseLeave={e => {
+              const fill = e.currentTarget.querySelector('.hero-btn-fill');
+              if (fill) fill.style.transform = 'translateX(-101%)';
+            }}
+          >
+            <span className="hero-btn-fill" style={{
+              position: 'absolute', inset: 0,
+              background: 'rgba(255,255,255,0.15)',
+              transform: 'translateX(-101%)',
+              transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              borderRadius: 'inherit',
+              pointerEvents: 'none',
+            }} />
+            <span style={{ position: 'relative', zIndex: 1 }}>Explore our projects</span>
+            <span style={{ position: 'relative', zIndex: 1 }}>→</span>
           </button>
         </div>
       </div>
