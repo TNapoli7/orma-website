@@ -1318,7 +1318,7 @@ function Projects() {
                   <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)' }} />
                 </div>
 
-                {/* CTA button */}
+                {/* CTA button with left-to-right fill hover */}
                 {!p.isPlaceholder && (
                   <a href="#" style={{
                     display: 'inline-block',
@@ -1329,10 +1329,29 @@ function Projects() {
                     padding: '16px 40px',
                     border: '1px solid rgba(255,255,255,0.35)',
                     marginTop: 40,
-                    transition: 'background 0.3s, border-color 0.3s',
                     alignSelf: 'flex-end',
-                  }}>
-                    Explore this project
+                    position: 'relative', overflow: 'hidden',
+                    transition: 'border-color 0.4s ease',
+                  }}
+                    onMouseEnter={e => {
+                      const fill = e.currentTarget.querySelector('.btn-fill');
+                      if (fill) { fill.style.transform = 'translateX(0)'; }
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)';
+                    }}
+                    onMouseLeave={e => {
+                      const fill = e.currentTarget.querySelector('.btn-fill');
+                      if (fill) { fill.style.transform = 'translateX(-101%)'; }
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.35)';
+                    }}
+                  >
+                    <span className="btn-fill" style={{
+                      position: 'absolute', inset: 0,
+                      background: 'rgba(255,255,255,0.12)',
+                      transform: 'translateX(-101%)',
+                      transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                      pointerEvents: 'none',
+                    }} />
+                    <span style={{ position: 'relative', zIndex: 1 }}>Explore this project</span>
                   </a>
                 )}
               </div>
@@ -1427,7 +1446,7 @@ const STAT_ICONS = {
   years: function() {
     return React.createElement('svg', { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none' },
       React.createElement('circle', { cx: 12, cy: 12, r: 9, stroke: C.clearGreen, strokeWidth: 1.5 }),
-      React.createElement('path', { d: '12 7 12 12 16 14', stroke: C.clearGreen, strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' })
+      React.createElement('path', { d: 'M12 7L12 12L16 14', stroke: C.clearGreen, strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' })
     );
   },
   projects: function() {
@@ -1877,15 +1896,15 @@ function ContactForm() {
         position: 'relative', zIndex: 2,
         willChange: 'opacity, transform',
       }}>
-        {/* Orma O. Symbol — inline SVG */}
+        {/* Orma O. Symbol — inline SVG, serif O with organic yin-yang interior */}
         <div style={{ textAlign: 'center', marginBottom: 52 }}>
-          <svg width="56" height="64" viewBox="0 0 120 136" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Orma">
-            {/* Outer O shape */}
-            <path d="M52 4C24 4 4 30 4 64C4 98 24 124 52 124C80 124 100 98 100 64C100 30 80 4 52 4ZM52 14C74 14 88 36 88 64C88 92 74 114 52 114C30 114 16 92 16 64C16 36 30 14 52 14Z" fill={C.ink} />
-            {/* Inner leaf/organic shape */}
-            <path d="M52 26C42 26 34 34 32 46C30 56 34 66 42 72C46 75 48 80 46 86C44 92 40 96 36 98C42 102 48 104 52 104C62 104 70 96 72 84C74 74 70 64 62 58C58 55 56 50 58 44C60 38 64 34 68 32C62 28 56 26 52 26Z" fill={C.ink} />
+          <svg width="52" height="60" viewBox="0 0 130 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Orma">
+            {/* Outer O — serif style with thick/thin stroke contrast */}
+            <path d="M55 6C28 6 6 32 6 72C6 112 28 138 55 138C82 138 104 112 104 72C104 32 82 6 55 6ZM55 18C75 18 90 40 90 72C90 104 75 126 55 126C35 126 20 104 20 72C20 40 35 18 55 18Z" fill={C.ink} />
+            {/* Interior organic S-curve / yin-yang leaf */}
+            <path d="M55 32C48 32 42 38 42 48C42 58 48 62 55 66C62 70 68 76 68 88C68 100 60 112 55 112C62 112 68 106 68 96C68 86 62 82 55 78C48 74 42 68 42 56C42 44 50 32 55 32Z" fill={C.ink} />
             {/* Period dot */}
-            <circle cx="110" cy="126" r="8" fill={C.ink} />
+            <circle cx="118" cy="132" r="7" fill={C.ink} />
           </svg>
         </div>
 
@@ -2024,90 +2043,133 @@ function ContactForm() {
 // ============================================================
 function Footer() {
   const isMobile = useIsMobile();
+  const footerRef = useScrollReveal();
+
   return (
     <footer data-screen-label="09 Footer" style={{
       background: C.ink, color: C.bege,
-      padding: isMobile ? '56px 24px 28px' : '88px 64px 36px',
       position: 'relative', overflow: 'hidden',
     }}>
-      <div style={{ position: 'absolute', right: -200, bottom: -200, width: 540, height: 540, pointerEvents: 'none' }}>
-        <TreeMark opacity={0.03} />
-      </div>
+      {/* Giant watermark "orma." text */}
+      <div style={{
+        position: 'absolute', bottom: isMobile ? -30 : -40, left: '50%',
+        transform: 'translateX(-50%)',
+        fontFamily: '"General Sans", sans-serif',
+        fontWeight: 700, fontSize: isMobile ? 160 : 280,
+        letterSpacing: '-0.04em', textTransform: 'uppercase',
+        color: 'rgba(255,255,255,0.04)',
+        whiteSpace: 'nowrap', pointerEvents: 'none',
+        lineHeight: 0.85,
+      }}>orma.</div>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+      {/* Main content */}
+      <div ref={footerRef} style={{
+        maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2,
+        padding: isMobile ? '80px 24px 32px' : '120px 64px 40px',
+        willChange: 'opacity, transform',
+      }}>
+
+        {/* Top section — CTA headline + contact info */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1fr 1fr 1fr',
-          gap: isMobile ? 36 : 56,
-          paddingBottom: isMobile ? 36 : 64,
-          borderBottom: `1px solid ${C.bege}22`,
+          gridTemplateColumns: isMobile ? '1fr' : '1.6fr 1fr',
+          gap: isMobile ? 48 : 80,
+          paddingBottom: isMobile ? 56 : 80,
         }}>
+
+          {/* Left — Big CTA */}
           <div>
-            <div>
-              <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="Orma" style={{ height: 28 }} />
-              <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 8, letterSpacing: '0.32em', color: C.bege, fontWeight: 500, textTransform: 'uppercase', marginTop: 8 }}>Designed for Living</div>
-            </div>
-            <p style={{
+            <div style={{
               fontFamily: '"General Sans", sans-serif',
-              fontSize: 14, lineHeight: 1.7, color: C.clearGreen, marginTop: 28, maxWidth: 320,
+              fontSize: 11, letterSpacing: '0.3em', color: C.clearGreen,
+              textTransform: 'uppercase', fontWeight: 600, marginBottom: 28,
+            }}>Contact</div>
+            <h2 style={{
+              fontFamily: '"General Sans", sans-serif',
+              fontWeight: 300, fontSize: isMobile ? 36 : 56, lineHeight: 1.1,
+              letterSpacing: '-0.02em', color: C.bege, margin: 0,
             }}>
-              Orma is a development company built on experience, thoughtful design and the belief that long-term value comes from balancing nature, space and urban convenience.
-            </p>
-          </div>
-          {isMobile ? (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28 }}>
-              {[
-                { title: 'Navigate', items: ['Home', 'About Us', 'Projects', 'Contact Us'] },
-                { title: 'Contact', items: ['info@orma.pt', '+351 220 000 000', 'Rua de Cedofeita 123', 'Porto, Portugal'] },
-              ].map(col => (
-                <div key={col.title}>
-                  <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 16 }}>{col.title}</div>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 10 }}>
-                    {col.items.map(it => (
-                      <li key={it} style={{ fontFamily: '"General Sans", sans-serif', fontSize: 13, color: col.title === 'Contact' ? C.clearGreen : C.bege }}>{it}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-              <div>
-                <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 16 }}>Follow</div>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 10 }}>
-                  {['Instagram', 'LinkedIn', 'Facebook'].map(it => (
-                    <li key={it} style={{ fontFamily: '"General Sans", sans-serif', fontSize: 13, color: C.bege }}>{it}</li>
-                  ))}
-                </ul>
-              </div>
+              Let's talk about your next <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>home.</em>
+            </h2>
+
+            {/* CTA buttons */}
+            <div style={{ display: 'flex', gap: 16, marginTop: isMobile ? 32 : 44, flexWrap: 'wrap' }}>
+              <a href="#" style={{
+                display: 'inline-block', padding: '16px 36px',
+                background: C.terracota, color: C.white,
+                fontFamily: '"General Sans", sans-serif', fontWeight: 600,
+                fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase',
+                textDecoration: 'none', borderRadius: 40,
+                transition: 'background 0.3s, transform 0.2s',
+              }}>Get in touch</a>
+              <a href="#" style={{
+                display: 'inline-block', padding: '16px 36px',
+                background: 'transparent', color: C.bege,
+                fontFamily: '"General Sans", sans-serif', fontWeight: 500,
+                fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase',
+                textDecoration: 'none', borderRadius: 40,
+                border: '1px solid rgba(238,232,218,0.25)',
+                transition: 'border-color 0.3s, background 0.3s',
+              }}>Our projects</a>
             </div>
-          ) : (
-            [
-              { title: 'Navigate', items: ['Home', 'About Us', 'Projects', 'Contact Us'] },
-              { title: 'Contact', items: ['info@orma.pt', '+351 220 000 000', 'Rua de Cedofeita 123', 'Porto, Portugal'] },
-              { title: 'Follow', items: ['Instagram', 'LinkedIn', 'Facebook'] },
-            ].map(col => (
-              <div key={col.title}>
-                <div style={{ fontFamily: '"General Sans", sans-serif', fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 22 }}>{col.title}</div>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 12 }}>
-                  {col.items.map(it => (
-                    <li key={it} style={{ fontFamily: '"General Sans", sans-serif', fontSize: 14, color: col.title === 'Contact' ? C.clearGreen : C.bege }}>{it}</li>
-                  ))}
-                </ul>
+          </div>
+
+          {/* Right — Contact details */}
+          <div style={{ paddingTop: isMobile ? 0 : 16 }}>
+            {[
+              { label: 'Email', value: 'info@orma.pt' },
+              { label: 'Phone', value: '+351 220 000 000' },
+              { label: 'Address', value: 'Rua de Cedofeita 123\nPorto, Portugal' },
+            ].map((item, i) => (
+              <div key={item.label} style={{
+                borderTop: i === 0 ? '1px solid rgba(238,232,218,0.12)' : 'none',
+                borderBottom: '1px solid rgba(238,232,218,0.12)',
+                padding: '20px 0',
+              }}>
+                <div style={{
+                  fontFamily: '"General Sans", sans-serif',
+                  fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase',
+                  color: C.clearGreen, fontWeight: 600, marginBottom: 6,
+                }}>{item.label}</div>
+                <div style={{
+                  fontFamily: '"General Sans", sans-serif',
+                  fontSize: 15, color: C.bege, lineHeight: 1.5,
+                  whiteSpace: 'pre-line',
+                }}>{item.value}</div>
               </div>
-            ))
-          )}
+            ))}
+
+            {/* Social links */}
+            <div style={{ display: 'flex', gap: 24, marginTop: 24 }}>
+              {['Instagram', 'LinkedIn', 'Facebook'].map(name => (
+                <a key={name} href="#" style={{
+                  fontFamily: '"General Sans", sans-serif',
+                  fontSize: 13, color: C.clearGreen, textDecoration: 'none',
+                  transition: 'color 0.3s',
+                }}>{name}</a>
+              ))}
+            </div>
+          </div>
         </div>
+
+        {/* Bottom bar */}
         <div style={{
           display: 'flex',
           flexDirection: isMobile ? 'column' : 'row',
           justifyContent: 'space-between',
           alignItems: isMobile ? 'flex-start' : 'center',
           gap: isMobile ? 16 : 0,
-          paddingTop: isMobile ? 20 : 28,
-          fontFamily: '"General Sans", sans-serif', fontSize: 12, color: C.clearGreen, letterSpacing: '0.04em',
+          paddingTop: 20,
+          borderTop: '1px solid rgba(238,232,218,0.08)',
+          fontFamily: '"General Sans", sans-serif', fontSize: 12, color: 'rgba(177,180,169,0.6)', letterSpacing: '0.04em',
         }}>
-          <div>© 2026 Orma. All rights reserved.</div>
-          <div style={{ display: 'flex', gap: isMobile ? 20 : 28 }}>
-            <a href="#" style={{ color: C.clearGreen, textDecoration: 'none' }}>Privacy Policy</a>
-            <a href="#" style={{ color: C.clearGreen, textDecoration: 'none' }}>Terms & Conditions</a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="Orma" style={{ height: 18, opacity: 0.5 }} />
+            <span>© 2026 Orma. All rights reserved.</span>
+          </div>
+          <div style={{ display: 'flex', gap: 24 }}>
+            <a href="#" style={{ color: 'rgba(177,180,169,0.6)', textDecoration: 'none' }}>Privacy Policy</a>
+            <a href="#" style={{ color: 'rgba(177,180,169,0.6)', textDecoration: 'none' }}>Terms & Conditions</a>
           </div>
         </div>
       </div>
@@ -2143,27 +2205,50 @@ function DesktopHomepage() {
         <Footer />
       </div>
 
-      {/* WhatsApp floating button — always visible */}
-      <a
-        href="https://wa.me/351XXXXXXXXX"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp"
-        style={{
-          position: 'fixed', bottom: 28, right: 28, zIndex: 180,
-          width: 52, height: 52, borderRadius: '50%',
-          background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
-          transition: 'transform 0.25s ease, box-shadow 0.25s ease',
-          textDecoration: 'none',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.22)'; }}
-        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)'; }}
-      >
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-      </a>
+      {/* Floating buttons — WhatsApp + Scroll to top */}
+      <div style={{
+        position: 'fixed', bottom: 28, right: 28, zIndex: 180,
+        display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center',
+      }}>
+        <a
+          href="https://wa.me/351XXXXXXXXX"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Chat on WhatsApp"
+          style={{
+            width: 52, height: 52, borderRadius: '50%',
+            background: C.green, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
+            transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+            textDecoration: 'none',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.22)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)'; }}
+        >
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </a>
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Scroll to top"
+          style={{
+            width: 40, height: 40, borderRadius: '50%',
+            background: C.green, border: 'none',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 3px 10px rgba(0,0,0,0.15)',
+            cursor: 'pointer',
+            transition: 'transform 0.25s ease, opacity 0.25s ease',
+            opacity: 0.85,
+          }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.opacity = '1'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.opacity = '0.85'; }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="18 15 12 9 6 15" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 }
