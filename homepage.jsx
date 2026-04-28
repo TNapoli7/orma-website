@@ -922,26 +922,28 @@ function Pillars() {
     gsap.registerPlugin(ScrollTrigger);
 
     const section = sectionRef.current;
-    const line = lineRef.current;
-    if (!section || !line) return;
+    if (!section) return;
 
     const triggers = [];
 
-    // Animate the vertical line drawing
-    const lineTween = gsap.fromTo(line,
-      { scaleY: 0 },
-      {
-        scaleY: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 55%',
-          end: 'bottom 35%',
-          scrub: 0.6,
-        },
-      }
-    );
-    triggers.push(lineTween.scrollTrigger);
+    // Animate the vertical line drawing (desktop only)
+    const line = lineRef.current;
+    if (line) {
+      const lineTween = gsap.fromTo(line,
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 55%',
+            end: 'bottom 35%',
+            scrub: 0.6,
+          },
+        }
+      );
+      triggers.push(lineTween.scrollTrigger);
+    }
 
     // Animate each pillar card with staggered internal elements
     itemRefs.current.forEach((el, i) => {
@@ -952,16 +954,17 @@ function Pillars() {
       const title = titleRefs.current[i];
       const dot = dotRefs.current[i];
 
-      // Card slide in
+      // Card slide in — simple fade-up on mobile, slide from side on desktop
+      const isMob = window.innerWidth < 768;
       const cardTween = gsap.fromTo(el,
-        { opacity: 0, x: isLeft ? -80 : 80, y: 30 },
+        { opacity: 0, x: isMob ? 0 : (isLeft ? -80 : 80), y: isMob ? 40 : 30 },
         {
           opacity: 1, x: 0, y: 0,
           duration: 1.1,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: el,
-            start: 'top 78%',
+            start: 'top 85%',
             toggleActions: 'play none none none',
           },
         }
