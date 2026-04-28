@@ -1733,16 +1733,16 @@ function ContactForm() {
         position: 'relative', zIndex: 2,
         willChange: 'opacity, transform',
       }}>
-        {/* Orma O. Logo — bege slogan PNG inverted to dark via CSS filter */}
+        {/* Orma O. Symbol — inline SVG */}
         <div style={{ textAlign: 'center', marginBottom: 52 }}>
-          <img
-            src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-bege-slogan-2.png"
-            alt="Orma"
-            style={{
-              height: 100,
-              filter: 'invert(1) brightness(0.2)',
-            }}
-          />
+          <svg width="56" height="64" viewBox="0 0 120 136" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Orma">
+            {/* Outer O shape */}
+            <path d="M52 4C24 4 4 30 4 64C4 98 24 124 52 124C80 124 100 98 100 64C100 30 80 4 52 4ZM52 14C74 14 88 36 88 64C88 92 74 114 52 114C30 114 16 92 16 64C16 36 30 14 52 14Z" fill={C.ink} />
+            {/* Inner leaf/organic shape */}
+            <path d="M52 26C42 26 34 34 32 46C30 56 34 66 42 72C46 75 48 80 46 86C44 92 40 96 36 98C42 102 48 104 52 104C62 104 70 96 72 84C74 74 70 64 62 58C58 55 56 50 58 44C60 38 64 34 68 32C62 28 56 26 52 26Z" fill={C.ink} />
+            {/* Period dot */}
+            <circle cx="110" cy="126" r="8" fill={C.ink} />
+          </svg>
         </div>
 
         {/* Heading */}
