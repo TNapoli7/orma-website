@@ -1718,20 +1718,14 @@ function ContactForm() {
       position: 'relative',
       overflow: 'hidden',
       padding: '160px 64px',
+      backgroundImage: 'url(https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/1-scaled.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center 30%',
     }}>
-      {/* Background photo */}
-      <div style={{
-        position: 'absolute', inset: 0, zIndex: 0,
-      }}>
-        <SiteImage
-          src="https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/1-scaled.jpg"
-          style={{ width: '100%', height: '100%', objectPosition: 'center 30%' }}
-        />
-      </div>
-      {/* Bege overlay */}
+      {/* Bege overlay — very heavy so photo is barely visible texture */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 1,
-        background: `${C.bege}e8`,
+        background: `${C.bege}f0`,
       }} />
 
       <div ref={sectionRef} style={{
@@ -1741,11 +1735,14 @@ function ContactForm() {
       }}>
         {/* Orma Logo */}
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <img
-            src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-green-2.png"
-            alt="Orma"
-            style={{ height: 40 }}
-          />
+          <div style={{
+            width: 60, height: 60, margin: '0 auto',
+            backgroundImage: 'url(https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-arvore-black-1.png)',
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            opacity: 0.7,
+          }} />
         </div>
 
         {/* Heading */}
