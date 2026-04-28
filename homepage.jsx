@@ -986,24 +986,7 @@ function Pillars() {
         triggers.push(titleTween.scrollTrigger);
       }
 
-      // Tree on opposite side — fade + scale entrance
-      const tree = treeRefs.current[i];
-      if (tree) {
-        const treeTween = gsap.from(tree,
-          {
-            opacity: 0, scale: 0.6,
-            duration: 1.4,
-            delay: 0.5,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 75%',
-              toggleActions: 'play none none none',
-            },
-          }
-        );
-        triggers.push(treeTween.scrollTrigger);
-      }
+      // Tree on opposite side — no GSAP for now, static watermark
     });
 
     return () => triggers.forEach(t => t && t.kill());
