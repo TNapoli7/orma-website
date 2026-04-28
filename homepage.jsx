@@ -1323,10 +1323,78 @@ function Projects() {
 }
 
 // ============================================================
-// 6. Why Orma — dark green, big stats
+// 6. Why Orma — dark green, big stats + community
 // ============================================================
+
+function RollingNumber({ value, suffix = '', duration = 2000 }) {
+  const ref = useRef(null);
+  const [display, setDisplay] = useState(0);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !hasAnimated.current) {
+        hasAnimated.current = true;
+        const num = parseInt(value, 10) || 0;
+        const start = performance.now();
+        const animate = (now) => {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          setDisplay(Math.round(eased * num));
+          if (progress < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+      }
+    }, { threshold: 0.3 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [value, duration]);
+
+  return React.createElement('span', { ref }, display + suffix);
+}
+
+const STAT_ICONS = {
+  years: function() {
+    return React.createElement('svg', { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none' },
+      React.createElement('circle', { cx: 12, cy: 12, r: 9, stroke: C.clearGreen, strokeWidth: 1.5 }),
+      React.createElement('path', { d: '12 7 12 12 16 14', stroke: C.clearGreen, strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' })
+    );
+  },
+  projects: function() {
+    return React.createElement('svg', { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none' },
+      React.createElement('path', { d: 'M3 21L3 9L12 3L21 9L21 21', stroke: C.clearGreen, strokeWidth: 1.5, strokeLinejoin: 'round' }),
+      React.createElement('rect', { x: 9, y: 14, width: 6, height: 7, rx: 0.5, stroke: C.clearGreen, strokeWidth: 1.5 })
+    );
+  },
+  reinvest: function() {
+    return React.createElement('svg', { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none' },
+      React.createElement('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10', stroke: C.clearGreen, strokeWidth: 1.5, strokeLinecap: 'round' }),
+      React.createElement('path', { d: 'M22 2L22 8L16 8', stroke: C.clearGreen, strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }),
+      React.createElement('path', { d: 'M22 8L18 4', stroke: C.clearGreen, strokeWidth: 1.5, strokeLinecap: 'round' })
+    );
+  },
+};
+
 function WhyOrma() {
-  const contentRef = useScrollReveal();
+  const whyRevealText = 'Our team brings thoughtful guidance and dependable execution to every project, standing by your vision with the confidence this moment calls for.';
+  const communityText = 'Every year, we reinvest part of our net income into the communities where our projects take shape — supporting local well-being and ensuring the places families choose to live continue to grow with them.';
+
+  const stats = [
+    { num: '40', suffix: '+', label: 'years of experience', icon: 'years' },
+    { num: '2', suffix: '', label: 'projects in development', icon: 'projects' },
+    { num: '100', suffix: '%', label: 'net income reinvested locally', icon: 'reinvest' },
+  ];
+
+  const communityPhotos = [
+    'https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/joel-muniz-qvzjG2pF4bE-unsplash-scaled.jpg',
+    'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
+    'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
+    'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/2.png',
+  ];
+
   return (
     <section data-screen-label="05 Why Orma" style={{
       position: 'relative',
@@ -1338,91 +1406,81 @@ function WhyOrma() {
         <TreeMark opacity={0.08} />
       </div>
 
-      <div ref={contentRef} style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2, willChange: 'opacity, transform' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
         <div style={{
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em', color: C.clearGreen,
-          textTransform: 'uppercase', fontWeight: 600, marginBottom: 48,
+          textTransform: 'uppercase', fontWeight: 600, marginBottom: 56,
         }}>Why Orma</div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '40fr 60fr', gap: 96, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '300px 120px 1fr', gap: 56, alignItems: 'start' }}>
+
+          {/* LEFT — Stats with cards and icons */}
           <div>
-            {[
-              ['40+', 'years of experience'],
-              ['2', 'projects in development'],
-              ['100%', 'net income reinvested locally'],
-            ].map(([num, label], i) => (
-              <div key={i} style={{
-                padding: '36px 0',
-                borderTop: `1px solid ${C.clearGreen}55`,
-                borderBottom: i === 2 ? `1px solid ${C.clearGreen}55` : 'none',
-              }}>
-                <div style={{
-                  fontFamily: '"General Sans", sans-serif',
-                  fontWeight: 300, fontSize: 80, lineHeight: 1, letterSpacing: '-0.04em',
-                  color: C.terracota,
-                }}>{num}</div>
-                <div style={{
-                  fontFamily: '"General Sans", sans-serif',
-                  fontSize: 14, color: C.bege, marginTop: 14, letterSpacing: '0.02em',
-                }}>{label}</div>
-              </div>
-            ))}
+            {stats.map((stat, i) => {
+              const IconComp = STAT_ICONS[stat.icon];
+              return (
+                <div key={i} style={{
+                  padding: '28px 24px',
+                  marginBottom: 16,
+                  background: 'rgba(255,255,255,0.06)',
+                  borderRadius: 10,
+                  borderLeft: '3px solid ' + C.terracota,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
+                    {IconComp && React.createElement(IconComp)}
+                    <div style={{
+                      fontFamily: '"General Sans", sans-serif',
+                      fontSize: 11, letterSpacing: '0.18em', color: C.clearGreen,
+                      textTransform: 'uppercase', fontWeight: 600,
+                    }}>{stat.label}</div>
+                  </div>
+                  <div style={{
+                    fontFamily: '"General Sans", sans-serif',
+                    fontWeight: 500, fontSize: 64, lineHeight: 1, letterSpacing: '-0.03em',
+                    color: C.terracota,
+                  }}>
+                    <RollingNumber value={stat.num} suffix={stat.suffix} />
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
-          <div>
-            {/* Narrative text with 2 community photos inline */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 32, alignItems: 'start' }}>
-              <div>
-                <p style={{
-                  fontFamily: '"General Sans", sans-serif',
-                  fontSize: 19, lineHeight: 1.8, color: C.white, margin: 0, fontWeight: 300,
-                }}>
-                  Our team brings thoughtful guidance and dependable execution to every project, standing by your vision with the confidence this moment calls for.
-                </p>
-                <p style={{
-                  fontFamily: '"General Sans", sans-serif',
-                  fontSize: 15, lineHeight: 1.7, color: C.bege, margin: '28px 0 0', fontWeight: 400, opacity: 0.85,
-                }}>
-                  Every year, we reinvest part of our net income into the communities where our projects take shape — supporting local well-being and ensuring the places families choose to live continue to grow with them.
-                </p>
+          {/* MIDDLE — Community photo strip */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, paddingTop: 8 }}>
+            {communityPhotos.map((src, i) => (
+              <div key={i} style={{
+                width: 100, height: 100, borderRadius: '50%',
+                border: '1px solid ' + C.clearGreen + '55',
+                padding: 3, overflow: 'hidden',
+              }}>
+                <SiteImage src={src} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 4 }}>
-                {[
-                  { src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/joel-muniz-qvzjG2pF4bE-unsplash-scaled.jpg' },
-                  { src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png' },
-                ].map((item, i) => (
-                  <div key={i} style={{
-                    width: 90, height: 90, borderRadius: '50%',
-                    border: '1px solid ' + C.clearGreen + '66',
-                    padding: 3, overflow: 'hidden', flexShrink: 0,
-                  }}>
-                    <SiteImage src={item.src} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
+            <div style={{
+              fontFamily: '"General Sans", sans-serif',
+              fontSize: 9, letterSpacing: '0.18em', color: C.clearGreen,
+              textTransform: 'uppercase', fontWeight: 600, textAlign: 'center',
+              marginTop: 4, lineHeight: 1.5,
+            }}>Giving back</div>
+          </div>
 
-            {/* 2 more community photos below */}
-            <div style={{ display: 'flex', gap: 16, marginTop: 36, alignItems: 'center' }}>
-              {[
-                { src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg' },
-                { src: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/2.png' },
-              ].map((item, i) => (
-                <div key={i} style={{
-                  width: 100, height: 100, borderRadius: '50%',
-                  border: '1px solid ' + C.clearGreen + '66',
-                  padding: 3, overflow: 'hidden', flexShrink: 0,
-                }}>
-                  <SiteImage src={item.src} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
-                </div>
-              ))}
-              <div style={{
+          {/* RIGHT — Narrative text with WordReveal */}
+          <div style={{ paddingTop: 8 }}>
+            <WordReveal
+              text={whyRevealText}
+              style={{
                 fontFamily: '"General Sans", sans-serif',
-                fontSize: 11, letterSpacing: '0.2em', color: C.clearGreen,
-                textTransform: 'uppercase', fontWeight: 600, marginLeft: 8,
-              }}>Giving back to the places we build.</div>
-            </div>
+                fontSize: 22, lineHeight: 1.75, color: C.white, margin: 0, fontWeight: 300,
+              }}
+            />
+            <p style={{
+              fontFamily: '"General Sans", sans-serif',
+              fontSize: 15, lineHeight: 1.7, color: C.bege, margin: '36px 0 0', fontWeight: 400, opacity: 0.8,
+            }}>
+              {communityText}
+            </p>
           </div>
         </div>
       </div>
