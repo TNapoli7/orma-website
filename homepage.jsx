@@ -606,18 +606,6 @@ function Hero() {
         padding: isMobile ? '0 24px' : '0 64px',
         maxWidth: 800,
       }}>
-        <div style={{
-          fontFamily: '"General Sans", sans-serif',
-          fontSize: 12, letterSpacing: '0.3em',
-          color: C.bege, textTransform: 'uppercase', fontWeight: 600,
-          marginBottom: 36,
-          display: 'flex', alignItems: 'center', gap: 14,
-          opacity: 0.85,
-        }}>
-          <span style={{ width: 32, height: 1, background: C.bege }} />
-          Porto · Santo Tirso
-        </div>
-
         <h1 style={{
           fontFamily: '"General Sans", sans-serif',
           fontWeight: 300, fontSize: isMobile ? 40 : 76, lineHeight: 1.0,
@@ -646,11 +634,6 @@ function Hero() {
           }}>
             Explore our projects <span>→</span>
           </button>
-          <a href="#" style={{
-            fontFamily: '"General Sans", sans-serif',
-            fontSize: 13, color: C.bege, textDecoration: 'none',
-            fontWeight: 500, borderBottom: `1px solid ${C.bege}66`, paddingBottom: 2,
-          }}>Our story →</a>
         </div>
       </div>
 
@@ -1148,7 +1131,7 @@ function Projects() {
     {
       code: 'ORMA / 03', name: 'Coming Soon', location: '',
       blurb: 'A new project is on the horizon. Stay tuned for more details about our next development.',
-      image: null,
+      image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/1-scaled.jpg',
       meta: 'Brevemente',
       isPlaceholder: true,
       bg: C.green,
@@ -1370,15 +1353,33 @@ function Projects() {
                 width: isMobile ? '100%' : 'auto',
               }}>
                 {p.image ? (
-                  <img
-                    src={p.image}
-                    alt={p.name}
-                    style={{
-                      width: '100%',
-                      maxHeight: '80vh',
-                      objectFit: 'contain',
-                    }}
-                  />
+                  <div style={{
+                    position: 'relative', width: '100%',
+                    overflow: 'hidden',
+                  }}>
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      style={{
+                        width: '100%',
+                        maxHeight: '80vh',
+                        objectFit: 'contain',
+                        clipPath: activeIndex === i ? 'inset(0 0 0 0)' : 'inset(0 0 100% 0)',
+                        transition: 'clip-path 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        ...(p.isPlaceholder ? { filter: 'blur(6px) brightness(0.6) grayscale(0.3)', transform: 'scale(1.05)' } : {}),
+                      }}
+                    />
+                    {p.isPlaceholder && (
+                      <div style={{
+                        position: 'absolute', inset: 0,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <div style={{ width: 120, height: 120, opacity: 0.15 }}>
+                          <TreeMark />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <div style={{
                     width: '100%', height: '60%',
@@ -1633,8 +1634,8 @@ function WhyOrma() {
                     </div>
                     <div style={{
                       fontFamily: '"General Sans", sans-serif',
-                      fontWeight: 300, fontSize: isMobile ? 44 : 48, lineHeight: 1, letterSpacing: '-0.03em',
-                      color: C.terracota,
+                      fontWeight: 500, fontSize: isMobile ? 48 : 56, lineHeight: 1, letterSpacing: '-0.03em',
+                      color: C.bege,
                     }}>
                       <RollingNumber value={stat.num} suffix={stat.suffix} />
                     </div>
@@ -1896,15 +1897,11 @@ function ContactForm() {
         position: 'relative', zIndex: 2,
         willChange: 'opacity, transform',
       }}>
-        {/* Orma O. Symbol — inline SVG, serif O with organic yin-yang interior */}
+        {/* Orma O. Symbol — official SVG logomarca */}
         <div style={{ textAlign: 'center', marginBottom: 52 }}>
-          <svg width="52" height="60" viewBox="0 0 130 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Orma">
-            {/* Outer O — serif style with thick/thin stroke contrast */}
-            <path d="M55 6C28 6 6 32 6 72C6 112 28 138 55 138C82 138 104 112 104 72C104 32 82 6 55 6ZM55 18C75 18 90 40 90 72C90 104 75 126 55 126C35 126 20 104 20 72C20 40 35 18 55 18Z" fill={C.ink} />
-            {/* Interior organic S-curve / yin-yang leaf */}
-            <path d="M55 32C48 32 42 38 42 48C42 58 48 62 55 66C62 70 68 76 68 88C68 100 60 112 55 112C62 112 68 106 68 96C68 86 62 82 55 78C48 74 42 68 42 56C42 44 50 32 55 32Z" fill={C.ink} />
-            {/* Period dot */}
-            <circle cx="118" cy="132" r="7" fill={C.ink} />
+          <svg width="48" height="42" viewBox="0 0 151 131" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Orma">
+            <path d="M102.444 33.6952C98.3685 24.0446 92.3369 16.0219 84.3493 9.61549C76.3735 3.20907 66.3012 0 54.156 0C53.5469 0 52.9496 0.0117119 52.364 0.0351358C52.001 0.0351358 51.6379 0 51.2748 0C42.772 0 35.3583 1.85048 29.0105 5.56317C22.6626 9.27585 17.4039 14.148 13.2228 20.1914C11.0795 23.2833 9.21729 26.5861 7.60104 30.1114C7.02716 31.2826 6.48841 32.4772 5.9848 33.6952C1.99103 43.3459 0 53.828 0 65.1418C0 76.4555 1.99103 86.9377 5.9848 96.5883C9.97856 106.239 16.0102 114.273 24.0797 120.668C32.1492 127.074 42.1747 130.272 54.156 130.272C66.1373 130.272 76.1627 127.074 84.2322 120.668C92.3017 114.262 98.3334 106.239 102.327 96.5883C106.321 86.9377 108.359 76.4555 108.441 65.1418C108.523 53.828 106.532 43.3459 102.456 33.6952H102.444ZM41.7999 116.428C36.389 110.525 32.0204 103.124 28.6942 94.2225C25.368 85.3214 23.1193 75.6708 21.9599 65.2706C20.7887 54.8704 20.9175 45.2198 22.3347 36.3187C23.7518 27.4176 26.5392 20.0157 30.697 14.1129C34.761 8.33889 40.2539 5.3992 47.1874 5.27037C42.0224 7.30824 37.6304 11.1615 34.0466 16.8886C30.2168 22.9905 28.3077 31.2474 28.3077 41.6476C28.3077 49.3072 29.2681 55.7605 31.1772 61.0309C33.0862 66.3012 35.5106 70.541 38.4503 73.7734C41.3783 77.0059 44.517 79.3366 47.8667 80.7772C51.2163 82.2178 54.3316 82.9322 57.2011 82.9322C60.0705 82.9322 62.2489 82.3349 64.1111 81.1402C65.9616 79.9456 66.8868 78.3294 66.8868 76.2915C66.8868 73.305 66.0436 70.904 64.3805 69.1121C62.7057 67.3202 60.6092 65.7976 58.1029 64.5327C55.5965 63.2796 52.8677 62.1084 49.9397 61.0309C47.0117 59.9534 44.2828 58.5479 41.7765 56.8146C39.2701 55.0812 37.1737 52.8442 35.4989 50.0802C33.8241 47.3279 32.9808 43.7441 32.9808 39.3169C32.9808 29.8654 34.7727 22.604 38.3683 17.5093C41.9521 12.4264 46.3792 9.88487 51.6496 9.88487C54.4019 9.88487 57.3065 10.693 60.3516 12.3092C63.4084 13.9255 66.3598 16.4318 69.2292 19.8517C72.0986 23.2599 74.8158 27.5933 77.3924 32.8637C79.8871 37.9701 82.0655 43.9783 83.9394 50.8766C84.9935 55.5145 85.8016 60.3047 86.3638 65.2823C86.4692 66.2193 86.5512 67.1445 86.6331 68.0697C86.8674 71.0563 86.9962 74.0662 86.9962 77.0996C86.9962 85.7782 85.9421 93.6135 83.8574 100.605C81.761 107.609 78.587 113.313 74.3473 117.74C70.0959 122.167 64.6264 124.381 57.9272 124.381C55.983 124.381 54.1091 124.17 52.2938 123.807C48.4991 122.378 45.0089 119.93 41.8233 116.452L41.7999 116.428Z" fill={C.ink} />
+            <path d="M137.276 96.834C141.597 96.834 144.888 98.5791 147.137 102.069C149.386 105.559 150.51 109.354 150.51 113.43C150.51 117.506 149.386 121.288 147.137 124.79C144.888 128.281 141.609 130.026 137.276 130.026C132.942 130.026 129.698 128.281 127.543 124.79C125.376 121.3 124.299 117.517 124.299 113.43C124.299 109.342 125.376 105.571 127.543 102.069C129.698 98.5791 132.942 96.834 137.276 96.834Z" fill={C.ink} />
           </svg>
         </div>
 
@@ -2047,7 +2044,7 @@ function Footer() {
 
   return (
     <footer data-screen-label="09 Footer" style={{
-      background: C.ink, color: C.bege,
+      background: '#3D4239', color: C.bege,
       position: 'relative', overflow: 'hidden',
     }}>
       {/* Giant watermark "orma." text */}
