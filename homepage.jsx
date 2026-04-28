@@ -1447,7 +1447,13 @@ const STAT_ICONS = {
 
 function WhyOrma() {
   const isMobile = useIsMobile();
-  const sectionRef = useScrollReveal();
+  const sectionRef = useRef(null);
+  const labelRef = useRef(null);
+  const textColRef = useRef(null);
+  const communityRef = useRef(null);
+  const cardRefs = useRef([]);
+  const borderRefs = useRef([]);
+
   const whyRevealText = 'Our team brings thoughtful guidance and dependable execution to every project, standing by your vision with the confidence this moment calls for.';
   const communityText = 'Every year, we reinvest part of our net income into the communities where our projects take shape — supporting local well-being and ensuring the places families choose to live continue to grow with them.';
 
@@ -1457,15 +1463,78 @@ function WhyOrma() {
     { num: '100', suffix: '%', label: 'Net income reinvested locally', icon: 'reinvest' },
   ];
 
-  const communityPhotos = [
-    'https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/joel-muniz-qvzjG2pF4bE-unsplash-scaled.jpg',
-    'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
-    'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
-    'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/2.png',
-  ];
+  useEffect(() => {
+    if (typeof gsap === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const triggers = [];
+
+    // Section label fade in
+    if (labelRef.current) {
+      const t = gsap.fromTo(labelRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: section, start: 'top 75%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    }
+
+    // Left column — text block slides up
+    if (textColRef.current) {
+      const t = gsap.fromTo(textColRef.current,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 0.15,
+          scrollTrigger: { trigger: section, start: 'top 70%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    }
+
+    // Community paragraph fade in (delayed)
+    if (communityRef.current) {
+      const t = gsap.fromTo(communityRef.current,
+        { opacity: 0, y: 24 },
+        { opacity: 0.65, y: 0, duration: 0.9, ease: 'power2.out', delay: 0.6,
+          scrollTrigger: { trigger: section, start: 'top 70%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    }
+
+    // Stat cards — staggered fade up with border draw
+    cardRefs.current.forEach((card, i) => {
+      if (!card) return;
+      const t = gsap.fromTo(card,
+        { opacity: 0, y: 40, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out',
+          delay: 0.2 + i * 0.15,
+          scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    });
+
+    // Border draw — terracota border height animates from 0 to 100%
+    borderRefs.current.forEach((border, i) => {
+      if (!border) return;
+      const t = gsap.fromTo(border,
+        { scaleY: 0 },
+        { scaleY: 1, duration: 0.7, ease: 'power2.out',
+          delay: 0.4 + i * 0.15,
+          scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    });
+
+    return () => triggers.forEach(t => t && t.kill());
+  }, []);
 
   return (
-    <section data-screen-label="05 Why Orma" style={{
+    <section ref={sectionRef} data-screen-label="05 Why Orma" style={{
       position: 'relative',
       background: C.green,
       padding: isMobile ? '80px 24px' : '140px 64px',
@@ -1475,11 +1544,12 @@ function WhyOrma() {
         <TreeMark opacity={0.08} />
       </div>
 
-      <div ref={sectionRef} style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2, willChange: 'opacity, transform' }}>
-        <div style={{
+      <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <div ref={labelRef} style={{
           fontFamily: '"General Sans", sans-serif',
           fontSize: 12, letterSpacing: '0.3em', color: C.clearGreen,
           textTransform: 'uppercase', fontWeight: 600, marginBottom: isMobile ? 32 : 56,
+          opacity: 0,
         }}>Why Orma</div>
 
         <div style={isMobile
@@ -1489,24 +1559,26 @@ function WhyOrma() {
 
           {/* LEFT — Narrative text */}
           <div>
-            <WordReveal
-              text={whyRevealText}
-              style={{
-                fontFamily: '"General Sans", sans-serif',
-                fontSize: isMobile ? 20 : 28, lineHeight: 1.55, color: C.white, margin: 0, fontWeight: 300,
-                letterSpacing: '-0.01em',
-              }}
-            />
-            <p style={{
+            <div ref={textColRef} style={{ opacity: 0 }}>
+              <WordReveal
+                text={whyRevealText}
+                style={{
+                  fontFamily: '"General Sans", sans-serif',
+                  fontSize: isMobile ? 20 : 28, lineHeight: 1.55, color: C.white, margin: 0, fontWeight: 300,
+                  letterSpacing: '-0.01em',
+                }}
+              />
+            </div>
+            <p ref={communityRef} style={{
               fontFamily: '"General Sans", sans-serif',
-              fontSize: isMobile ? 14 : 15, lineHeight: 1.8, color: C.bege, margin: '36px 0 0', fontWeight: 400, opacity: 0.65,
+              fontSize: isMobile ? 14 : 15, lineHeight: 1.8, color: C.bege, margin: '36px 0 0', fontWeight: 400, opacity: 0,
               maxWidth: 480,
             }}>
               {communityText}
             </p>
           </div>
 
-          {/* RIGHT — Stats grid + avatar stack */}
+          {/* RIGHT — Stats grid */}
           <div>
             <div style={{
               display: 'grid',
@@ -1517,13 +1589,21 @@ function WhyOrma() {
                 const IconComp = STAT_ICONS[stat.icon];
                 const isFullWidth = i === 2;
                 return (
-                  <div key={i} style={{
+                  <div key={i} ref={el => cardRefs.current[i] = el} style={{
                     padding: isMobile ? '24px 20px' : '28px 24px',
                     background: 'rgba(238,232,218,0.08)',
                     borderRadius: 8,
-                    borderLeft: '3px solid ' + C.terracota,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    opacity: 0,
                     ...(isFullWidth && !isMobile ? { gridColumn: '1 / -1' } : {}),
                   }}>
+                    {/* Animated terracota border */}
+                    <div ref={el => borderRefs.current[i] = el} style={{
+                      position: 'absolute', left: 0, top: 0, bottom: 0,
+                      width: 3, background: C.terracota, borderRadius: '3px 0 0 3px',
+                      transformOrigin: 'top center', transform: 'scaleY(0)',
+                    }} />
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                       {IconComp && React.createElement(IconComp)}
                       <div style={{
@@ -1542,40 +1622,6 @@ function WhyOrma() {
                   </div>
                 );
               })}
-            </div>
-
-            {/* Avatar stack — Giving Back */}
-            <div style={{ marginTop: 28, display: 'flex', alignItems: 'center', gap: 16 }}>
-              <div style={{ display: 'flex' }}>
-                {communityPhotos.map((src, i) => (
-                  <div key={i} style={{
-                    width: 44, height: 44, borderRadius: '50%',
-                    border: '2px solid ' + C.green,
-                    overflow: 'hidden', flexShrink: 0,
-                    marginLeft: i > 0 ? -12 : 0,
-                    position: 'relative', zIndex: communityPhotos.length - i,
-                  }}>
-                    <SiteImage src={src} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
-                  </div>
-                ))}
-                <div style={{
-                  width: 44, height: 44, borderRadius: '50%',
-                  border: '2px solid ' + C.green,
-                  background: 'rgba(238,232,218,0.06)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  marginLeft: -12, position: 'relative', zIndex: 0,
-                }}>
-                  <span style={{
-                    fontFamily: '"General Sans", sans-serif',
-                    fontSize: 13, color: 'rgba(238,232,218,0.4)', fontWeight: 500,
-                  }}>+</span>
-                </div>
-              </div>
-              <div style={{
-                fontFamily: '"General Sans", sans-serif',
-                fontSize: 11, letterSpacing: '0.18em', color: 'rgba(238,232,218,0.4)',
-                textTransform: 'uppercase', fontWeight: 500,
-              }}>Giving back</div>
             </div>
           </div>
 
