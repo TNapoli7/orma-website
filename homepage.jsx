@@ -659,7 +659,6 @@ function Hero() {
               pointerEvents: 'none',
             }} />
             <span style={{ position: 'relative', zIndex: 1 }}>Explore our projects</span>
-            <span style={{ position: 'relative', zIndex: 1 }}>→</span>
           </button>
         </div>
       </div>
