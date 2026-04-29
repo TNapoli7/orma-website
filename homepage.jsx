@@ -1939,19 +1939,34 @@ function ContactForm() {
                 border: 'none',
                 padding: isMobile ? '18px 0' : '20px 56px',
                 width: isMobile ? '100%' : 'auto',
-        
                 fontWeight: 600,
                 fontSize: 13,
                 letterSpacing: '0.2em',
                 textTransform: 'uppercase',
                 borderRadius: 40,
                 cursor: 'pointer',
-                transition: 'background 0.3s ease, transform 0.2s ease',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'opacity 0.3s',
               }}
-              onMouseEnter={(e) => { e.target.style.background = '#7a3610'; e.target.style.transform = 'scale(1.03)'; }}
-              onMouseLeave={(e) => { e.target.style.background = C.terracota; e.target.style.transform = 'scale(1)'; }}
+              onMouseEnter={e => {
+                const fill = e.currentTarget.querySelector('.form-btn-fill');
+                if (fill) fill.style.transform = 'translateX(0)';
+              }}
+              onMouseLeave={e => {
+                const fill = e.currentTarget.querySelector('.form-btn-fill');
+                if (fill) fill.style.transform = 'translateX(-101%)';
+              }}
             >
-              {sent ? 'Message Sent ✓' : 'Send Message →'}
+              <span className="form-btn-fill" style={{
+                position: 'absolute', inset: 0,
+                background: 'rgba(255,255,255,0.15)',
+                transform: 'translateX(-101%)',
+                transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                borderRadius: 'inherit',
+                pointerEvents: 'none',
+              }} />
+              <span style={{ position: 'relative', zIndex: 1 }}>{sent ? 'Message Sent ✓' : 'Send Message'}</span>
             </button>
           </div>
         </form>
