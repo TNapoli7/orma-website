@@ -870,28 +870,31 @@ function Location({ project }) {
 
     gsap.registerPlugin(ScrollTrigger);
 
+    const section = sectionRef.current;
     const ctx = gsap.context(() => {
-      /* Pin the entire section - map stays fixed while scroll continues */
+      /* Pin the section - map stays fixed while content scrolls over */
       ScrollTrigger.create({
-        trigger: sectionRef.current,
+        trigger: section,
         start: 'top top',
-        end: 'bottom top',
+        end: '+=60%',
         pin: true,
         pinSpacing: true,
+        onEnter: () => { section.style.zIndex = '10'; },
+        onLeaveBack: () => { section.style.zIndex = '2'; },
       });
 
-      /* Map parallax - slow vertical drift as you scroll through */
+      /* Map parallax + fade in */
       gsap.fromTo(mapRef.current,
-        { yPercent: -6, opacity: 0 },
+        { yPercent: -4, opacity: 0 },
         {
-          yPercent: 6,
+          yPercent: 4,
           opacity: 1,
           ease: 'none',
           scrollTrigger: {
-            trigger: sectionRef.current,
+            trigger: section,
             start: 'top bottom',
             end: 'top 20%',
-            scrub: true,
+            scrub: 0.6,
           },
         }
       );
@@ -899,20 +902,20 @@ function Location({ project }) {
       /* Cards - fade in + slide up, scroll-driven */
       const cards = cardsRef.current.children;
       gsap.fromTo(cards,
-        { opacity: 0, y: 60 },
+        { opacity: 0, y: 50 },
         {
           opacity: 1, y: 0,
-          stagger: 0.1,
+          stagger: 0.08,
           ease: 'none',
           scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 50%',
-            end: 'top 10%',
-            scrub: true,
+            trigger: section,
+            start: 'top 45%',
+            end: 'top 5%',
+            scrub: 0.6,
           },
         }
       );
-    }, sectionRef);
+    }, section);
 
     return () => ctx.revert();
   }, [isMobile]);
@@ -987,6 +990,8 @@ function Location({ project }) {
       width: '100%',
       height: '100vh',
       overflow: 'hidden',
+      zIndex: 2,
+      background: C.bege,
     }}>
       {/* Map background - absolute, taller than section for parallax room */}
       <div ref={mapRef} style={{
