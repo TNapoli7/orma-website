@@ -2,7 +2,7 @@
 const { useState, useEffect, useRef } = React;
 
 // ============================================================
-// Design tokens — shared with homepage
+// Design tokens -shared with homepage
 // ============================================================
 const C = {
   ink: '#1F2022',
@@ -15,80 +15,80 @@ const C = {
 };
 
 // ============================================================
-// Project data — single source of truth
+// Project data -single source of truth
 // ============================================================
 const PROJECTS = {
   'lir-725': {
     name: 'Lir 725',
     location: 'Porto, Portugal',
-    tagline: 'Where the city meets the light.',
+    tagline: '[Tagline]',
     hero: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
-    description: 'Lir 725 is a residential building in the heart of Porto, designed in direct response to its surrounding urban context. The project balances a clear relationship with the street with the inclusion of generous private outdoor spaces — terraces, balconies and patios that extend living areas toward natural light and open sky.',
-    descriptionExtra: 'Every apartment is oriented to maximise daylight and cross ventilation. Common areas are designed with the same attention as private ones — lobbies, corridors and stairwells are treated as shared living space, not afterthought.',
+    description: '[Project description - to be provided]',
+    descriptionExtra: '[Additional description - to be provided]',
     stats: [
-      { label: 'Units', value: '12' },
-      { label: 'Typologies', value: 'T1 – T4' },
+      { label: 'Units', value: '[TBD]' },
+      { label: 'Typologies', value: '[TBD]' },
       { label: 'Location', value: 'Porto' },
-      { label: 'Status', value: '2026 – 2027' },
-      { label: 'Architecture', value: 'Studio [TBD]' },
-      { label: 'Area', value: '1,200 m²' },
+      { label: 'Status', value: '[TBD]' },
+      { label: 'Architecture', value: '[TBD]' },
+      { label: 'Area', value: '[TBD]' },
     ],
     gallery: [
       'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
-      'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
-      'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/1-scaled.jpg',
+      '',
+      '',
     ],
     typologies: [
-      { type: 'T1', area: '55 – 65 m²', bedrooms: 1, description: 'Open-plan living with private balcony. Ideal for individuals or couples seeking a compact, light-filled space in the city.' },
-      { type: 'T2', area: '85 – 100 m²', bedrooms: 2, description: 'Versatile layout with two bedrooms, an integrated kitchen-living area, and a generous terrace connecting indoor and outdoor living.' },
-      { type: 'T3', area: '120 – 140 m²', bedrooms: 3, description: 'A family-oriented floor plan with three bedrooms, two bathrooms, and a south-facing terrace designed for daily life and gatherings.' },
-      { type: 'T4', area: '160 – 180 m²', bedrooms: 4, description: 'The largest typology, spanning a full floor. Four bedrooms, a master suite with private terrace, and panoramic city views.' },
+      { type: 'T1', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
+      { type: 'T2', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
+      { type: 'T3', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
+      { type: 'T4', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
     ],
     locationInfo: {
-      description: 'Situated in one of Porto\'s most connected and liveable neighbourhoods, Lir 725 is steps away from public transport, local markets, schools, and the city\'s cultural landmarks. A five-minute walk reaches the Jardim da Cordoaria; the riverfront is a short ride away.',
+      description: '[Location description - to be provided]',
       highlights: [
-        { icon: 'transport', label: 'Metro & Bus', detail: '3 min walk' },
-        { icon: 'park', label: 'Jardim da Cordoaria', detail: '5 min walk' },
-        { icon: 'school', label: 'Schools & University', detail: '8 min walk' },
-        { icon: 'shopping', label: 'Rua de Cedofeita', detail: '2 min walk' },
-        { icon: 'hospital', label: 'Hospital Sto. António', detail: '10 min' },
-        { icon: 'river', label: 'Douro Riverfront', detail: '12 min' },
+        { icon: 'transport', label: '[TBD]', detail: '[TBD]' },
+        { icon: 'park', label: '[TBD]', detail: '[TBD]' },
+        { icon: 'school', label: '[TBD]', detail: '[TBD]' },
+        { icon: 'shopping', label: '[TBD]', detail: '[TBD]' },
+        { icon: 'hospital', label: '[TBD]', detail: '[TBD]' },
+        { icon: 'river', label: '[TBD]', detail: '[TBD]' },
       ],
     },
   },
   'villas-sto-tirso': {
     name: 'Villas Sto. Tirso',
     location: 'Santo Tirso, Portugal',
-    tagline: 'Living shaped by landscape.',
+    tagline: '[Tagline]',
     hero: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
-    description: 'A residential project in Santo Tirso set within a low-density, naturally defined environment. The design responds to the surrounding landscape, prioritising orientation, privacy, and the relationship between interior spaces and the outdoors.',
-    descriptionExtra: 'Each villa is positioned to capture the best views and natural light, with private gardens that blur the boundary between architecture and nature. Sustainable construction practices and locally sourced materials ground the project in its context.',
+    description: '[Project description - to be provided]',
+    descriptionExtra: '[Additional description - to be provided]',
     stats: [
-      { label: 'Units', value: '6' },
-      { label: 'Typologies', value: 'T3 – T4' },
+      { label: 'Units', value: '[TBD]' },
+      { label: 'Typologies', value: '[TBD]' },
       { label: 'Location', value: 'Santo Tirso' },
-      { label: 'Status', value: '2026 – 2028' },
-      { label: 'Architecture', value: 'Studio [TBD]' },
-      { label: 'Plot', value: '3,800 m²' },
+      { label: 'Status', value: '[TBD]' },
+      { label: 'Architecture', value: '[TBD]' },
+      { label: 'Plot', value: '[TBD]' },
     ],
     gallery: [
       'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
-      'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
-      'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/1-scaled.jpg',
+      '',
+      '',
     ],
     typologies: [
-      { type: 'T3', area: '180 – 220 m²', bedrooms: 3, description: 'Three-bedroom villa with open-plan living, a private garden, and direct connection to outdoor space. Designed for families who value both privacy and community.' },
-      { type: 'T4', area: '240 – 280 m²', bedrooms: 4, description: 'The flagship villa. Four bedrooms, a master suite with walk-in closet, double-height living area, and a wraparound garden with mature landscaping.' },
+      { type: 'T3', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
+      { type: 'T4', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
     ],
     locationInfo: {
-      description: 'Santo Tirso offers the rare combination of natural surroundings and urban convenience. Set along the Ave River, the town provides excellent schools, a growing cultural scene, and fast road connections to Porto — all within a landscape defined by green hills and riverside paths.',
+      description: '[Location description - to be provided]',
       highlights: [
-        { icon: 'transport', label: 'Train Station', detail: '5 min drive' },
-        { icon: 'park', label: 'Parque Urbano Sara Moreira', detail: '3 min walk' },
-        { icon: 'school', label: 'Schools', detail: '5 min drive' },
-        { icon: 'shopping', label: 'Town Centre', detail: '4 min drive' },
-        { icon: 'hospital', label: 'Hospital', detail: '8 min' },
-        { icon: 'river', label: 'Rio Ave', detail: '2 min walk' },
+        { icon: 'transport', label: '[TBD]', detail: '[TBD]' },
+        { icon: 'park', label: '[TBD]', detail: '[TBD]' },
+        { icon: 'school', label: '[TBD]', detail: '[TBD]' },
+        { icon: 'shopping', label: '[TBD]', detail: '[TBD]' },
+        { icon: 'hospital', label: '[TBD]', detail: '[TBD]' },
+        { icon: 'river', label: '[TBD]', detail: '[TBD]' },
       ],
     },
   },
@@ -205,11 +205,198 @@ function LocationIcon({ type }) {
 }
 
 // ============================================================
-// Nav — adapted for project page (always solid bg, back link)
+// Menu components -shared with homepage
+// ============================================================
+function MenuSubLink({ label, subtitle, href, onClose }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <a
+      href={href || '#'}
+      onClick={(e) => {
+        if (href && !href.startsWith('http')) {
+          // Let the browser navigate to index.html#section
+        } else {
+          e.preventDefault();
+        }
+        onClose();
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: 'block', textDecoration: 'none',
+        padding: '12px 0',
+        transition: 'opacity 0.3s',
+        opacity: hovered ? 0.7 : 1,
+      }}
+    >
+      <span style={{
+        fontWeight: 400, fontSize: 15, letterSpacing: '0.08em',
+        textTransform: 'uppercase', color: C.bege,
+        position: 'relative', display: 'inline-block',
+      }}>
+        {label}
+        <span style={{
+          position: 'absolute', left: 0, bottom: -1, height: 1,
+          background: C.bege, width: hovered ? '100%' : '0%',
+          transition: 'width 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
+        }} />
+      </span>
+      {subtitle && (
+        <span style={{
+          display: 'block', fontWeight: 300, fontSize: 12, letterSpacing: '0.06em',
+          color: 'rgba(238,232,218,0.5)', marginTop: 2,
+        }}>{subtitle}</span>
+      )}
+    </a>
+  );
+}
+
+function MenuLink({ label, href, onClose, hasChildren, children }) {
+  const [hovered, setHovered] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const handleClick = (e) => {
+    if (hasChildren) {
+      e.preventDefault();
+      setExpanded(!expanded);
+    } else {
+      // Navigate to homepage section
+      if (href) {
+        // Let browser follow the link naturally
+      } else {
+        e.preventDefault();
+      }
+      onClose();
+    }
+  };
+
+  return (
+    <div>
+      <a
+        href={href || '#'}
+        onClick={handleClick}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          fontWeight: 400, fontSize: 28, letterSpacing: '0.04em',
+          textTransform: 'uppercase',
+          color: C.bege, textDecoration: 'none',
+          padding: '16px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          transition: 'opacity 0.3s',
+          opacity: hovered ? 0.7 : 1,
+          borderBottom: '1px solid rgba(238,232,218,0.15)',
+          position: 'relative',
+        }}
+      >
+        <span style={{ position: 'relative', display: 'inline-block' }}>
+          {label}
+          <span style={{
+            position: 'absolute', left: 0, bottom: -2, height: 1,
+            background: C.bege, width: hovered ? '100%' : '0%',
+            transition: 'width 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+          }} />
+        </span>
+        {hasChildren && (
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={C.bege} strokeWidth="1"
+            style={{ transition: 'transform 0.3s ease', transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', marginLeft: 12, flexShrink: 0 }}>
+            <polyline points="2,5 7,10 12,5" />
+          </svg>
+        )}
+      </a>
+      {hasChildren && (
+        <div style={{
+          maxHeight: expanded ? 200 : 0,
+          overflow: 'hidden',
+          transition: 'max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+          paddingLeft: 16,
+        }}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MenuDrawer({ open, onClose }) {
+  return (
+    <>
+      {/* Dark backdrop */}
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 199,
+          background: 'rgba(0,0,0,0.45)',
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? 'auto' : 'none',
+          transition: 'opacity 0.4s ease',
+        }}
+      />
+      {/* Side drawer from right */}
+      <div style={{
+        position: 'fixed', top: 0, right: 0, bottom: 0,
+        width: Math.min(420, window.innerWidth),
+        maxWidth: '100vw',
+        zIndex: 201,
+        background: C.green,
+        transform: open ? 'translateX(0)' : 'translateX(100%)',
+        transition: 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+        display: 'flex', flexDirection: 'column',
+        justifyContent: 'space-between',
+        padding: '48px 56px 48px',
+        overflowY: 'auto',
+      }}>
+        {/* Top: close button + logo */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 72 }}>
+            <img
+              src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
+              alt="Orma" style={{ height: 22, width: 'auto', display: 'block', opacity: 0.8 }}
+            />
+            <button onClick={onClose} style={{
+              background: 'transparent', border: 'none',
+              cursor: 'pointer', padding: 8,
+            }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke={C.bege} strokeWidth="1" strokeLinecap="round">
+                <line x1="4" y1="4" x2="16" y2="16" />
+                <line x1="16" y1="4" x2="4" y2="16" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Nav links */}
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            <MenuLink label="Projects" href="index.html#projects" onClose={onClose} hasChildren>
+              <MenuSubLink label="Lir 725" subtitle="Porto" href="project.html?id=lir-725" onClose={onClose} />
+              <MenuSubLink label="Villas Sto. Tirso" subtitle="Santo Tirso" href="project.html?id=villas-sto-tirso" onClose={onClose} />
+            </MenuLink>
+            <MenuLink label="About" href="index.html#about" onClose={onClose} />
+            <MenuLink label="Contact" href="index.html#contact" onClose={onClose} />
+          </nav>
+        </div>
+
+        {/* Bottom: contact info */}
+        <div style={{ borderTop: '1px solid rgba(238,232,218,0.15)', paddingTop: 32 }}>
+          <p style={{
+            fontWeight: 300,
+            fontSize: 13, lineHeight: 1.7, letterSpacing: '0.03em',
+            color: 'rgba(238,232,218,0.6)', margin: 0,
+          }}>
+            Porto - Santo Tirso<br />
+            geral@orma.pt
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ============================================================
+// Nav -global menu (same as homepage)
 // ============================================================
 function ProjectNav({ projectName }) {
   const isMobile = useIsMobile();
   const [visible, setVisible] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
   const lastScroll = useRef(0);
 
   useEffect(() => {
@@ -229,77 +416,78 @@ function ProjectNav({ projectName }) {
   }, []);
 
   return (
-    <nav style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0,
-      height: 80,
-      padding: isMobile ? '0 20px' : '0 48px',
-      background: 'rgba(92,100,87,0.95)',
-      backdropFilter: 'blur(12px)',
-      WebkitBackdropFilter: 'blur(12px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      zIndex: 150,
-      transform: visible ? 'translateY(0)' : 'translateY(-100%)',
-      transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
-    }}>
-      {/* Logo — links to homepage */}
-      <a href="index.html" style={{ display: 'block', lineHeight: 0 }}>
-        <img
-          src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
-          alt="Orma"
-          style={{ height: 28, width: 'auto', display: 'block' }}
-        />
-      </a>
+    <>
+      <MenuDrawer open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <nav style={{
+        position: 'fixed',
+        top: 0, left: 0, right: 0,
+        height: 80,
+        padding: isMobile ? '0 20px' : '0 48px',
+        background: 'rgba(92,100,87,0.95)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        zIndex: 150,
+        transform: visible || menuOpen ? 'translateY(0)' : 'translateY(-100%)',
+        transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+      }}>
+        {/* Logo -links to homepage */}
+        <a href="index.html" style={{ display: 'block', lineHeight: 0 }}>
+          <img
+            src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png"
+            alt="Orma"
+            style={{ height: 28, width: 'auto', display: 'block' }}
+          />
+        </a>
 
-      {/* Back to projects */}
-      <a href="index.html#projects" style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-        color: C.bege, textDecoration: 'none',
-        fontSize: 12, letterSpacing: '0.15em', textTransform: 'uppercase',
-        fontWeight: 500, opacity: 0.8, transition: 'opacity 0.3s',
-      }}
-        onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-        onMouseLeave={e => e.currentTarget.style.opacity = '0.8'}
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
-        All Projects
-      </a>
-    </nav>
+        {/* Hamburger icon */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          style={{
+            background: 'transparent', border: 'none',
+            cursor: 'pointer', padding: 8,
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'flex-end', justifyContent: 'center',
+            gap: 7, width: 48, height: 48,
+          }}
+          aria-label="Menu"
+        >
+          <span style={{ display: 'block', width: 32, height: 1.5, background: C.bege, transition: 'all 0.3s' }} />
+          <span style={{ display: 'block', width: 24, height: 1.5, background: C.bege, transition: 'all 0.3s' }} />
+          <span style={{ display: 'block', width: 32, height: 1.5, background: C.bege, transition: 'all 0.3s' }} />
+        </button>
+      </nav>
+    </>
   );
 }
 
 // ============================================================
-// 1. Project Hero — full-bleed image with overlay text
+// 1. Project Hero -full-bleed image with overlay text
 // ============================================================
 function ProjectHero({ project }) {
   const isMobile = useIsMobile();
   const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
+    <>
+    {/* Fixed hero -content scrolls over it */}
     <section style={{
-      position: 'relative',
+      position: 'fixed',
+      top: 0, left: 0,
       width: '100%',
-      height: '85vh',
-      minHeight: 500,
+      height: '100vh',
       overflow: 'hidden',
+      zIndex: 1,
     }}>
       {/* Background image */}
-      <img
-        src={project.hero}
-        alt={project.name}
-        onLoad={() => setImgLoaded(true)}
-        style={{
-          position: 'absolute', inset: 0,
-          width: '100%', height: '100%',
-          objectFit: 'cover',
-          opacity: imgLoaded ? 1 : 0,
-          transition: 'opacity 0.8s ease',
-        }}
-      />
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: 'url(' + project.hero + ')',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }} />
 
       {/* Gradient overlay */}
       <div style={{
@@ -357,11 +545,14 @@ function ProjectHero({ project }) {
         }
       `}</style>
     </section>
+    {/* Spacer so content starts after hero */}
+    <div style={{ height: '100vh' }} />
+    </>
   );
 }
 
 // ============================================================
-// 2. Overview — description + stats grid
+// 2. Overview -description + stats grid
 // ============================================================
 function Overview({ project }) {
   const isMobile = useIsMobile();
@@ -379,7 +570,7 @@ function Overview({ project }) {
         gap: isMobile ? 48 : 100,
         willChange: 'opacity, transform',
       }}>
-        {/* Left — text */}
+        {/* Left -text */}
         <div>
           <div style={{
             fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
@@ -401,7 +592,7 @@ function Overview({ project }) {
           </p>
         </div>
 
-        {/* Right — stats grid */}
+        {/* Right -stats grid */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
@@ -434,7 +625,7 @@ function Overview({ project }) {
 }
 
 // ============================================================
-// 3. Gallery — asymmetric image grid
+// 3. Gallery -asymmetric image grid
 // ============================================================
 function Gallery({ project }) {
   const isMobile = useIsMobile();
@@ -468,29 +659,10 @@ function Gallery({ project }) {
             overflow: 'hidden', borderRadius: 4,
             gridRow: isMobile ? 'auto' : '1 / 3',
           }}>
-            <img
-              src={project.gallery[0]}
-              alt={project.name + ' — 1'}
-              loading="lazy"
-              style={{
-                width: '100%', height: '100%',
-                objectFit: 'cover',
-                transition: 'transform 0.6s ease',
-              }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-            />
-          </div>
-
-          {/* Two smaller images stacked */}
-          {project.gallery.slice(1, 3).map((img, i) => (
-            <div key={i} style={{
-              overflow: 'hidden', borderRadius: 4,
-              height: isMobile ? 240 : 'auto',
-            }}>
+            {project.gallery[0] ? (
               <img
-                src={img}
-                alt={project.name + ' — ' + (i + 2)}
+                src={project.gallery[0]}
+                alt={project.name}
                 loading="lazy"
                 style={{
                   width: '100%', height: '100%',
@@ -500,6 +672,33 @@ function Gallery({ project }) {
                 onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
                 onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
               />
+            ) : (
+              <div style={{ width: '100%', height: '100%', minHeight: 400, background: C.grey, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.clearGreen, fontSize: 13, letterSpacing: '0.15em', textTransform: 'uppercase' }}>[Image]</div>
+            )}
+          </div>
+
+          {/* Two smaller images stacked */}
+          {project.gallery.slice(1, 3).map((img, i) => (
+            <div key={i} style={{
+              overflow: 'hidden', borderRadius: 4,
+              height: isMobile ? 240 : 'auto',
+            }}>
+              {img ? (
+                <img
+                  src={img}
+                  alt={project.name + ' ' + (i + 2)}
+                  loading="lazy"
+                  style={{
+                    width: '100%', height: '100%',
+                    objectFit: 'cover',
+                    transition: 'transform 0.6s ease',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                />
+              ) : (
+                <div style={{ width: '100%', height: '100%', minHeight: 200, background: C.grey, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.clearGreen, fontSize: 13, letterSpacing: '0.15em', textTransform: 'uppercase' }}>[Image]</div>
+              )}
             </div>
           ))}
         </div>
@@ -509,7 +708,7 @@ function Gallery({ project }) {
 }
 
 // ============================================================
-// 4. Typologies — tabs/cards per unit type
+// 4. Typologies -tabs/cards per unit type
 // ============================================================
 function Typologies({ project }) {
   const isMobile = useIsMobile();
@@ -648,7 +847,7 @@ function Typologies({ project }) {
 }
 
 // ============================================================
-// 5. Location — map area + highlights
+// 5. Location -map area + highlights
 // ============================================================
 function Location({ project }) {
   const isMobile = useIsMobile();
@@ -721,7 +920,7 @@ function Location({ project }) {
 }
 
 // ============================================================
-// 6. Project CTA — contact block specific to project
+// 6. Project CTA -contact block specific to project
 // ============================================================
 function ProjectCTA({ project }) {
   const isMobile = useIsMobile();
@@ -764,7 +963,7 @@ function ProjectCTA({ project }) {
           fontSize: 16, lineHeight: 1.8, color: 'rgba(238,232,218,0.65)',
           margin: '0 auto 44px', maxWidth: 500,
         }}>
-          Whether you're looking for more details, floor plans, or pricing — our team is here.
+          Whether you're looking for more details, floor plans, or pricing - our team is here.
         </p>
 
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -781,7 +980,7 @@ function ProjectCTA({ project }) {
 }
 
 // ============================================================
-// 7. Footer — simplified for project page
+// 7. Footer -simplified for project page
 // ============================================================
 function ProjectFooter() {
   const isMobile = useIsMobile();
@@ -826,7 +1025,7 @@ function ProjectPage() {
   // Update page title
   useEffect(() => {
     if (project) {
-      document.title = `Orma. — ${project.name}`;
+      document.title = `Orma. -${project.name}`;
     }
   }, [project]);
 
@@ -851,12 +1050,15 @@ function ProjectPage() {
     }}>
       <ProjectNav projectName={project.name} />
       <ProjectHero project={project} />
-      <Overview project={project} />
-      <Gallery project={project} />
-      <Typologies project={project} />
-      <Location project={project} />
-      <ProjectCTA project={project} />
-      <ProjectFooter />
+      {/* All content after hero has relative position + z-index to scroll over the fixed hero */}
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        <Overview project={project} />
+        <Gallery project={project} />
+        <Typologies project={project} />
+        <Location project={project} />
+        <ProjectCTA project={project} />
+        <ProjectFooter />
+      </div>
 
       {/* Scroll to top */}
       <ScrollToTop />
