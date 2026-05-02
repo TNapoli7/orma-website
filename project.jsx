@@ -871,34 +871,44 @@ function Location({ project }) {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
+      /* Pin the entire section - map stays fixed while scroll continues */
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: 'bottom top',
+        pin: true,
+        pinSpacing: true,
+      });
+
       /* Map parallax - slow vertical drift as you scroll through */
       gsap.fromTo(mapRef.current,
-        { yPercent: -8 },
+        { yPercent: -6, opacity: 0 },
         {
-          yPercent: 8,
+          yPercent: 6,
+          opacity: 1,
           ease: 'none',
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top bottom',
-            end: 'bottom top',
+            end: 'top 20%',
             scrub: true,
           },
         }
       );
 
-      /* Cards - fade in + slide up on enter */
+      /* Cards - fade in + slide up, scroll-driven */
       const cards = cardsRef.current.children;
       gsap.fromTo(cards,
-        { opacity: 0, y: 50 },
+        { opacity: 0, y: 60 },
         {
           opacity: 1, y: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'power2.out',
+          stagger: 0.1,
+          ease: 'none',
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: 'top 60%',
-            toggleActions: 'play none none none',
+            start: 'top 50%',
+            end: 'top 10%',
+            scrub: true,
           },
         }
       );
@@ -1241,12 +1251,20 @@ function ProjectPage() {
     }}>
       <ProjectNav projectName={project.name} />
       <ProjectHero project={project} />
-      {/* All content after hero has relative position + z-index to scroll over the fixed hero */}
+      {/* Content before map - scrolls over fixed hero */}
       <div style={{ position: 'relative', zIndex: 2 }}>
         <Overview project={project} />
         <Gallery project={project} />
         <Typologies project={project} />
+      </div>
+
+      {/* Location - GSAP pinned, z-index 1 so next block scrolls over it */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
         <Location project={project} />
+      </div>
+
+      {/* Content after map - z-index 2 scrolls over the pinned map */}
+      <div style={{ position: 'relative', zIndex: 2 }}>
         <ProjectCTA project={project} />
         <ProjectFooter />
       </div>
