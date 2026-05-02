@@ -45,7 +45,10 @@ const PROJECTS = {
       { type: 'T4', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
     ],
     locationInfo: {
-      description: '[Location description - to be provided]',
+      address: '[Address - to be provided]',
+      phone: '[TBD]',
+      mapCoords: '41.1496,-8.6110',
+      mapZoom: 15,
       highlights: [
         { icon: 'transport', label: '[TBD]', detail: '[TBD]' },
         { icon: 'park', label: '[TBD]', detail: '[TBD]' },
@@ -81,7 +84,10 @@ const PROJECTS = {
       { type: 'T4', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
     ],
     locationInfo: {
-      description: '[Location description - to be provided]',
+      address: '[Address - to be provided]',
+      phone: '[TBD]',
+      mapCoords: '41.3411,-8.4770',
+      mapZoom: 14,
       highlights: [
         { icon: 'transport', label: '[TBD]', detail: '[TBD]' },
         { icon: 'park', label: '[TBD]', detail: '[TBD]' },
@@ -847,72 +853,215 @@ function Typologies({ project }) {
 }
 
 // ============================================================
-// 5. Location -map area + highlights
+// 5. Location - full-bleed map with overlay cards (LAGOM-style)
 // ============================================================
 function Location({ project }) {
   const isMobile = useIsMobile();
-  const revealRef = useScrollReveal();
+  const sectionRef = useRef(null);
+  const [visible, setVisible] = useState(false);
   const loc = project.locationInfo;
+  const [lat, lng] = (loc.mapCoords || '41.15,-8.61').split(',');
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            observer.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section style={{
-      background: C.bege,
-      padding: isMobile ? '80px 24px' : '140px 80px',
+    <section ref={sectionRef} style={{
+      position: 'relative',
+      width: '100%',
+      height: isMobile ? 'auto' : '85vh',
+      minHeight: isMobile ? 'auto' : 620,
+      overflow: 'hidden',
     }}>
-      <div ref={revealRef} style={{
-        maxWidth: 1200, margin: '0 auto',
-        willChange: 'opacity, transform',
+      {/* Google Maps embed as background */}
+      <div style={{
+        position: isMobile ? 'relative' : 'absolute',
+        inset: 0,
+        height: isMobile ? 350 : '100%',
+        zIndex: 0,
       }}>
-        <div style={{
-          fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
-          textTransform: 'uppercase', fontWeight: 600, marginBottom: 16,
-        }}>
-          Location
-        </div>
-        <h2 style={{
-          fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2,
-          letterSpacing: '-0.01em', color: C.ink, margin: '0 0 24px',
-        }}>
-          {project.location}
-        </h2>
-        <p style={{
-          fontSize: 16, lineHeight: 1.8, color: C.green,
-          margin: '0 0 56px', maxWidth: 640,
-        }}>
-          {loc.description}
-        </p>
+        <iframe
+          src={'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d6000!2d' + lng + '!3d' + lat + '!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4v1700000000000!5m2!1spt!2spt'}
+          width="100%"
+          height="100%"
+          style={{ border: 0, filter: 'saturate(0.85) brightness(1.02)' }}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          title={'Map - ' + project.name}
+        />
+      </div>
 
-        {/* Highlights grid */}
+      {/* Card overlays */}
+      <div style={{
+        position: isMobile ? 'relative' : 'absolute',
+        inset: 0,
+        zIndex: 1,
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
+        alignItems: isMobile ? 'stretch' : 'flex-start',
+        justifyContent: 'space-between',
+        padding: isMobile ? '0' : '60px 64px',
+        gap: isMobile ? 0 : 24,
+        pointerEvents: 'none',
+      }}>
+        {/* Left card - Address info */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, 1fr)',
-          gap: isMobile ? 16 : 24,
+          background: C.white,
+          padding: isMobile ? '32px 24px' : '40px 36px',
+          borderRadius: isMobile ? 0 : 8,
+          maxWidth: isMobile ? '100%' : 380,
+          width: isMobile ? '100%' : 380,
+          pointerEvents: 'auto',
+          boxShadow: isMobile ? 'none' : '0 8px 40px rgba(0,0,0,0.12)',
+          opacity: visible ? 1 : 0,
+          transform: visible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1)',
         }}>
-          {loc.highlights.map((h) => (
-            <div key={h.label} style={{
-              padding: isMobile ? '20px 16px' : '28px 24px',
-              background: C.white,
-              borderRadius: 6,
-              display: 'flex', flexDirection: 'column', gap: 12,
-            }}>
-              <div style={{ color: C.green }}>
-                <LocationIcon type={h.icon} />
-              </div>
+          <h3 style={{
+            fontWeight: 500, fontSize: isMobile ? 22 : 26,
+            color: C.ink, margin: '0 0 28px',
+            letterSpacing: '-0.01em',
+          }}>
+            {project.name}
+          </h3>
+
+          {/* Address */}
+          <div style={{
+            padding: '20px 0',
+            borderTop: '1px solid rgba(92,100,87,0.1)',
+          }}>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.terracota} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}>
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
               <div>
-                <div style={{
-                  fontWeight: 500, fontSize: 14, color: C.ink,
-                  marginBottom: 2,
-                }}>
-                  {h.label}
+                <div style={{ fontSize: 14, color: C.ink, lineHeight: 1.6 }}>
+                  {loc.address}
                 </div>
-                <div style={{
-                  fontSize: 13, color: C.clearGreen, fontWeight: 500,
-                }}>
-                  {h.detail}
+                <div style={{ fontSize: 13, color: C.clearGreen, marginTop: 2 }}>
+                  {project.location}
                 </div>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Phone */}
+          <div style={{
+            padding: '16px 0',
+            borderTop: '1px solid rgba(92,100,87,0.1)',
+          }}>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.terracota} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
+              </svg>
+              <span style={{ fontSize: 14, color: C.ink }}>{loc.phone}</span>
+            </div>
+          </div>
+
+          {/* View on map link */}
+          <a
+            href={'https://www.google.com/maps?q=' + lat + ',' + lng}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              marginTop: 16,
+              color: C.terracota, textDecoration: 'none',
+              fontSize: 13, fontWeight: 600, letterSpacing: '0.06em',
+              transition: 'opacity 0.3s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+          >
+            Ver no mapa
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </a>
+
+          {/* Nearby highlights */}
+          {loc.highlights && loc.highlights[0] && loc.highlights[0].label !== '[TBD]' && (
+            <div style={{ marginTop: 28, paddingTop: 20, borderTop: '1px solid rgba(92,100,87,0.1)' }}>
+              {loc.highlights.slice(0, 4).map((h) => (
+                <div key={h.label} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '8px 0',
+                  fontSize: 13, color: C.green,
+                }}>
+                  <span>{h.label}</span>
+                  <span style={{ color: C.clearGreen, fontWeight: 500 }}>{h.detail}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right card - Project image */}
+        <div style={{
+          background: C.white,
+          borderRadius: isMobile ? 0 : 8,
+          maxWidth: isMobile ? '100%' : 380,
+          width: isMobile ? '100%' : 380,
+          overflow: 'hidden',
+          pointerEvents: 'auto',
+          boxShadow: isMobile ? 'none' : '0 8px 40px rgba(0,0,0,0.12)',
+          alignSelf: isMobile ? 'auto' : 'flex-start',
+          marginTop: isMobile ? 0 : 60,
+          opacity: visible ? 1 : 0,
+          transform: visible ? 'translateY(0)' : 'translateY(30px)',
+          transition: 'opacity 0.7s cubic-bezier(0.22,1,0.36,1) 0.15s, transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.15s',
+        }}>
+          {/* Project image */}
+          <div style={{ height: isMobile ? 200 : 220, overflow: 'hidden' }}>
+            <img
+              src={project.hero}
+              alt={project.name}
+              loading="lazy"
+              style={{
+                width: '100%', height: '100%',
+                objectFit: 'cover',
+              }}
+            />
+          </div>
+
+          {/* Project name + CTA */}
+          <div style={{ padding: '24px 28px' }}>
+            <h4 style={{
+              fontWeight: 500, fontSize: 18,
+              color: C.ink, margin: '0 0 16px',
+              letterSpacing: '-0.01em',
+            }}>
+              {project.name}
+            </h4>
+            <FillButton
+              href={'#'}
+              onClick={e => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              style={{ width: '100%', textAlign: 'center', display: 'block', padding: '14px 24px' }}
+            >
+              Ver projecto
+            </FillButton>
+          </div>
         </div>
       </div>
     </section>
