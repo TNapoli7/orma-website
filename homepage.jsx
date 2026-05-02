@@ -1188,6 +1188,7 @@ function Projects() {
   const projects = [
     {
       code: 'ORMA / 01', name: 'Lir 725', location: 'Porto',
+      slug: 'lir-725',
       blurb: 'A residential building in Porto designed in response to its surrounding context. The project balances a clear relationship with the street with the inclusion of private outdoor spaces.',
       image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
       meta: '12 apartments - 2026 - 2027',
@@ -1195,6 +1196,7 @@ function Projects() {
     },
     {
       code: 'ORMA / 02', name: 'Villas Sto. Tirso', location: 'Santo Tirso',
+      slug: 'villas-sto-tirso',
       blurb: 'A residential project in Santo Tirso set within a low-density and naturally defined environment. The design responds to the surrounding landscape, prioritising orientation, privacy and the relationship with outdoor space.',
       image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
       meta: '6 villas - 2026 - 2028',
@@ -1424,8 +1426,8 @@ function Projects() {
                 </div>
 
                 {/* CTA button with left-to-right fill hover */}
-                {!p.isPlaceholder && (
-                  <a href="#" style={{
+                {!p.isPlaceholder && p.slug && (
+                  <a href={'project.html?id=' + p.slug} style={{
                     display: 'inline-block',
                     fontSize: isMobile ? 11 : 12, letterSpacing: '0.2em',
                     textTransform: 'uppercase', fontWeight: 600,
