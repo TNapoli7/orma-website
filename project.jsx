@@ -952,6 +952,7 @@ function Location({ project }) {
   return (
     <section ref={sectionRef} style={{
       position: 'relative',
+      zIndex: 1,
       width: '100%',
     }}>
       {/* Sticky map - pins to viewport while section scrolls */}
@@ -1267,12 +1268,18 @@ function ProjectPage() {
     }}>
       <ProjectNav projectName={project.name} />
       <ProjectHero project={project} />
-      {/* All content after hero has relative position + z-index to scroll over the fixed hero */}
+      {/* Content block 1 - scrolls over fixed hero, then away to reveal map */}
       <div style={{ position: 'relative', zIndex: 2 }}>
         <Overview project={project} />
         <Gallery project={project} />
         <Typologies project={project} />
-        <Location project={project} />
+      </div>
+
+      {/* Location - sticky map revealed between content blocks */}
+      <Location project={project} />
+
+      {/* Content block 2 - scrolls over the sticky map */}
+      <div style={{ position: 'relative', zIndex: 2 }}>
         <ProjectCTA project={project} />
         <ProjectFooter />
       </div>
