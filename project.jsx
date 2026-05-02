@@ -1258,13 +1258,13 @@ function ProjectPage() {
         <Typologies project={project} />
       </div>
 
-      {/* Location - GSAP pinned, z-index 1 so next block scrolls over it */}
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      {/* Location - GSAP pinned, z-index 2 covers hero, below z-index 3 content after */}
+      <div style={{ position: 'relative', zIndex: 2 }}>
         <Location project={project} />
       </div>
 
-      {/* Content after map - z-index 2 scrolls over the pinned map */}
-      <div style={{ position: 'relative', zIndex: 2 }}>
+      {/* Content after map - z-index 3 scrolls over the pinned map */}
+      <div style={{ position: 'relative', zIndex: 3 }}>
         <ProjectCTA project={project} />
         <ProjectFooter />
       </div>
