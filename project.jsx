@@ -896,7 +896,7 @@ function Location({ project }) {
         zIndex: 0,
       }}>
         <iframe
-          src={'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d6000!2d' + lng + '!3d' + lat + '!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4v1700000000000!5m2!1spt!2spt'}
+          src={'https://maps.google.com/maps?q=' + lat + ',' + lng + '&t=&z=' + (loc.mapZoom || 15) + '&ie=UTF8&iwloc=&output=embed'}
           width="100%"
           height="100%"
           style={{ border: 0, filter: 'saturate(0.85) brightness(1.02)' }}
