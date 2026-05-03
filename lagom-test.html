@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orma — Gallery Test (LAGOM Style)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #F2EFE9;
+    --ink: #1F2022;
+    --text-muted: #7E7975;
+    --accent: #974315;
+    --white: #FFFFFF;
+    --green: #5C6457;
+    --border: rgba(0,0,0,0.08);
+  }
+
+  html { scroll-behavior: auto; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== HERO (section 1 — simple placeholder) ===== */
+  .hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 60px;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80') center/cover no-repeat;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(31,32,34,0.5) 0%, rgba(31,32,34,0) 60%);
+  }
+  .hero-title {
+    position: relative; z-index: 2;
+    font-family: 'Mulish', sans-serif;
+    font-size: clamp(60px, 12vw, 180px);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+  .hero-tagline {
+    position: absolute; bottom: 60px; right: 60px; z-index: 2;
+    max-width: 400px;
+    font-size: 16px; line-height: 1.6;
+    color: rgba(255,255,255,0.8);
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 20px;
+    padding: 14px 32px;
+    background: var(--accent);
+    color: var(--white);
+    text-decoration: none;
+    font-size: 14px; font-weight: 600;
+    letter-spacing: 0.05em;
+    border: none; cursor: pointer;
+    transition: background 0.3s;
+  }
+  .hero-cta:hover { background: #b05018; }
+  .hero-arrow {
+    position: absolute; top: 40px; right: 60px; z-index: 2;
+    width: 24px; height: 24px;
+    border-right: 2px solid var(--white);
+    border-bottom: 2px solid var(--white);
+    opacity: 0.5;
+  }
+
+  /* ===== SECTION 2 — BENEFITS (asymmetric images + text reveal + stats) ===== */
+  .benefits {
+    position: relative;
+    padding: 0 0 100px;
+  }
+  .benefits .container-top {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 0;
+    min-height: 100vh;
+    padding: 80px 48px 0;
+    align-items: start;
+  }
+  .benefits .container-index {
+    position: absolute;
+    top: 80px; left: 48px;
+    font-size: 14px;
+    color: var(--text-muted);
+    opacity: 0.5;
+    letter-spacing: 0.05em;
+    z-index: 5;
+  }
+  .benefits .img-left {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    margin-top: 60px;
+  }
+  .benefits .img-left img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .benefits .img-right {
+    grid-column: 3;
+    grid-row: 1;
+    width: 100%;
+    max-width: 340px;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    justify-self: end;
+  }
+  .benefits .img-right img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .benefits .img-center {
+    grid-column: 2;
+    grid-row: 2;
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    justify-self: center;
+    margin-top: -80px;
+  }
+  .benefits .img-center img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .benefits .container-text {
+    grid-column: 1 / -1;
+    grid-row: 1 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 40px;
+    pointer-events: none;
+    z-index: 3;
+    min-height: 70vh;
+  }
+  .benefits .reveal-heading {
+    font-family: 'Mulish', sans-serif;
+    font-size: clamp(40px, 5.5vw, 80px);
+    font-weight: 800;
+    color: var(--text-muted);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .benefits .reveal-heading .word {
+    display: inline-block;
+    margin: 0 0.15em;
+  }
+  .benefits .reveal-heading .char {
+    display: inline-block;
+    opacity: 0.15;
+  }
+
+  /* Stats row */
+  .benefits .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    padding: 80px 48px 0;
+    position: relative;
+  }
+  .benefits .stat {
+    padding: 40px 32px;
+    border-left: 1px solid var(--border);
+  }
+  .benefits .stat:first-child { border-left: none; }
+  .benefits .stat-label {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .benefits .stat-number {
+    font-family: 'Mulish', sans-serif;
+    font-size: clamp(48px, 5vw, 72px);
+    font-weight: 800;
+    color: var(--text-muted);
+    opacity: 0.35;
+    line-height: 1;
+    margin-bottom: 4px;
+    display: inline;
+  }
+  .benefits .stat-unit {
+    font-family: 'Mulish', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-muted);
+    opacity: 0.5;
+    margin-left: 8px;
+    display: inline;
+  }
+  .benefits .stat-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    max-width: 300px;
+  }
+  .benefits .stats-img {
+    position: absolute;
+    top: -60px; right: 48px;
+    width: 320px; height: 400px;
+    overflow: hidden;
+    z-index: 2;
+  }
+  .benefits .stats-img img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+
+  /* ===== SECTION 3 — PROJECTS (pinned cards with swiper) ===== */
+  .projects {
+    position: relative;
+    padding: 120px 0 0;
+  }
+  .projects .container-index {
+    position: absolute;
+    top: 120px; left: 48px;
+    font-size: 14px;
+    color: var(--text-muted);
+    opacity: 0.5;
+    letter-spacing: 0.05em;
+  }
+  .projects .section-title {
+    text-align: center;
+    padding: 0 48px 80px;
+  }
+  .projects .section-title h2 {
+    font-family: 'Mulish', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    color: var(--text-muted);
+    line-height: 1.15;
+  }
+  .projects .section-title .word {
+    display: inline-block;
+    margin: 0 0.1em;
+  }
+  .projects .section-title .char {
+    display: inline-block;
+    opacity: 0.15;
+  }
+  .projects .projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 48px;
+  }
+
+  /* Project card */
+  .project-card {
+    background: var(--white);
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    min-height: 80vh;
+    margin-bottom: 40px;
+    overflow: hidden;
+  }
+  .project-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px;
+  }
+  .project-info-top {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .project-price {
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .project-price strong {
+    font-family: 'Mulish', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+  }
+  .project-price sup {
+    font-size: 14px;
+    font-weight: 600;
+    vertical-align: super;
+  }
+  .project-area {
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .project-area strong { font-weight: 700; }
+  .project-highlight {
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .project-info-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .project-counter {
+    font-size: 14px;
+    color: var(--text-muted);
+    opacity: 0.5;
+  }
+  .project-counter strong {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    opacity: 1;
+  }
+  .project-name {
+    font-family: 'Mulish', sans-serif;
+    font-size: clamp(28px, 3vw, 44px);
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.15;
+  }
+  .project-desc {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .project-location {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .project-location svg {
+    width: 16px; height: 16px;
+    fill: none; stroke: var(--ink); stroke-width: 2;
+  }
+  .project-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .btn-accent {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px;
+    background: var(--accent);
+    color: var(--white);
+    text-decoration: none;
+    font-size: 14px; font-weight: 600;
+    border: none; cursor: pointer;
+    transition: background 0.3s;
+    letter-spacing: 0.02em;
+  }
+  .btn-accent:hover { background: #b05018; }
+  .btn-border {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px;
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--ink);
+    text-decoration: none;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.02em;
+  }
+  .btn-border:hover { background: var(--ink); color: var(--white); }
+  .btn-arrow {
+    width: 14px; height: 14px;
+    border-right: 2px solid currentColor;
+    border-top: 2px solid currentColor;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* Project slider */
+  .project-slider {
+    position: relative;
+    overflow: hidden;
+    min-height: 500px;
+  }
+  .project-slider .swiper {
+    width: 100%; height: 100%;
+  }
+  .project-slider .swiper-slide img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .project-badge {
+    position: absolute;
+    top: 24px; right: 24px;
+    z-index: 10;
+    background: var(--white);
+    padding: 16px 20px;
+    text-align: center;
+    min-width: 90px;
+  }
+  .project-badge-num {
+    font-family: 'Mulish', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .project-badge-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .project-badge-avail {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ===== FOOTER SPACER ===== */
+  .footer-spacer {
+    height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Mulish', sans-serif;
+    font-size: 24px;
+    color: var(--text-muted);
+    opacity: 0.3;
+  }
+
+  /* ===== Small arrow icon ===== */
+  .corner-arrow {
+    position: absolute;
+    width: 20px; height: 20px;
+    border-right: 1.5px solid var(--accent);
+    border-top: 1.5px solid var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ SECTION 1: HERO ============ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-title">ORMA</div>
+  <div class="hero-tagline">
+    Espaços pensados para viver em harmonia com a natureza.
+    <br><br>
+    <a href="#" class="hero-cta">Explorar projectos <span class="btn-arrow"></span></a>
+  </div>
+  <div class="hero-arrow"></div>
+</section>
+
+<!-- ============ SECTION 2: BENEFITS ============ -->
+<section class="benefits">
+  <div class="container-top">
+    <div class="container-index">002</div>
+
+    <!-- Left image -->
+    <div class="img-left">
+      <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80" alt="Interior">
+    </div>
+
+    <!-- Center text overlay -->
+    <div class="container-text">
+      <h2 class="reveal-heading" id="benefitsHeading"></h2>
+    </div>
+
+    <!-- Right image -->
+    <div class="img-right">
+      <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80" alt="Exterior">
+    </div>
+
+    <!-- Center-bottom image -->
+    <div class="img-center">
+      <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80" alt="Bedroom">
+    </div>
+  </div>
+
+  <!-- Stats row -->
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-label">Projectos</div>
+      <div>
+        <span class="stat-number">5</span>
+        <span class="stat-unit">unidades</span>
+      </div>
+      <div class="stat-desc">Projectos residenciais premium no Grande Porto e arredores.</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Acabamentos</div>
+      <div>
+        <span class="stat-number">A+</span>
+        <span class="stat-unit">classe</span>
+      </div>
+      <div class="stat-desc">Materiais de excelência e certificação energética superior.</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Espaço Exterior</div>
+      <div>
+        <span class="stat-number">2,4</span>
+        <span class="stat-unit">ha</span>
+      </div>
+      <div class="stat-desc">Jardins privados, zonas de lazer e paisagismo integrado.</div>
+    </div>
+    <div class="stats-img">
+      <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c0?w=600&q=80" alt="Garden">
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 3: PROJECTS ============ -->
+<section class="projects">
+  <div class="container-index">003</div>
+
+  <div class="section-title">
+    <h2 id="projectsHeading"></h2>
+  </div>
+
+  <div class="projects-grid">
+    <!-- Project 1 -->
+    <div class="project-card" data-project="1">
+      <div class="project-info">
+        <div class="project-info-top">
+          <p class="project-price">desde <strong>3 200</strong> <sup>€/m²</sup></p>
+          <p class="project-area">Area desde <strong>126</strong> m²</p>
+          <p class="project-highlight">Entrega prevista 2027</p>
+        </div>
+        <div class="project-info-bottom">
+          <div>
+            <p class="project-counter"><strong>01</strong>/02</p>
+            <h3 class="project-name">Lir 725</h3>
+            <p class="project-desc">Viver com vista, no coração do Porto</p>
+          </div>
+          <div class="project-location">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            Porto, Foz do Douro
+          </div>
+          <div class="project-buttons">
+            <a href="#" class="btn-accent">Saber mais <span class="btn-arrow"></span></a>
+            <button class="btn-border">Ver no mapa <span class="btn-arrow"></span></button>
+          </div>
+        </div>
+      </div>
+      <div class="project-slider">
+        <div class="project-badge">
+          <div class="project-badge-num">8</div>
+          <div class="project-badge-label">unidades</div>
+          <div class="project-badge-avail">disponível</div>
+        </div>
+        <div class="swiper project-swiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80" alt="Lir 725"></div>
+            <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80" alt="Lir 725"></div>
+            <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?w=1200&q=80" alt="Lir 725"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 2 -->
+    <div class="project-card" data-project="2">
+      <div class="project-info">
+        <div class="project-info-top">
+          <p class="project-price">desde <strong>2 800</strong> <sup>€/m²</sup></p>
+          <p class="project-area">Area desde <strong>180</strong> m²</p>
+          <p class="project-highlight">Entrega prevista 2028</p>
+        </div>
+        <div class="project-info-bottom">
+          <div>
+            <p class="project-counter"><strong>02</strong>/02</p>
+            <h3 class="project-name">Villas Sto. Tirso</h3>
+            <p class="project-desc">Moradias com jardim privativo e vista campo</p>
+          </div>
+          <div class="project-location">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            Santo Tirso, Porto
+          </div>
+          <div class="project-buttons">
+            <a href="#" class="btn-accent">Saber mais <span class="btn-arrow"></span></a>
+            <button class="btn-border">Ver no mapa <span class="btn-arrow"></span></button>
+          </div>
+        </div>
+      </div>
+      <div class="project-slider">
+        <div class="project-badge">
+          <div class="project-badge-num">12</div>
+          <div class="project-badge-label">moradias</div>
+          <div class="project-badge-avail">disponível</div>
+        </div>
+        <div class="swiper project-swiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80" alt="Villas"></div>
+            <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=1200&q=80" alt="Villas"></div>
+            <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=1200&q=80" alt="Villas"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="footer-spacer">— Orma. —</div>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ======== TEXT REVEAL — split into words & chars ======== */
+function splitText(el, text) {
+  const words = text.split(' ');
+  el.innerHTML = words.map(w => {
+    const chars = w.split('').map(c => '<span class="char">' + c + '</span>').join('');
+    return '<span class="word">' + chars + '</span>';
+  }).join(' ');
+}
+
+// Section 2 heading
+splitText(
+  document.getElementById('benefitsHeading'),
+  'Espaços pensados para viver em harmonia'
+);
+
+// Section 3 heading
+splitText(
+  document.getElementById('projectsHeading'),
+  'Os nossos projectos'
+);
+
+/* ======== SECTION 2: SCROLL ANIMATIONS ======== */
+(function() {
+  const section = document.querySelector('.benefits');
+  const chars = section.querySelectorAll('.reveal-heading .char');
+
+  // Char-by-char reveal on scroll
+  gsap.fromTo(chars,
+    { opacity: 0.15 },
+    {
+      opacity: 1,
+      stagger: 0.03,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section.querySelector('.container-text'),
+        start: '0% 80%',
+        end: '50% 50%',
+        scrub: 0.5,
+      }
+    }
+  );
+
+  // Image parallax
+  gsap.fromTo(section.querySelector('.img-left'),
+    { yPercent: 15, opacity: 0 },
+    {
+      yPercent: -5, opacity: 1, ease: 'none',
+      scrollTrigger: { trigger: section, start: '0% 100%', end: '100% 100%', scrub: 0.6 }
+    }
+  );
+  gsap.fromTo(section.querySelector('.img-right'),
+    { yPercent: -10, opacity: 0 },
+    {
+      yPercent: 5, opacity: 1, ease: 'none',
+      scrollTrigger: { trigger: section, start: '0% 100%', end: '100% 100%', scrub: 0.6 }
+    }
+  );
+  gsap.fromTo(section.querySelector('.img-center'),
+    { yPercent: 20, opacity: 0 },
+    {
+      yPercent: -10, opacity: 1, ease: 'none',
+      scrollTrigger: { trigger: section, start: '0% 60%', end: '100% 100%', scrub: 0.6 }
+    }
+  );
+
+  // Stats image parallax
+  const statsImg = section.querySelector('.stats-img');
+  if (statsImg) {
+    gsap.fromTo(statsImg,
+      { yPercent: 30 },
+      {
+        yPercent: -15, ease: 'none',
+        scrollTrigger: { trigger: section.querySelector('.stats-row'), start: 'top bottom', end: 'bottom top', scrub: 0.4 }
+      }
+    );
+  }
+
+  // Stats number reveal
+  const stats = section.querySelectorAll('.stat');
+  gsap.fromTo(stats,
+    { opacity: 0, y: 40 },
+    {
+      opacity: 1, y: 0,
+      stagger: 0.1, ease: 'none',
+      scrollTrigger: {
+        trigger: section.querySelector('.stats-row'),
+        start: '0% 80%',
+        end: '0% 40%',
+        scrub: 0.5,
+      }
+    }
+  );
+})();
+
+/* ======== SECTION 3: SCROLL ANIMATIONS ======== */
+(function() {
+  const section = document.querySelector('.projects');
+  const chars = section.querySelectorAll('.section-title .char');
+
+  // Title char reveal
+  gsap.fromTo(chars,
+    { opacity: 0.15 },
+    {
+      opacity: 1,
+      stagger: 0.04,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section.querySelector('.section-title'),
+        start: '0% 80%',
+        end: '50% 50%',
+        scrub: 0.5,
+      }
+    }
+  );
+
+  // Pin each project card
+  const cards = document.querySelectorAll('.project-card');
+  cards.forEach((card, i) => {
+    if (i < cards.length - 1) {
+      ScrollTrigger.create({
+        trigger: card,
+        start: '50% 50%',
+        end: () => '+=' + card.clientHeight,
+        pin: true,
+        pinSpacing: true,
+      });
+    }
+  });
+
+  // Swiper instances
+  document.querySelectorAll('.project-swiper').forEach(el => {
+    new Swiper(el, {
+      slidesPerView: 1,
+      loop: true,
+      effect: 'fade',
+      speed: 800,
+      autoplay: { delay: 4000, disableOnInteraction: false },
+      fadeEffect: { crossFade: true },
+    });
+  });
+})();
+
+/* ======== HERO PARALLAX ======== */
+gsap.to('.hero-bg', {
+  yPercent: 30,
+  ease: 'none',
+  scrollTrigger: {
+    trigger: '.hero',
+    start: 'top top',
+    end: 'bottom top',
+    scrub: 0.3,
+  }
+});
+gsap.to('.hero-title', {
+  yPercent: -50, opacity: 0,
+  ease: 'none',
+  scrollTrigger: {
+    trigger: '.hero',
+    start: 'top top',
+    end: 'bottom top',
+    scrub: 0.3,
+  }
+});
+</script>
+</body>
+</html>
