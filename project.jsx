@@ -685,238 +685,199 @@ function Overview({ project }) {
 function Gallery({ project }) {
   const isMobile = useIsMobile();
   const sectionRef = useRef(null);
-  const trackRef = useRef(null);
-  const counterRef = useRef(null);
-  const progressRef = useRef(null);
+  const headingRef = useRef(null);
   const rooms = project.rooms || [];
 
-  // Flatten rooms into slides: [{img, name, area, detail, isFirst}]
-  const slides = [];
-  rooms.forEach(room => {
-    room.images.forEach((img, i) => {
-      slides.push({ img, name: room.name, area: room.area, detail: room.detail, isFirst: i === 0 });
-    });
-  });
+  // Pick 3 images from rooms for asymmetric layout
+  const galleryImages = [
+    rooms[0]?.images?.[1] || rooms[0]?.images?.[0] || '',
+    rooms[1]?.images?.[0] || '',
+    rooms[2]?.images?.[0] || '',
+  ];
 
+  // Gallery stats — project-specific
+  const galleryStats = project.galleryStats || [
+    { label: 'Projectos', number: '5', unit: 'unidades', desc: 'Projectos residenciais premium no Grande Porto e arredores.' },
+    { label: 'Acabamentos', number: 'A+', unit: 'classe', desc: 'Materiais de excelência e certificação energética superior.' },
+    { label: 'Espaço Exterior', number: '2,4', unit: 'ha', desc: 'Jardins privados, zonas de lazer e paisagismo integrado.' },
+  ];
+
+  // Gallery heading text
+  const headingText = project.galleryHeading || 'Espaços pensados para viver em harmonia';
+
+  // Split text into words > chars for reveal animation
   useEffect(() => {
-    if (typeof gsap === 'undefined' || !gsap.registerPlugin || !sectionRef.current || isMobile) return;
+    if (!headingRef.current) return;
+    const words = headingText.split(' ');
+    headingRef.current.innerHTML = words.map(w => {
+      const chars = w.split('').map(c => '<span class="gal-char" style="display:inline-block;opacity:0.15">' + c + '</span>').join('');
+      return '<span style="display:inline-block;margin:0 0.15em">' + chars + '</span>';
+    }).join(' ');
+  }, [headingText]);
+
+  // GSAP animations
+  useEffect(() => {
+    if (typeof gsap === 'undefined' || !gsap.registerPlugin || !sectionRef.current) return;
     const section = sectionRef.current;
-    const slideEls = section.querySelectorAll('.g-slide');
-    const labelEls = section.querySelectorAll('.g-label');
-    const total = slideEls.length;
-    if (total < 2) return;
 
     const ctx = gsap.context(() => {
-      // Main pinned timeline
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: () => '+=' + (total * 70) + '%',
-          pin: true,
-          pinSpacing: true,
-          scrub: 0.6,
-          onUpdate: (self) => {
-            // Update progress bar
-            if (progressRef.current) {
-              progressRef.current.style.transform = 'scaleX(' + self.progress + ')';
+      // Char-by-char reveal
+      const chars = section.querySelectorAll('.gal-char');
+      if (chars.length) {
+        gsap.fromTo(chars,
+          { opacity: 0.15 },
+          {
+            opacity: 1, stagger: 0.03, ease: 'none',
+            scrollTrigger: {
+              trigger: section.querySelector('.gal-text-wrap'),
+              start: '0% 80%',
+              end: '50% 50%',
+              scrub: 0.5,
             }
-            // Update counter
-            const idx = Math.min(Math.floor(self.progress * total), total - 1);
-            if (counterRef.current) {
-              counterRef.current.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
-            }
-          },
-        },
-      });
-
-      // First slide starts visible — set initial states
-      gsap.set(slideEls[0], { opacity: 1, scale: 1 });
-      gsap.set(labelEls[0], { opacity: 1, y: 0 });
-      for (let i = 1; i < total; i++) {
-        gsap.set(slideEls[i], { opacity: 0, scale: 1.08 });
-        gsap.set(labelEls[i], { opacity: 0, y: 40 });
+          }
+        );
       }
 
-      // Build crossfade transitions
-      const hold = 0.6;   // hold duration per slide
-      const fade = 0.4;   // crossfade duration
-      for (let i = 0; i < total - 1; i++) {
-        const pos = i * (hold + fade) + hold;
-        // Fade out current label
-        tl.to(labelEls[i], { opacity: 0, y: -30, duration: fade * 0.6, ease: 'power2.in' }, pos);
-        // Crossfade images
-        tl.to(slideEls[i], { opacity: 0, scale: 1.04, duration: fade, ease: 'power2.inOut' }, pos);
-        tl.to(slideEls[i + 1], { opacity: 1, scale: 1, duration: fade, ease: 'power2.inOut' }, pos);
-        // Fade in next label
-        tl.to(labelEls[i + 1], { opacity: 1, y: 0, duration: fade * 0.7, ease: 'power2.out' }, pos + fade * 0.3);
+      if (!isMobile) {
+        // Image parallax — desktop only
+        const imgLeft = section.querySelector('.gal-img-left');
+        const imgRight = section.querySelector('.gal-img-right');
+        const imgCenter = section.querySelector('.gal-img-center');
+        if (imgLeft) gsap.fromTo(imgLeft, { yPercent: 15, opacity: 0 }, { yPercent: -5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 100%', end: '100% 100%', scrub: 0.6 } });
+        if (imgRight) gsap.fromTo(imgRight, { yPercent: -10, opacity: 0 }, { yPercent: 5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 100%', end: '100% 100%', scrub: 0.6 } });
+        if (imgCenter) gsap.fromTo(imgCenter, { yPercent: 20, opacity: 0 }, { yPercent: -10, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 60%', end: '100% 100%', scrub: 0.6 } });
+
+        // Stats image parallax
+        const statsImg = section.querySelector('.gal-stats-img');
+        if (statsImg) {
+          gsap.fromTo(statsImg, { yPercent: 30 }, { yPercent: -15, ease: 'none', scrollTrigger: { trigger: section.querySelector('.gal-stats-row'), start: 'top bottom', end: 'bottom top', scrub: 0.4 } });
+        }
+      }
+
+      // Stats reveal
+      const stats = section.querySelectorAll('.gal-stat');
+      if (stats.length) {
+        gsap.fromTo(stats,
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, stagger: 0.1, ease: 'none',
+            scrollTrigger: { trigger: section.querySelector('.gal-stats-row'), start: '0% 80%', end: '0% 40%', scrub: 0.5 } }
+        );
       }
     }, section);
 
     return () => ctx.revert();
-  }, [isMobile, slides.length]);
-
-  // ----- Mobile: simple vertical scroll with reveals -----
-  useEffect(() => {
-    if (typeof gsap === 'undefined' || !gsap.registerPlugin || !sectionRef.current || !isMobile) return;
-    const ctx = gsap.context(() => {
-      const items = sectionRef.current.querySelectorAll('.mob-card');
-      items.forEach(el => {
-        gsap.fromTo(el,
-          { opacity: 0, y: 50 },
-          { opacity: 1, y: 0, ease: 'power2.out',
-            scrollTrigger: { trigger: el, start: 'top 85%', end: 'top 50%', scrub: 0.4 } }
-        );
-      });
-    }, sectionRef.current);
-    return () => ctx.revert();
   }, [isMobile]);
 
-  if (!slides.length) return null;
+  if (!rooms.length) return null;
+
+  const textMuted = '#7E7975';
+  const border = 'rgba(0,0,0,0.08)';
 
   // ========= MOBILE LAYOUT =========
   if (isMobile) {
     return (
-      <section ref={sectionRef} style={{ background: C.bege }}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', padding: '80px 24px 40px' }}>
-          <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 12 }}>Gallery</div>
+      <section ref={sectionRef} style={{ background: C.bege, padding: '80px 0 60px' }}>
+        {/* Heading */}
+        <div className="gal-text-wrap" style={{ padding: '0 24px 48px', textAlign: 'center' }}>
+          <h2 ref={headingRef} style={{
+            fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(28px, 8vw, 44px)',
+            fontWeight: 800, color: textMuted, lineHeight: 1.2, letterSpacing: '-0.02em',
+          }} />
         </div>
-        {rooms.map((room, ri) => (
-          <div key={ri}>
-            {/* Room title */}
-            <div className="mob-card" style={{ textAlign: 'center', padding: '48px 24px 24px', background: C.bege }}>
-              <div style={{ fontSize: 28, fontWeight: 300, color: C.ink, lineHeight: 1.15 }}>{room.name}</div>
-              <div style={{ fontSize: 12, color: C.green, letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: 10, fontWeight: 500 }}>{room.area}</div>
-            </div>
-            {/* Images */}
-            {room.images.map((img, ii) => (
-              <div key={ii} className="mob-card" style={{ padding: '0 16px', marginBottom: 12 }}>
-                <div style={{ width: '100%', height: 280, overflow: 'hidden', borderRadius: 4, background: C.grey }}>
-                  {img ? (
-                    <img src={img} alt={room.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.clearGreen, fontSize: 12, letterSpacing: '0.15em', textTransform: 'uppercase' }}>[Image]</div>
-                  )}
-                </div>
-              </div>
-            ))}
-            {/* Detail */}
-            <div className="mob-card" style={{ padding: '16px 24px 48px' }}>
-              <p style={{ fontSize: 15, lineHeight: 1.7, color: C.ink, fontWeight: 300 }}>{room.detail}</p>
+        {/* Images stacked */}
+        {galleryImages.filter(Boolean).map((img, i) => (
+          <div key={i} className="mob-card" style={{ padding: '0 16px', marginBottom: 16 }}>
+            <div style={{ width: '100%', aspectRatio: i === 1 ? '4/5' : '3/4', overflow: 'hidden', background: C.grey }}>
+              <img src={img} alt={rooms[i]?.name || 'Gallery'} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             </div>
           </div>
         ))}
+        {/* Stats */}
+        <div className="gal-stats-row" style={{ padding: '48px 24px 0' }}>
+          {galleryStats.map((s, i) => (
+            <div key={i} className="gal-stat" style={{ padding: '32px 0', borderTop: i > 0 ? '1px solid ' + border : 'none' }}>
+              <div style={{ fontSize: 14, color: textMuted, marginBottom: 12, fontWeight: 500 }}>{s.label}</div>
+              <div>
+                <span style={{ fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(36px, 10vw, 52px)', fontWeight: 800, color: textMuted, opacity: 0.35, lineHeight: 1 }}>{s.number}</span>
+                <span style={{ fontFamily: "'Mulish', sans-serif", fontSize: 16, fontWeight: 600, color: textMuted, opacity: 0.5, marginLeft: 8 }}>{s.unit}</span>
+              </div>
+              <div style={{ fontSize: 13, lineHeight: 1.6, color: textMuted, marginTop: 16, paddingTop: 16, borderTop: '1px solid ' + border, maxWidth: 300 }}>{s.desc}</div>
+            </div>
+          ))}
+        </div>
       </section>
     );
   }
 
-  // ========= DESKTOP LAYOUT — Pinned crossfade showcase =========
+  // ========= DESKTOP LAYOUT — LAGOM-style asymmetric gallery =========
   return (
     <section ref={sectionRef} style={{
-      position: 'relative', width: '100%', height: '100vh',
-      overflow: 'hidden', background: C.ink, zIndex: 2,
+      position: 'relative', background: C.bege, zIndex: 2,
+      padding: '0 0 100px',
     }}>
-      {/* Image stack — all slides layered */}
-      <div ref={trackRef} style={{ position: 'absolute', inset: 0 }}>
-        {slides.map((slide, i) => (
-          <div key={i} className="g-slide" style={{
-            position: 'absolute', inset: 0,
-            opacity: i === 0 ? 1 : 0,
+      {/* Top grid: 3-col asymmetric images + center text overlay */}
+      <div style={{
+        position: 'relative',
+        display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto',
+        minHeight: '100vh', padding: '80px 48px 0', alignItems: 'start',
+      }}>
+        {/* Section counter */}
+        <div style={{ position: 'absolute', top: 80, left: 48, fontSize: 14, color: textMuted, opacity: 0.5, letterSpacing: '0.05em', zIndex: 5 }}>
+          002
+        </div>
+
+        {/* Left image */}
+        <div className="gal-img-left" style={{ gridColumn: 1, gridRow: 1, width: '100%', maxWidth: 380, aspectRatio: '3/4', overflow: 'hidden', marginTop: 60 }}>
+          <img src={galleryImages[0]} alt="Interior" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </div>
+
+        {/* Center text overlay — spans all columns */}
+        <div className="gal-text-wrap" style={{
+          gridColumn: '1 / -1', gridRow: '1 / 3',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+          padding: '0 40px', pointerEvents: 'none', zIndex: 3, minHeight: '70vh',
+        }}>
+          <h2 ref={headingRef} style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontSize: 'clamp(40px, 5.5vw, 80px)',
+            fontWeight: 800, color: textMuted,
+            lineHeight: 1.15, letterSpacing: '-0.02em',
+          }} />
+        </div>
+
+        {/* Right image */}
+        <div className="gal-img-right" style={{ gridColumn: 3, gridRow: 1, width: '100%', maxWidth: 340, aspectRatio: '4/5', overflow: 'hidden', justifySelf: 'end' }}>
+          <img src={galleryImages[1]} alt="Exterior" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </div>
+
+        {/* Center-bottom image */}
+        <div className="gal-img-center" style={{ gridColumn: 2, gridRow: 2, width: '100%', maxWidth: 360, aspectRatio: '3/4', overflow: 'hidden', justifySelf: 'center', marginTop: -80 }}>
+          <img src={galleryImages[2]} alt="Suite" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div className="gal-stats-row" style={{
+        display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
+        padding: '80px 48px 0', position: 'relative',
+      }}>
+        {galleryStats.map((s, i) => (
+          <div key={i} className="gal-stat" style={{
+            padding: '40px 32px',
+            borderLeft: i > 0 ? '1px solid ' + border : 'none',
           }}>
-            {slide.img ? (
-              <img src={slide.img} alt={slide.name} loading={i < 2 ? 'eager' : 'lazy'}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-            ) : (
-              <div style={{
-                width: '100%', height: '100%', background: C.grey,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: C.clearGreen, fontSize: 14, letterSpacing: '0.15em', textTransform: 'uppercase',
-              }}>[Image]</div>
-            )}
-            {/* Subtle gradient overlay at bottom for text legibility */}
-            <div style={{
-              position: 'absolute', bottom: 0, left: 0, right: 0, height: '45%',
-              background: 'linear-gradient(to top, rgba(31,32,34,0.65) 0%, rgba(31,32,34,0) 100%)',
-              pointerEvents: 'none',
-            }} />
+            <div style={{ fontSize: 15, color: textMuted, marginBottom: 16, fontWeight: 500 }}>{s.label}</div>
+            <div>
+              <span style={{ fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(48px, 5vw, 72px)', fontWeight: 800, color: textMuted, opacity: 0.35, lineHeight: 1, display: 'inline' }}>{s.number}</span>
+              <span style={{ fontFamily: "'Mulish', sans-serif", fontSize: 18, fontWeight: 600, color: textMuted, opacity: 0.5, marginLeft: 8, display: 'inline' }}>{s.unit}</span>
+            </div>
+            <div style={{ fontSize: 14, lineHeight: 1.6, color: textMuted, marginTop: 20, paddingTop: 20, borderTop: '1px solid ' + border, maxWidth: 300 }}>{s.desc}</div>
           </div>
         ))}
-      </div>
-
-      {/* Room labels — positioned bottom-left, one per slide */}
-      {slides.map((slide, i) => (
-        <div key={i} className="g-label" style={{
-          position: 'absolute', bottom: 80, left: 80,
-          opacity: i === 0 ? 1 : 0,
-          pointerEvents: 'none', zIndex: 2,
-        }}>
-          {slide.isFirst && (
-            <div style={{
-              fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
-              textTransform: 'uppercase', fontWeight: 600, marginBottom: 16,
-            }}>
-              {slide.name}
-            </div>
-          )}
-          <div style={{
-            fontSize: slide.isFirst ? 'clamp(36px, 5vw, 64px)' : 22,
-            fontWeight: 300, color: C.white, lineHeight: 1.15,
-            letterSpacing: '-0.02em',
-            maxWidth: 500,
-          }}>
-            {slide.isFirst ? slide.name : slide.detail}
-          </div>
-          {slide.isFirst && (
-            <div style={{
-              fontSize: 14, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.12em',
-              textTransform: 'uppercase', marginTop: 16, fontWeight: 500,
-            }}>
-              {slide.area}
-            </div>
-          )}
+        {/* Parallax image next to stats */}
+        <div className="gal-stats-img" style={{ position: 'absolute', top: -60, right: 48, width: 320, height: 400, overflow: 'hidden', zIndex: 2 }}>
+          <img src={galleryImages[2]} alt="Garden" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
-      ))}
-
-      {/* Counter — top right */}
-      <div ref={counterRef} style={{
-        position: 'absolute', top: 40, right: 80, zIndex: 2,
-        fontSize: 13, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.5)',
-        fontWeight: 500, fontVariantNumeric: 'tabular-nums',
-      }}>
-        01 / {String(slides.length).padStart(2, '0')}
-      </div>
-
-      {/* "Gallery" label — top left */}
-      <div style={{
-        position: 'absolute', top: 40, left: 80, zIndex: 2,
-        fontSize: 11, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.4)',
-        textTransform: 'uppercase', fontWeight: 600,
-      }}>
-        Gallery
-      </div>
-
-      {/* Progress bar — bottom */}
-      <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        height: 3, background: 'rgba(255,255,255,0.1)', zIndex: 2,
-      }}>
-        <div ref={progressRef} style={{
-          width: '100%', height: '100%',
-          background: C.terracota,
-          transformOrigin: 'left center',
-          transform: 'scaleX(0)',
-        }} />
-      </div>
-
-      {/* Scroll hint — visible at start */}
-      <div style={{
-        position: 'absolute', bottom: 30, left: '50%', transform: 'translateX(-50%)',
-        zIndex: 2, textAlign: 'center',
-        fontSize: 11, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.35)',
-        textTransform: 'uppercase',
-      }}>
-        Scroll
       </div>
     </section>
   );
