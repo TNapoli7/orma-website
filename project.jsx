@@ -688,11 +688,16 @@ function Gallery({ project }) {
   const headingRef = useRef(null);
   const rooms = project.rooms || [];
 
-  // Pick 3 images from rooms for asymmetric layout
+  // Pick 5 images from rooms for asymmetric layout
+  // Top row: img1 (left), img2 (right) — frame the heading
+  // Bottom row: img3 (left), img4 (center, dominant), img5 (right, landscape)
+  const allImages = rooms.flatMap(r => r.images || []);
   const galleryImages = [
-    rooms[0]?.images?.[1] || rooms[0]?.images?.[0] || '',
-    rooms[1]?.images?.[0] || '',
-    rooms[2]?.images?.[0] || '',
+    allImages[1] || allImages[0] || '',  // top-left: interior
+    allImages[2] || '',                   // top-right: exterior
+    allImages[3] || '',                   // bottom-left: garden
+    allImages[4] || '',                   // bottom-center: suite (dominant)
+    allImages[5] || allImages[0] || '',   // bottom-right: kitchen/detail
   ];
 
   // Gallery heading text
@@ -732,14 +737,19 @@ function Gallery({ project }) {
       }
 
       if (!isMobile) {
-        // Image parallax — desktop only
-        const imgLeft = section.querySelector('.gal-img-left');
-        const imgRight = section.querySelector('.gal-img-right');
-        const imgCenter = section.querySelector('.gal-img-center');
-        if (imgLeft) gsap.fromTo(imgLeft, { yPercent: 15, opacity: 0 }, { yPercent: -5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 100%', end: '100% 100%', scrub: 0.6 } });
-        if (imgRight) gsap.fromTo(imgRight, { yPercent: -10, opacity: 0 }, { yPercent: 5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 100%', end: '100% 100%', scrub: 0.6 } });
-        if (imgCenter) gsap.fromTo(imgCenter, { yPercent: 20, opacity: 0 }, { yPercent: -10, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 60%', end: '100% 100%', scrub: 0.6 } });
+        // Top row parallax
+        const img1 = section.querySelector('.gal-img-1');
+        const img2 = section.querySelector('.gal-img-2');
+        if (img1) gsap.fromTo(img1, { yPercent: 15, opacity: 0 }, { yPercent: -5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 100%', end: '60% 50%', scrub: 0.6 } });
+        if (img2) gsap.fromTo(img2, { yPercent: -10, opacity: 0 }, { yPercent: 5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 100%', end: '60% 50%', scrub: 0.6 } });
 
+        // Bottom row parallax — staggered cascade
+        const img3 = section.querySelector('.gal-img-3');
+        const img4 = section.querySelector('.gal-img-4');
+        const img5 = section.querySelector('.gal-img-5');
+        if (img3) gsap.fromTo(img3, { yPercent: 25, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: img3, start: '-20% 90%', end: '30% 50%', scrub: 0.5 } });
+        if (img4) gsap.fromTo(img4, { yPercent: 30, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: img4, start: '-30% 90%', end: '20% 50%', scrub: 0.5 } });
+        if (img5) gsap.fromTo(img5, { yPercent: 20, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: img5, start: '-10% 90%', end: '40% 50%', scrub: 0.5 } });
       }
     }, section);
 
@@ -752,6 +762,7 @@ function Gallery({ project }) {
 
   // ========= MOBILE LAYOUT =========
   if (isMobile) {
+    const mobileRatios = ['3/4', '4/5', '4/5', '3/4', '16/10'];
     return (
       <section ref={sectionRef} style={{ background: C.bege, padding: '80px 0 60px' }}>
         {/* Heading */}
@@ -761,11 +772,14 @@ function Gallery({ project }) {
             fontWeight: 800, color: textMuted, lineHeight: 1.2, letterSpacing: '-0.02em',
           }} />
         </div>
-        {/* Images stacked */}
+        {/* Images — alternating sizes */}
         {galleryImages.filter(Boolean).map((img, i) => (
-          <div key={i} className="mob-card" style={{ padding: '0 16px', marginBottom: 16 }}>
-            <div style={{ width: '100%', aspectRatio: i === 1 ? '4/5' : '3/4', overflow: 'hidden', background: C.grey }}>
-              <img src={img} alt={rooms[i]?.name || 'Gallery'} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <div key={i} className="mob-card" style={{
+            padding: i % 2 === 0 ? '0 16px' : '0 40px',
+            marginBottom: 16,
+          }}>
+            <div style={{ width: '100%', aspectRatio: mobileRatios[i] || '3/4', overflow: 'hidden', background: C.grey }}>
+              <img src={img} alt={'Gallery ' + (i + 1)} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             </div>
           </div>
         ))}
@@ -773,31 +787,35 @@ function Gallery({ project }) {
     );
   }
 
-  // ========= DESKTOP LAYOUT — LAGOM-style asymmetric gallery =========
+  // ========= DESKTOP LAYOUT — 5 images asymmetric cascade =========
   return (
     <section ref={sectionRef} style={{
       position: 'relative', background: C.bege, zIndex: 2,
-      padding: '0 0 100px',
+      padding: '0 0 120px',
     }}>
-      {/* Top grid: 3-col asymmetric images + center text overlay */}
+      {/* ---- TOP ROW: 2 images framing the heading ---- */}
       <div style={{
         position: 'relative',
-        display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto',
-        minHeight: '100vh', padding: '80px 48px 0', alignItems: 'start',
+        display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
+        minHeight: '85vh', padding: '80px 48px 0', alignItems: 'start',
       }}>
         {/* Section counter */}
         <div style={{ position: 'absolute', top: 80, left: 48, fontSize: 14, color: textMuted, opacity: 0.5, letterSpacing: '0.05em', zIndex: 5 }}>
           002
         </div>
 
-        {/* Left image */}
-        <div className="gal-img-left" style={{ gridColumn: 1, gridRow: 1, width: '100%', maxWidth: 380, aspectRatio: '3/4', overflow: 'hidden', marginTop: 60 }}>
+        {/* Image 1 — top-left, tall portrait */}
+        <div className="gal-img-1" style={{
+          gridColumn: 1, gridRow: 1,
+          width: '100%', maxWidth: 380, aspectRatio: '3/4',
+          overflow: 'hidden', marginTop: 60,
+        }}>
           <img src={galleryImages[0]} alt="Interior" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
 
-        {/* Center text overlay — spans all columns */}
+        {/* Heading overlay — spans all columns */}
         <div className="gal-text-wrap" style={{
-          gridColumn: '1 / -1', gridRow: '1 / 3',
+          gridColumn: '1 / -1', gridRow: '1',
           display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center',
           padding: '0 40px', pointerEvents: 'none', zIndex: 3, minHeight: '70vh',
         }}>
@@ -809,17 +827,46 @@ function Gallery({ project }) {
           }} />
         </div>
 
-        {/* Right image */}
-        <div className="gal-img-right" style={{ gridColumn: 3, gridRow: 1, width: '100%', maxWidth: 340, aspectRatio: '4/5', overflow: 'hidden', justifySelf: 'end' }}>
+        {/* Image 2 — top-right, slightly smaller portrait */}
+        <div className="gal-img-2" style={{
+          gridColumn: 3, gridRow: 1,
+          width: '100%', maxWidth: 320, aspectRatio: '4/5',
+          overflow: 'hidden', justifySelf: 'end',
+        }}>
           <img src={galleryImages[1]} alt="Exterior" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-        </div>
-
-        {/* Center-bottom image */}
-        <div className="gal-img-center" style={{ gridColumn: 2, gridRow: 2, width: '100%', maxWidth: 360, aspectRatio: '3/4', overflow: 'hidden', justifySelf: 'center', marginTop: -80 }}>
-          <img src={galleryImages[2]} alt="Suite" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
       </div>
 
+      {/* ---- BOTTOM ROW: 3 images in descending cascade ---- */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: '1fr 1.4fr 1fr',
+        gap: '0 32px', padding: '0 48px', marginTop: -40,
+        alignItems: 'start',
+      }}>
+        {/* Image 3 — bottom-left, portrait */}
+        <div className="gal-img-3" style={{
+          width: '100%', maxWidth: 280, aspectRatio: '4/5',
+          overflow: 'hidden', marginTop: 40, marginLeft: 20,
+        }}>
+          <img src={galleryImages[2]} alt="Jardim" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </div>
+
+        {/* Image 4 — bottom-center, dominant tall portrait */}
+        <div className="gal-img-4" style={{
+          width: '100%', maxWidth: 420, aspectRatio: '3/4',
+          overflow: 'hidden', justifySelf: 'center', marginTop: -60,
+        }}>
+          <img src={galleryImages[3]} alt="Suite" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </div>
+
+        {/* Image 5 — bottom-right, landscape */}
+        <div className="gal-img-5" style={{
+          width: '100%', maxWidth: 340, aspectRatio: '16/10',
+          overflow: 'hidden', justifySelf: 'end', marginTop: 100,
+        }}>
+          <img src={galleryImages[4]} alt="Detalhe" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </div>
+      </div>
     </section>
   );
 }
