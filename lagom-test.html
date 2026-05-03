@@ -402,10 +402,11 @@
   .project-slider {
     position: relative;
     overflow: hidden;
-    min-height: 500px;
   }
   .project-slider .swiper {
     width: 100%; height: 100%;
+    position: absolute;
+    inset: 0;
   }
   .project-slider .swiper-slide img {
     width: 100%; height: 100%;
@@ -527,7 +528,7 @@
       <div class="stat-desc">Jardins privados, zonas de lazer e paisagismo integrado.</div>
     </div>
     <div class="stats-img">
-      <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c0?w=600&q=80" alt="Garden">
+      <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80" alt="Garden">
     </div>
   </div>
 </section>
@@ -761,16 +762,25 @@ splitText(
     }
   });
 
-  // Swiper instances
+  // Swiper instances — observer fixes GSAP pin conflict
+  const swipers = [];
   document.querySelectorAll('.project-swiper').forEach(el => {
-    new Swiper(el, {
+    swipers.push(new Swiper(el, {
       slidesPerView: 1,
       loop: true,
       effect: 'fade',
       speed: 800,
       autoplay: { delay: 4000, disableOnInteraction: false },
       fadeEffect: { crossFade: true },
-    });
+      observer: true,
+      observeParents: true,
+      observeSlideChildren: true,
+    }));
+  });
+
+  // Force Swiper update when ScrollTrigger refreshes (pin changes)
+  ScrollTrigger.addEventListener('refresh', () => {
+    swipers.forEach(s => s.update());
   });
 })();
 
