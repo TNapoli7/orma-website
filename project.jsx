@@ -597,6 +597,10 @@ function ProjectHero({ project }) {
           0%, 100% { opacity: 0.3; transform: scaleY(0.6); transform-origin: top; }
           50% { opacity: 1; transform: scaleY(1); transform-origin: top; }
         }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
       `}</style>
     </section>
     {/* Spacer so content starts after hero */}
@@ -865,6 +869,200 @@ function Gallery({ project }) {
           overflow: 'hidden', justifySelf: 'end', marginTop: 100,
         }}>
           <img src={galleryImages[4]} alt="Detalhe" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================
+// 3b. PhotoCarousel — Olivia Harper style with lightbox
+// ============================================================
+function PhotoCarousel({ project }) {
+  const isMobile = useIsMobile();
+  const rooms = project.rooms || [];
+  const allImages = rooms.flatMap(r => r.images || []);
+  // Use all available images for the carousel
+  const images = allImages.length > 0 ? allImages : [];
+  const [current, setCurrent] = useState(0);
+  const [lightbox, setLightbox] = useState(null); // index or null
+  const [isAnimating, setIsAnimating] = useState(false);
+  const sectionRef = useRef(null);
+  const trackRef = useRef(null);
+
+  if (images.length === 0) return null;
+
+  const total = images.length;
+
+  const goTo = (idx) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setCurrent(((idx % total) + total) % total);
+    setTimeout(() => setIsAnimating(false), 500);
+  };
+
+  const prev = () => goTo(current - 1);
+  const next = () => goTo(current + 1);
+
+  // Arrow button style
+  const arrowBtn = (side) => ({
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    [side]: isMobile ? 12 : 24,
+    zIndex: 10,
+    width: isMobile ? 40 : 52,
+    height: isMobile ? 40 : 52,
+    borderRadius: '50%',
+    background: 'rgba(255,255,255,0.85)',
+    border: 'none',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+    transition: 'background 0.2s, transform 0.2s',
+  });
+
+  const arrowSvg = (dir) => (
+    <svg width={isMobile ? 18 : 22} height={isMobile ? 18 : 22} viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      {dir === 'left'
+        ? <polyline points="15 18 9 12 15 6" />
+        : <polyline points="9 6 15 12 9 18" />
+      }
+    </svg>
+  );
+
+  // Desktop: show 3 slides (center big, sides peeking with rounded corners)
+  // Mobile: show 1 slide with sides peeking
+  const slideWidth = isMobile ? 80 : 60; // percentage of container
+  const sideScale = isMobile ? 0.85 : 0.82;
+  const gap = isMobile ? 8 : 16;
+
+  // Lightbox overlay
+  const renderLightbox = () => {
+    if (lightbox === null) return null;
+    return (
+      <div
+        onClick={() => setLightbox(null)}
+        style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          zIndex: 99999, background: 'rgba(0,0,0,0.92)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'zoom-out',
+          animation: 'fadeIn 0.3s ease',
+        }}
+      >
+        {/* Close button */}
+        <button
+          onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
+          style={{
+            position: 'absolute', top: 20, right: 20, zIndex: 10,
+            width: 44, height: 44, borderRadius: '50%',
+            background: 'rgba(255,255,255,0.15)', border: 'none',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+        {/* Prev/Next in lightbox */}
+        <button
+          onClick={(e) => { e.stopPropagation(); setLightbox(((lightbox - 1) % total + total) % total); }}
+          style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); setLightbox((lightbox + 1) % total); }}
+          style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+        {/* Counter */}
+        <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.6)', fontSize: 14, fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.05em' }}>
+          {lightbox + 1} / {total}
+        </div>
+        {/* Image */}
+        <img
+          src={images[lightbox]}
+          alt=""
+          style={{
+            maxWidth: '90vw', maxHeight: '85vh',
+            objectFit: 'contain',
+            borderRadius: 4,
+          }}
+        />
+      </div>
+    );
+  };
+
+  // Build visible slides: prev, current, next (looping)
+  const getSlideIndex = (offset) => ((current + offset) % total + total) % total;
+
+  return (
+    <section ref={sectionRef} style={{ padding: isMobile ? '40px 0' : '80px 0', background: C.bege, overflow: 'hidden', position: 'relative' }}>
+      {renderLightbox()}
+
+      <div style={{ position: 'relative', width: '100%', maxWidth: 1440, margin: '0 auto' }}>
+        {/* Prev arrow */}
+        <button style={arrowBtn('left')} onClick={prev} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,1)'} onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.85)'}>
+          {arrowSvg('left')}
+        </button>
+        {/* Next arrow */}
+        <button style={arrowBtn('right')} onClick={next} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,1)'} onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.85)'}>
+          {arrowSvg('right')}
+        </button>
+
+        {/* Track */}
+        <div ref={trackRef} style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: gap,
+          height: isMobile ? 320 : 520,
+          position: 'relative',
+        }}>
+          {[-1, 0, 1].map((offset) => {
+            const idx = getSlideIndex(offset);
+            const isCenter = offset === 0;
+            return (
+              <div
+                key={offset}
+                onClick={() => {
+                  if (isCenter) setLightbox(idx);
+                  else goTo(idx);
+                }}
+                style={{
+                  flex: '0 0 auto',
+                  width: isCenter ? (isMobile ? '75%' : '58%') : (isMobile ? '15%' : '22%'),
+                  height: isCenter ? '100%' : '88%',
+                  borderRadius: isCenter ? (isMobile ? 12 : 16) : (isMobile ? 10 : 14),
+                  overflow: 'hidden',
+                  cursor: isCenter ? 'zoom-in' : 'pointer',
+                  transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: isCenter ? '0 8px 40px rgba(0,0,0,0.12)' : '0 4px 20px rgba(0,0,0,0.08)',
+                  position: 'relative',
+                }}
+              >
+                <img
+                  src={images[idx]}
+                  alt=""
+                  loading="lazy"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                    transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                  onMouseOver={e => { if (isCenter) e.currentTarget.style.transform = 'scale(1.03)'; }}
+                  onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -1418,6 +1616,7 @@ function ProjectPage() {
       <div style={{ position: 'relative', zIndex: 2 }}>
         <Overview project={project} />
         <Gallery project={project} />
+        <PhotoCarousel project={project} />
         <Typologies project={project} />
       </div>
 
