@@ -695,13 +695,6 @@ function Gallery({ project }) {
     rooms[2]?.images?.[0] || '',
   ];
 
-  // Gallery stats — project-specific
-  const galleryStats = project.galleryStats || [
-    { label: 'Projectos', number: '5', unit: 'unidades', desc: 'Projectos residenciais premium no Grande Porto e arredores.' },
-    { label: 'Acabamentos', number: 'A+', unit: 'classe', desc: 'Materiais de excelência e certificação energética superior.' },
-    { label: 'Espaço Exterior', number: '2,4', unit: 'ha', desc: 'Jardins privados, zonas de lazer e paisagismo integrado.' },
-  ];
-
   // Gallery heading text
   const headingText = project.galleryHeading || 'Espaços pensados para viver em harmonia';
 
@@ -747,21 +740,6 @@ function Gallery({ project }) {
         if (imgRight) gsap.fromTo(imgRight, { yPercent: -10, opacity: 0 }, { yPercent: 5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 100%', end: '100% 100%', scrub: 0.6 } });
         if (imgCenter) gsap.fromTo(imgCenter, { yPercent: 20, opacity: 0 }, { yPercent: -10, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 60%', end: '100% 100%', scrub: 0.6 } });
 
-        // Stats image parallax
-        const statsImg = section.querySelector('.gal-stats-img');
-        if (statsImg) {
-          gsap.fromTo(statsImg, { yPercent: 30 }, { yPercent: -15, ease: 'none', scrollTrigger: { trigger: section.querySelector('.gal-stats-row'), start: 'top bottom', end: 'bottom top', scrub: 0.4 } });
-        }
-      }
-
-      // Stats reveal
-      const stats = section.querySelectorAll('.gal-stat');
-      if (stats.length) {
-        gsap.fromTo(stats,
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, stagger: 0.1, ease: 'none',
-            scrollTrigger: { trigger: section.querySelector('.gal-stats-row'), start: '0% 80%', end: '0% 40%', scrub: 0.5 } }
-        );
       }
     }, section);
 
@@ -771,7 +749,6 @@ function Gallery({ project }) {
   if (!rooms.length) return null;
 
   const textMuted = '#7E7975';
-  const border = 'rgba(0,0,0,0.08)';
 
   // ========= MOBILE LAYOUT =========
   if (isMobile) {
@@ -792,19 +769,6 @@ function Gallery({ project }) {
             </div>
           </div>
         ))}
-        {/* Stats */}
-        <div className="gal-stats-row" style={{ padding: '48px 24px 0' }}>
-          {galleryStats.map((s, i) => (
-            <div key={i} className="gal-stat" style={{ padding: '32px 0', borderTop: i > 0 ? '1px solid ' + border : 'none' }}>
-              <div style={{ fontSize: 14, color: textMuted, marginBottom: 12, fontWeight: 500 }}>{s.label}</div>
-              <div>
-                <span style={{ fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(36px, 10vw, 52px)', fontWeight: 800, color: textMuted, opacity: 0.35, lineHeight: 1 }}>{s.number}</span>
-                <span style={{ fontFamily: "'Mulish', sans-serif", fontSize: 16, fontWeight: 600, color: textMuted, opacity: 0.5, marginLeft: 8 }}>{s.unit}</span>
-              </div>
-              <div style={{ fontSize: 13, lineHeight: 1.6, color: textMuted, marginTop: 16, paddingTop: 16, borderTop: '1px solid ' + border, maxWidth: 300 }}>{s.desc}</div>
-            </div>
-          ))}
-        </div>
       </section>
     );
   }
@@ -856,29 +820,6 @@ function Gallery({ project }) {
         </div>
       </div>
 
-      {/* Stats row */}
-      <div className="gal-stats-row" style={{
-        display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
-        padding: '80px 48px 0', position: 'relative',
-      }}>
-        {galleryStats.map((s, i) => (
-          <div key={i} className="gal-stat" style={{
-            padding: '40px 32px',
-            borderLeft: i > 0 ? '1px solid ' + border : 'none',
-          }}>
-            <div style={{ fontSize: 15, color: textMuted, marginBottom: 16, fontWeight: 500 }}>{s.label}</div>
-            <div>
-              <span style={{ fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(48px, 5vw, 72px)', fontWeight: 800, color: textMuted, opacity: 0.35, lineHeight: 1, display: 'inline' }}>{s.number}</span>
-              <span style={{ fontFamily: "'Mulish', sans-serif", fontSize: 18, fontWeight: 600, color: textMuted, opacity: 0.5, marginLeft: 8, display: 'inline' }}>{s.unit}</span>
-            </div>
-            <div style={{ fontSize: 14, lineHeight: 1.6, color: textMuted, marginTop: 20, paddingTop: 20, borderTop: '1px solid ' + border, maxWidth: 300 }}>{s.desc}</div>
-          </div>
-        ))}
-        {/* Parallax image next to stats */}
-        <div className="gal-stats-img" style={{ position: 'absolute', top: -60, right: 48, width: 320, height: 400, overflow: 'hidden', zIndex: 2 }}>
-          <img src={galleryImages[2]} alt="Garden" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-        </div>
-      </div>
     </section>
   );
 }
