@@ -49,7 +49,7 @@ const PROJECTS = {
         detail: 'Espaço exterior privativo com paisagismo integrado. O prolongamento natural da sala.',
         images: [
           'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80',
-          'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c0?w=1920&q=80',
+          'https://images.unsplash.com/photo-1600573472591-ee6981cf81f6?w=1920&q=80',
         ],
       },
       {
