@@ -33,10 +33,28 @@ const PROJECTS = {
       { label: 'Architecture', value: '[TBD]' },
       { label: 'Area', value: '[TBD]' },
     ],
-    gallery: [
-      'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
-      '',
-      '',
+    rooms: [
+      {
+        name: 'Sala',
+        area: '[TBD] m²',
+        detail: '[Living room description — to be provided]',
+        images: [
+          'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
+          '',
+        ],
+      },
+      {
+        name: 'Jardim',
+        area: '[TBD] m²',
+        detail: '[Garden description — to be provided]',
+        images: ['', ''],
+      },
+      {
+        name: 'Suite Master',
+        area: '[TBD] m²',
+        detail: '[Master suite description — to be provided]',
+        images: ['', ''],
+      },
     ],
     typologies: [
       { type: 'T1', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
@@ -74,10 +92,28 @@ const PROJECTS = {
       { label: 'Architecture', value: '[TBD]' },
       { label: 'Plot', value: '[TBD]' },
     ],
-    gallery: [
-      'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
-      '',
-      '',
+    rooms: [
+      {
+        name: 'Sala',
+        area: '[TBD] m²',
+        detail: '[Living room description — to be provided]',
+        images: [
+          'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
+          '',
+        ],
+      },
+      {
+        name: 'Jardim',
+        area: '[TBD] m²',
+        detail: '[Garden description — to be provided]',
+        images: ['', ''],
+      },
+      {
+        name: 'Suite Master',
+        area: '[TBD] m²',
+        detail: '[Master suite description — to be provided]',
+        images: ['', ''],
+      },
     ],
     typologies: [
       { type: 'T3', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
@@ -631,84 +667,336 @@ function Overview({ project }) {
 }
 
 // ============================================================
-// 3. Gallery -asymmetric image grid
+// 3. Gallery — Cinematic scroll + split-screen reveal (GSAP)
 // ============================================================
-function Gallery({ project }) {
-  const isMobile = useIsMobile();
-  const revealRef = useScrollReveal();
+
+/* ---------- helper: render image or grey placeholder ---------- */
+function GalleryImage({ src, alt, style, imgStyle }) {
+  if (src) {
+    return (
+      <div style={{ overflow: 'hidden', ...style }}>
+        <img src={src} alt={alt} loading="lazy"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', ...imgStyle }} />
+      </div>
+    );
+  }
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: C.grey, color: C.clearGreen,
+      fontSize: 13, letterSpacing: '0.15em', textTransform: 'uppercase',
+      ...style,
+    }}>[Image]</div>
+  );
+}
+
+/* ---------- single room block (desktop) ---------- */
+function RoomBlock({ room, index, total }) {
+  const blockRef = useRef(null);
+  const titleRef = useRef(null);
+  const heroRef = useRef(null);
+  const heroImgRef = useRef(null);
+  const splitRef = useRef(null);
+  const infoRef = useRef(null);
+  const img2Ref = useRef(null);
+
+  useEffect(() => {
+    if (typeof gsap === 'undefined' || !gsap.registerPlugin) return;
+    const ctx = gsap.context(() => {
+
+      /* — title card fade-in — */
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: titleRef.current,
+          start: 'top 80%',
+          end: 'bottom 20%',
+          scrub: 0.5,
+        },
+      });
+      tl.fromTo(titleRef.current.querySelector('.room-name'),
+        { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.5 })
+        .fromTo(titleRef.current.querySelector('.room-detail'),
+          { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4 }, 0.15);
+
+      /* — hero image parallax + scale — */
+      gsap.fromTo(heroImgRef.current,
+        { scale: 1.15, yPercent: -8 },
+        {
+          scale: 1, yPercent: 8, ease: 'none',
+          scrollTrigger: { trigger: heroRef.current, start: 'top bottom', end: 'bottom top', scrub: 0.4 },
+        }
+      );
+
+      /* — split-screen: clip-path reveal on second image — */
+      if (img2Ref.current) {
+        gsap.fromTo(img2Ref.current,
+          { clipPath: 'inset(0 100% 0 0)' },
+          {
+            clipPath: 'inset(0 0% 0 0)', ease: 'power2.inOut',
+            scrollTrigger: { trigger: splitRef.current, start: 'top 60%', end: 'top 10%', scrub: 0.6 },
+          }
+        );
+      }
+
+      /* — info text fade — */
+      gsap.fromTo(infoRef.current,
+        { opacity: 0, x: -30 },
+        {
+          opacity: 1, x: 0, ease: 'power2.out',
+          scrollTrigger: { trigger: splitRef.current, start: 'top 50%', end: 'top 15%', scrub: 0.5 },
+        }
+      );
+    }, blockRef.current);
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section style={{
-      background: C.white,
-      padding: isMobile ? '60px 24px' : '120px 80px',
-    }}>
-      <div ref={revealRef} style={{
-        maxWidth: 1400, margin: '0 auto',
-        willChange: 'opacity, transform',
+    <div ref={blockRef}>
+      {/* ---- Breather divider (except first room) ---- */}
+      {index > 0 && (
+        <div style={{
+          height: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: C.green,
+        }}>
+          <span style={{
+            fontSize: 11, letterSpacing: '0.35em', textTransform: 'uppercase',
+            color: C.bege, fontWeight: 500, opacity: 0.7,
+          }}>
+            {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+          </span>
+        </div>
+      )}
+
+      {/* ---- Title card ---- */}
+      <div ref={titleRef} style={{
+        height: '70vh', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        background: C.bege, textAlign: 'center', padding: '0 40px',
+      }}>
+        <div className="room-name" style={{
+          fontSize: 'clamp(40px, 6vw, 80px)', fontWeight: 300,
+          color: C.ink, lineHeight: 1.1, letterSpacing: '-0.02em',
+        }}>
+          {room.name}
+        </div>
+        <div className="room-detail" style={{
+          fontSize: 14, color: C.green, letterSpacing: '0.15em',
+          textTransform: 'uppercase', marginTop: 20, fontWeight: 500,
+        }}>
+          {room.area}
+        </div>
+      </div>
+
+      {/* ---- Hero image (full-width, parallax + scale) ---- */}
+      <div ref={heroRef} style={{
+        width: '100%', height: '85vh', overflow: 'hidden',
+        position: 'relative',
+      }}>
+        <div ref={heroImgRef} style={{
+          position: 'absolute', inset: '-15% 0',
+          width: '100%', height: '130%',
+        }}>
+          <GalleryImage
+            src={room.images[0]} alt={room.name}
+            style={{ width: '100%', height: '100%' }}
+            imgStyle={{}} />
+        </div>
+      </div>
+
+      {/* ---- Split-screen: info left + image right with clip-path reveal ---- */}
+      {room.images.length > 1 && (
+        <div ref={splitRef} style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr',
+          minHeight: '70vh', background: C.white,
+        }}>
+          {/* Left: room info */}
+          <div ref={infoRef} style={{
+            display: 'flex', flexDirection: 'column', justifyContent: 'center',
+            padding: '80px 60px 80px 80px',
+          }}>
+            <div style={{
+              fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
+              textTransform: 'uppercase', fontWeight: 600, marginBottom: 24,
+            }}>
+              {room.name}
+            </div>
+            <p style={{
+              fontSize: 18, lineHeight: 1.7, color: C.ink, fontWeight: 300,
+              maxWidth: 420,
+            }}>
+              {room.detail}
+            </p>
+            <div style={{
+              marginTop: 32, fontSize: 13, letterSpacing: '0.12em',
+              color: C.green, textTransform: 'uppercase', fontWeight: 500,
+            }}>
+              {room.area}
+            </div>
+          </div>
+
+          {/* Right: second image with clip-path reveal */}
+          <div style={{ position: 'relative', overflow: 'hidden', minHeight: 500 }}>
+            <div ref={img2Ref} style={{
+              position: 'absolute', inset: 0,
+              clipPath: 'inset(0 100% 0 0)',
+            }}>
+              <GalleryImage
+                src={room.images[1]} alt={room.name + ' detail'}
+                style={{ width: '100%', height: '100%' }}
+                imgStyle={{}} />
+            </div>
+            {/* Background placeholder visible while clip reveals */}
+            <div style={{
+              width: '100%', height: '100%', background: C.grey,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: C.clearGreen, fontSize: 13, letterSpacing: '0.15em', textTransform: 'uppercase',
+            }}>
+              {room.images[1] ? '' : '[Image]'}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------- single room block (mobile) ---------- */
+function RoomBlockMobile({ room, index, total }) {
+  const blockRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof gsap === 'undefined' || !gsap.registerPlugin) return;
+    const ctx = gsap.context(() => {
+      const els = blockRef.current.querySelectorAll('.mob-reveal');
+      els.forEach(el => {
+        gsap.fromTo(el,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1, y: 0, ease: 'power2.out',
+            scrollTrigger: { trigger: el, start: 'top 85%', end: 'top 55%', scrub: 0.4 },
+          }
+        );
+      });
+    }, blockRef.current);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={blockRef}>
+      {/* Divider */}
+      {index > 0 && (
+        <div style={{
+          height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: C.green,
+        }}>
+          <span style={{
+            fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase',
+            color: C.bege, fontWeight: 500, opacity: 0.7,
+          }}>
+            {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+          </span>
+        </div>
+      )}
+
+      {/* Title */}
+      <div className="mob-reveal" style={{
+        padding: '60px 24px 32px', background: C.bege, textAlign: 'center',
+      }}>
+        <div style={{
+          fontSize: 36, fontWeight: 300, color: C.ink, lineHeight: 1.15,
+        }}>
+          {room.name}
+        </div>
+        <div style={{
+          fontSize: 12, color: C.green, letterSpacing: '0.15em',
+          textTransform: 'uppercase', marginTop: 12, fontWeight: 500,
+        }}>
+          {room.area}
+        </div>
+      </div>
+
+      {/* Images stacked */}
+      {room.images.map((img, i) => (
+        <div key={i} className="mob-reveal" style={{ background: C.white }}>
+          <GalleryImage
+            src={img} alt={room.name + ' ' + (i + 1)}
+            style={{ width: '100%', height: 320, marginBottom: i < room.images.length - 1 ? 2 : 0 }}
+            imgStyle={{}} />
+        </div>
+      ))}
+
+      {/* Detail text */}
+      <div className="mob-reveal" style={{
+        padding: '32px 24px 60px', background: C.white,
       }}>
         <div style={{
           fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
-          textTransform: 'uppercase', fontWeight: 600, marginBottom: 48,
-          textAlign: 'center',
+          textTransform: 'uppercase', fontWeight: 600, marginBottom: 16,
+        }}>
+          {room.name}
+        </div>
+        <p style={{
+          fontSize: 16, lineHeight: 1.7, color: C.ink, fontWeight: 300,
+        }}>
+          {room.detail}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- main Gallery component ---------- */
+function Gallery({ project }) {
+  const isMobile = useIsMobile();
+  const headerRef = useRef(null);
+  const rooms = project.rooms || [];
+
+  useEffect(() => {
+    if (typeof gsap === 'undefined' || !gsap.registerPlugin || !headerRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(headerRef.current,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0, ease: 'power2.out',
+          scrollTrigger: { trigger: headerRef.current, start: 'top 80%', end: 'top 50%', scrub: 0.5 },
+        }
+      );
+    }, headerRef.current);
+    return () => ctx.revert();
+  }, []);
+
+  if (!rooms.length) return null;
+
+  return (
+    <section style={{ background: C.bege }}>
+      {/* Section header */}
+      <div ref={headerRef} style={{
+        textAlign: 'center',
+        padding: isMobile ? '80px 24px 0' : '140px 80px 0',
+      }}>
+        <div style={{
+          fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
+          textTransform: 'uppercase', fontWeight: 600, marginBottom: 16,
         }}>
           Gallery
         </div>
-
-        {/* Asymmetric grid */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1fr',
-          gap: isMobile ? 16 : 20,
+          fontSize: isMobile ? 28 : 48, fontWeight: 300, color: C.ink,
+          lineHeight: 1.2, letterSpacing: '-0.02em',
         }}>
-          {/* Large image */}
-          <div style={{
-            overflow: 'hidden', borderRadius: 4,
-            gridRow: isMobile ? 'auto' : '1 / 3',
-          }}>
-            {project.gallery[0] ? (
-              <img
-                src={project.gallery[0]}
-                alt={project.name}
-                loading="lazy"
-                style={{
-                  width: '100%', height: '100%',
-                  objectFit: 'cover',
-                  transition: 'transform 0.6s ease',
-                }}
-                onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-              />
-            ) : (
-              <div style={{ width: '100%', height: '100%', minHeight: 400, background: C.grey, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.clearGreen, fontSize: 13, letterSpacing: '0.15em', textTransform: 'uppercase' }}>[Image]</div>
-            )}
-          </div>
-
-          {/* Two smaller images stacked */}
-          {project.gallery.slice(1, 3).map((img, i) => (
-            <div key={i} style={{
-              overflow: 'hidden', borderRadius: 4,
-              height: isMobile ? 240 : 'auto',
-            }}>
-              {img ? (
-                <img
-                  src={img}
-                  alt={project.name + ' ' + (i + 2)}
-                  loading="lazy"
-                  style={{
-                    width: '100%', height: '100%',
-                    objectFit: 'cover',
-                    transition: 'transform 0.6s ease',
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                />
-              ) : (
-                <div style={{ width: '100%', height: '100%', minHeight: 200, background: C.grey, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.clearGreen, fontSize: 13, letterSpacing: '0.15em', textTransform: 'uppercase' }}>[Image]</div>
-              )}
-            </div>
-          ))}
+          Espaços que inspiram
         </div>
       </div>
+
+      {/* Room blocks */}
+      {rooms.map((room, i) =>
+        isMobile
+          ? <RoomBlockMobile key={i} room={room} index={i} total={rooms.length} />
+          : <RoomBlock key={i} room={room} index={i} total={rooms.length} />
+      )}
+
+      {/* Bottom breathing space */}
+      <div style={{ height: isMobile ? 40 : 80, background: C.white }} />
     </section>
   );
 }
