@@ -876,7 +876,7 @@ function Gallery({ project }) {
 }
 
 // ============================================================
-// 3b. PhotoCarousel — Olivia Harper style with lightbox
+// 3b. PhotoCarousel — infinite loop, no white gaps
 // ============================================================
 function PhotoCarousel({ project }) {
   const isMobile = useIsMobile();
@@ -888,35 +888,51 @@ function PhotoCarousel({ project }) {
   const animatingRef = useRef(false);
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
+  const containerRef = useRef(null);
 
   if (images.length === 0) return null;
   const total = images.length;
 
-  // Slide widths as percentages
-  const centerW = isMobile ? 72 : 58;
-  const sideW = isMobile ? 16 : 22;
-  const gapPx = isMobile ? 10 : 16;
+  // Fixed pixel sizes for predictable positioning
+  const gap = isMobile ? 10 : 16;
+  const trackH = isMobile ? 320 : 520;
+  const slideW = isMobile ? 280 : 420; // each slide in px
+  const step = slideW + gap; // distance per slide
 
-  // Calculate track offset so current slide is centered
-  // Each slide occupies sideW%, gap is fixed px. We position with translateX.
-  const getTrackX = (idx) => {
-    // Each "step" = one slide width (sideW%) + gap
-    // We want slide[idx] at center position
-    return -(idx * (sideW + 1.2)); // 1.2% accounts for gap relative to container
+  // Triple the images: [...images, ...images, ...images]
+  // Start at the middle set so we can go left or right freely
+  const tripled = [...images, ...images, ...images];
+  const startOffset = total; // index into tripled where "real" set starts
+
+  // Position track so that tripled[startOffset + current] is centered
+  const getX = (idx) => {
+    return -((startOffset + idx) * step);
   };
 
-  // GSAP smooth slide
+  // Set initial position centered
+  useEffect(() => {
+    if (!trackRef.current || !containerRef.current) return;
+    const containerW = containerRef.current.offsetWidth;
+    const centerOffset = (containerW / 2) - (slideW / 2);
+    trackRef.current.style.paddingLeft = centerOffset + 'px';
+    trackRef.current.style.transform = 'translateX(' + getX(0) + 'px)';
+  }, [isMobile]);
+
   const goTo = (idx) => {
     if (animatingRef.current || typeof gsap === 'undefined' || !trackRef.current) return;
     animatingRef.current = true;
-    const normalized = ((idx % total) + total) % total;
-    const targetX = getTrackX(normalized);
+    const targetX = getX(idx);
 
     gsap.to(trackRef.current, {
-      x: targetX + '%',
-      duration: 0.7,
-      ease: 'power3.inOut',
+      x: targetX,
+      duration: 0.65,
+      ease: 'power2.inOut',
       onComplete: () => {
+        // Normalize: if we went past bounds, snap back to middle set
+        const normalized = ((idx % total) + total) % total;
+        if (idx !== normalized) {
+          gsap.set(trackRef.current, { x: getX(normalized) });
+        }
         setCurrent(normalized);
         animatingRef.current = false;
       }
@@ -926,14 +942,7 @@ function PhotoCarousel({ project }) {
   const prev = () => goTo(current - 1);
   const next = () => goTo(current + 1);
 
-  // Set initial position
-  useEffect(() => {
-    if (trackRef.current) {
-      trackRef.current.style.transform = 'translateX(' + getTrackX(0) + '%)';
-    }
-  }, []);
-
-  // Gentle entrance on scroll
+  // Scroll entrance
   useEffect(() => {
     if (typeof gsap === 'undefined' || !sectionRef.current) return;
     const ctx = gsap.context(() => {
@@ -947,7 +956,7 @@ function PhotoCarousel({ project }) {
     return () => ctx.revert();
   }, []);
 
-  // Arrow
+  // Arrow style
   const arrowBtn = (side) => ({
     position: 'absolute', top: '50%', transform: 'translateY(-50%)',
     [side]: isMobile ? 10 : 20, zIndex: 10,
@@ -956,7 +965,6 @@ function PhotoCarousel({ project }) {
     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)', transition: 'all 0.3s ease',
   });
-
   const arrowSvg = (dir) => (
     <svg width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       {dir === 'left' ? <polyline points="15 18 9 12 15 6" /> : <polyline points="9 6 15 12 9 18" />}
@@ -965,7 +973,7 @@ function PhotoCarousel({ project }) {
 
   // Lightbox
   const openLightbox = (idx) => {
-    setLightbox(idx);
+    setLightbox(((idx % total) + total) % total);
     requestAnimationFrame(() => {
       const ov = document.querySelector('.pc-lightbox');
       const img = document.querySelector('.pc-lb-img');
@@ -975,14 +983,12 @@ function PhotoCarousel({ project }) {
       }
     });
   };
-
   const closeLightbox = () => {
     const ov = document.querySelector('.pc-lightbox');
     if (ov && typeof gsap !== 'undefined') {
       gsap.to(ov, { opacity: 0, duration: 0.25, ease: 'power2.in', onComplete: () => setLightbox(null) });
     } else setLightbox(null);
   };
-
   const navLightbox = (dir) => {
     const img = document.querySelector('.pc-lb-img');
     if (img && typeof gsap !== 'undefined') {
@@ -997,7 +1003,6 @@ function PhotoCarousel({ project }) {
       });
     }
   };
-
   const renderLightbox = () => {
     if (lightbox === null) return null;
     return (
@@ -1024,13 +1029,10 @@ function PhotoCarousel({ project }) {
     );
   };
 
-  // Duplicate images for infinite feel: [last, ...all, first]
-  const extImages = [images[total - 1], ...images, images[0]];
-
   return (
     <section ref={sectionRef} style={{ padding: isMobile ? '40px 0' : '80px 0', background: C.bege, overflow: 'hidden', position: 'relative' }}>
       {renderLightbox()}
-      <div style={{ position: 'relative', width: '100%', maxWidth: 1440, margin: '0 auto' }}>
+      <div ref={containerRef} style={{ position: 'relative', width: '100%' }}>
         <button style={arrowBtn('left')} onClick={prev}
           onMouseOver={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.06)'; }}
           onMouseOut={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.8)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}>
@@ -1042,41 +1044,38 @@ function PhotoCarousel({ project }) {
           {arrowSvg('right')}
         </button>
 
-        {/* Viewport clips the track */}
-        <div style={{
-          overflow: 'hidden',
-          height: isMobile ? 320 : 520,
-          borderRadius: isMobile ? 10 : 14,
-        }}>
-          {/* Continuous track — all images laid out, GSAP slides it */}
+        {/* Viewport — clips overflow */}
+        <div style={{ overflow: 'hidden', height: trackH }}>
+          {/* Continuous track — tripled images, never runs out */}
           <div ref={trackRef} style={{
             display: 'flex', alignItems: 'center',
-            gap: gapPx,
+            gap: gap,
             height: '100%',
             willChange: 'transform',
-            paddingLeft: 'calc(50% - ' + (centerW / 2) + '%)',
           }}>
-            {images.map((src, i) => {
-              const isActive = i === current;
+            {tripled.map((src, i) => {
+              // Which real image index is this?
+              const realIdx = i % total;
+              const isActive = (i === startOffset + current);
               return (
                 <div
                   key={i}
-                  onClick={() => { if (isActive) openLightbox(i); else goTo(i); }}
+                  onClick={() => { if (isActive) openLightbox(realIdx); }}
                   style={{
-                    flex: '0 0 ' + (isActive ? centerW : sideW) + '%',
-                    width: (isActive ? centerW : sideW) + '%',
+                    flex: '0 0 ' + slideW + 'px',
+                    width: slideW,
                     height: isActive ? '100%' : '85%',
                     borderRadius: isMobile ? 10 : 14,
                     overflow: 'hidden',
-                    cursor: isActive ? 'zoom-in' : 'pointer',
-                    boxShadow: isActive ? '0 6px 32px rgba(0,0,0,0.1)' : '0 3px 12px rgba(0,0,0,0.06)',
-                    transition: 'flex 0.7s cubic-bezier(0.4,0,0.2,1), height 0.7s cubic-bezier(0.4,0,0.2,1), box-shadow 0.5s ease',
+                    cursor: isActive ? 'zoom-in' : 'default',
+                    boxShadow: isActive ? '0 6px 32px rgba(0,0,0,0.1)' : '0 2px 8px rgba(0,0,0,0.04)',
+                    transition: 'height 0.65s cubic-bezier(0.4,0,0.2,1), box-shadow 0.5s ease',
                   }}
                 >
                   <img src={src} alt="" loading="lazy"
                     style={{
                       width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-                      transition: 'transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                      transition: 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)',
                     }}
                     onMouseOver={e => { if (isActive) e.currentTarget.style.transform = 'scale(1.03)'; }}
                     onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
