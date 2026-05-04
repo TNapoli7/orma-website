@@ -720,8 +720,17 @@ function Gallery({ project }) {
             borderRight: i % 2 === 0 ? '1px solid rgba(92,100,87,0.08)' : 'none',
             paddingLeft: i % 2 !== 0 ? 16 : 0,
             display: 'flex', alignItems: 'center', gap: 10,
+            cursor: 'default',
+          }}
+          onMouseEnter={e => {
+            const icon = e.currentTarget.querySelector('.stat-icon');
+            if (icon) icon.style.transform = 'translateY(-3px)';
+          }}
+          onMouseLeave={e => {
+            const icon = e.currentTarget.querySelector('.stat-icon');
+            if (icon) icon.style.transform = 'translateY(0)';
           }}>
-            <div style={{ color: C.clearGreen, flexShrink: 0 }}>{statIcon(stat.label)}</div>
+            <div className="stat-icon" style={{ color: C.clearGreen, flexShrink: 0, transition: 'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94)' }}>{statIcon(stat.label)}</div>
             <div>
               <div style={{ fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 2 }}>
                 {stat.label}
