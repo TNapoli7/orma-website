@@ -883,124 +883,111 @@ function PhotoCarousel({ project }) {
   const rooms = project.rooms || [];
   const allImages = rooms.flatMap(r => r.images || []);
   const images = allImages.length > 0 ? allImages : [];
-  const [current, setCurrent] = useState(0);
+  const currentRef = useRef(0);
+  const [, forceRender] = useState(0);
   const [lightbox, setLightbox] = useState(null);
   const animatingRef = useRef(false);
   const sectionRef = useRef(null);
-  const slidesRef = useRef([]);
+  const trackRef = useRef(null);
 
   if (images.length === 0) return null;
   const total = images.length;
+  const current = currentRef.current;
   const getIdx = (offset) => ((current + offset) % total + total) % total;
 
-  // GSAP-powered slide transition
+  // Subtle GSAP slide: crossfade images within their containers
   const goTo = (idx) => {
-    if (animatingRef.current || typeof gsap === 'undefined') return;
+    if (animatingRef.current || typeof gsap === 'undefined' || !trackRef.current) return;
     animatingRef.current = true;
     const normalized = ((idx % total) + total) % total;
     const direction = idx > current ? 1 : -1;
+    const slides = trackRef.current.querySelectorAll('.pc-slide');
 
-    // Animate all 5 visible slides out
-    const slides = slidesRef.current.filter(Boolean);
-    const tl = gsap.timeline({
+    // Subtle shift + fade out
+    gsap.to(slides, {
+      x: -direction * 30,
+      opacity: 0,
+      duration: 0.35,
+      ease: 'power2.inOut',
+      stagger: direction * 0.04,
       onComplete: () => {
-        setCurrent(normalized);
-        // After React re-renders with new indices, animate in
+        currentRef.current = normalized;
+        forceRender(n => n + 1);
         requestAnimationFrame(() => {
-          const newSlides = slidesRef.current.filter(Boolean);
-          newSlides.forEach((el, i) => {
-            const fromX = direction * (i === 2 ? 0 : 60);
-            gsap.fromTo(el,
-              { opacity: 0.4, x: fromX, scale: 0.95 },
-              { opacity: 1, x: 0, scale: 1, duration: 0.7, ease: 'power3.out', delay: Math.abs(i - 2) * 0.04 }
-            );
-          });
-          setTimeout(() => { animatingRef.current = false; }, 700);
+          const newSlides = trackRef.current.querySelectorAll('.pc-slide');
+          gsap.fromTo(newSlides,
+            { x: direction * 30, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.45, ease: 'power2.out', stagger: direction * 0.05,
+              onComplete: () => { animatingRef.current = false; }
+            }
+          );
         });
       }
-    });
-
-    slides.forEach((el, i) => {
-      tl.to(el, {
-        x: -direction * 80,
-        opacity: 0.3,
-        scale: 0.96,
-        duration: 0.45,
-        ease: 'power2.in',
-      }, i * 0.03);
     });
   };
 
   const prev = () => goTo(current - 1);
   const next = () => goTo(current + 1);
 
-  // GSAP entrance on scroll
+  // Gentle entrance on scroll
   useEffect(() => {
     if (typeof gsap === 'undefined' || !sectionRef.current) return;
-    const section = sectionRef.current;
     const ctx = gsap.context(() => {
-      const slides = section.querySelectorAll('.pc-slide');
-      gsap.fromTo(slides,
-        { y: 60, opacity: 0, scale: 0.92 },
-        {
-          y: 0, opacity: 1, scale: 1,
-          duration: 0.9, ease: 'power3.out',
-          stagger: 0.08,
-          scrollTrigger: { trigger: section, start: '0% 85%', end: '30% 60%', toggleActions: 'play none none none' }
+      gsap.fromTo('.pc-slide',
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, ease: 'power3.out', stagger: 0.1,
+          scrollTrigger: { trigger: sectionRef.current, start: '0% 85%', toggleActions: 'play none none none' }
         }
       );
-    }, section);
+    }, sectionRef.current);
     return () => ctx.revert();
   }, []);
 
-  // Arrow button
+  // Arrow
   const arrowBtn = (side) => ({
     position: 'absolute', top: '50%', transform: 'translateY(-50%)',
-    [side]: isMobile ? 12 : 24, zIndex: 10,
-    width: isMobile ? 40 : 52, height: isMobile ? 40 : 52,
-    borderRadius: '50%', background: 'rgba(255,255,255,0.85)', border: 'none',
+    [side]: isMobile ? 10 : 20, zIndex: 10,
+    width: isMobile ? 38 : 48, height: isMobile ? 38 : 48,
+    borderRadius: '50%', background: 'rgba(255,255,255,0.8)', border: 'none',
     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    boxShadow: '0 2px 12px rgba(0,0,0,0.12)', transition: 'background 0.25s, transform 0.25s',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.1)', transition: 'all 0.3s ease',
   });
 
   const arrowSvg = (dir) => (
-    <svg width={isMobile ? 18 : 22} height={isMobile ? 18 : 22} viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       {dir === 'left' ? <polyline points="15 18 9 12 15 6" /> : <polyline points="9 6 15 12 9 18" />}
     </svg>
   );
 
-  // Lightbox with GSAP
+  // Lightbox
   const openLightbox = (idx) => {
     setLightbox(idx);
     requestAnimationFrame(() => {
-      const overlay = document.querySelector('.pc-lightbox');
-      const img = document.querySelector('.pc-lightbox-img');
-      if (overlay && typeof gsap !== 'undefined') {
-        gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: 'power2.out' });
-        if (img) gsap.fromTo(img, { scale: 0.85, y: 30 }, { scale: 1, y: 0, duration: 0.5, ease: 'power3.out', delay: 0.1 });
+      const ov = document.querySelector('.pc-lightbox');
+      const img = document.querySelector('.pc-lb-img');
+      if (ov && typeof gsap !== 'undefined') {
+        gsap.fromTo(ov, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' });
+        if (img) gsap.fromTo(img, { scale: 0.9, y: 20 }, { scale: 1, y: 0, duration: 0.45, ease: 'power3.out', delay: 0.08 });
       }
     });
   };
 
   const closeLightbox = () => {
-    const overlay = document.querySelector('.pc-lightbox');
-    if (overlay && typeof gsap !== 'undefined') {
-      gsap.to(overlay, { opacity: 0, duration: 0.3, ease: 'power2.in', onComplete: () => setLightbox(null) });
-    } else {
-      setLightbox(null);
-    }
+    const ov = document.querySelector('.pc-lightbox');
+    if (ov && typeof gsap !== 'undefined') {
+      gsap.to(ov, { opacity: 0, duration: 0.25, ease: 'power2.in', onComplete: () => setLightbox(null) });
+    } else setLightbox(null);
   };
 
   const navLightbox = (dir) => {
-    const img = document.querySelector('.pc-lightbox-img');
+    const img = document.querySelector('.pc-lb-img');
     if (img && typeof gsap !== 'undefined') {
-      gsap.to(img, {
-        x: -dir * 60, opacity: 0, duration: 0.25, ease: 'power2.in',
+      gsap.to(img, { x: -dir * 40, opacity: 0, duration: 0.2, ease: 'power2.in',
         onComplete: () => {
-          setLightbox(prev => ((prev + dir) % total + total) % total);
+          setLightbox(p => ((p + dir) % total + total) % total);
           requestAnimationFrame(() => {
-            const newImg = document.querySelector('.pc-lightbox-img');
-            if (newImg) gsap.fromTo(newImg, { x: dir * 60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
+            const ni = document.querySelector('.pc-lb-img');
+            if (ni) gsap.fromTo(ni, { x: dir * 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
           });
         }
       });
@@ -1012,82 +999,74 @@ function PhotoCarousel({ project }) {
     return (
       <div className="pc-lightbox" onClick={closeLightbox}
         style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 99999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
-        <button onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
-          style={{ position: 'absolute', top: 20, right: 20, zIndex: 10, width: 44, height: 44, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <button onClick={e => { e.stopPropagation(); closeLightbox(); }}
+          style={{ position: 'absolute', top: 20, right: 20, zIndex: 10, width: 44, height: 44, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
-        <button onClick={(e) => { e.stopPropagation(); navLightbox(-1); }}
-          style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
+        <button onClick={e => { e.stopPropagation(); navLightbox(-1); }}
+          style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.12)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <button onClick={(e) => { e.stopPropagation(); navLightbox(1); }}
-          style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
+        <button onClick={e => { e.stopPropagation(); navLightbox(1); }}
+          style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.12)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
         </button>
-        <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.5)', fontSize: 13, fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.08em' }}>
+        <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: 13, fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.1em' }}>
           {lightbox + 1} / {total}
         </div>
-        <img className="pc-lightbox-img" src={images[lightbox]} alt=""
+        <img className="pc-lb-img" src={images[lightbox]} alt=""
           style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 4 }} />
       </div>
     );
   };
 
-  // Slide layout: [-2, -1, 0, 1, 2] for 5 visible panels
-  const offsets = isMobile ? [-1, 0, 1] : [-2, -1, 0, 1, 2];
+  // 3 slides: left partial, center full, right partial
+  const offsets = [-1, 0, 1];
 
   return (
     <section ref={sectionRef} style={{ padding: isMobile ? '40px 0' : '80px 0', background: C.bege, overflow: 'hidden', position: 'relative' }}>
       {renderLightbox()}
       <div style={{ position: 'relative', width: '100%', maxWidth: 1440, margin: '0 auto' }}>
         <button style={arrowBtn('left')} onClick={prev}
-          onMouseOver={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)'; }}
-          onMouseOut={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}>
+          onMouseOver={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.06)'; }}
+          onMouseOut={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.8)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}>
           {arrowSvg('left')}
         </button>
         <button style={arrowBtn('right')} onClick={next}
-          onMouseOver={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)'; }}
-          onMouseOut={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}>
+          onMouseOver={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.06)'; }}
+          onMouseOut={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.8)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}>
           {arrowSvg('right')}
         </button>
 
-        <div style={{
+        <div ref={trackRef} style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          gap: isMobile ? 8 : 14,
+          gap: isMobile ? 10 : 16,
           height: isMobile ? 320 : 520, position: 'relative',
         }}>
-          {offsets.map((offset, i) => {
+          {offsets.map((offset) => {
             const idx = getIdx(offset);
             const isCenter = offset === 0;
-            const isEdge = Math.abs(offset) === 2;
-            const w = isCenter ? (isMobile ? '75%' : '50%')
-              : isEdge ? '12%'
-              : (isMobile ? '15%' : '20%');
-            const h = isCenter ? '100%' : isEdge ? '72%' : '88%';
-            const radius = isCenter ? (isMobile ? 12 : 16) : (isMobile ? 10 : 12);
-            const shadow = isCenter ? '0 8px 40px rgba(0,0,0,0.12)' : '0 4px 16px rgba(0,0,0,0.06)';
-
             return (
               <div
                 key={offset}
                 className="pc-slide"
-                ref={el => slidesRef.current[i] = el}
                 onClick={() => { if (isCenter) openLightbox(idx); else goTo(idx); }}
                 style={{
-                  flex: '0 0 auto', width: w, height: h,
-                  borderRadius: radius, overflow: 'hidden',
+                  flex: '0 0 auto',
+                  width: isCenter ? (isMobile ? '72%' : '58%') : (isMobile ? '16%' : '22%'),
+                  height: isCenter ? '100%' : '85%',
+                  borderRadius: isMobile ? 10 : 14,
+                  overflow: 'hidden',
                   cursor: isCenter ? 'zoom-in' : 'pointer',
-                  boxShadow: shadow, position: 'relative',
-                  opacity: isEdge ? 0.6 : 1,
-                  filter: isEdge ? 'brightness(0.92)' : 'none',
+                  boxShadow: isCenter ? '0 6px 32px rgba(0,0,0,0.1)' : '0 3px 12px rgba(0,0,0,0.06)',
                 }}
               >
                 <img src={images[idx]} alt="" loading="lazy"
                   style={{
                     width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-                    transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    transition: 'transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                   }}
-                  onMouseOver={e => { if (isCenter) e.currentTarget.style.transform = 'scale(1.04)'; }}
+                  onMouseOver={e => { if (isCenter) e.currentTarget.style.transform = 'scale(1.03)'; }}
                   onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
                 />
               </div>
