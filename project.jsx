@@ -1342,46 +1342,35 @@ function Location({ project }) {
 
     const section = sectionRef.current;
     const ctx = gsap.context(() => {
-      /* Pin the section - map stays fixed while content scrolls over */
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'top top',
-        end: '+=80%',
-        pin: true,
-        pinSpacing: true,
-        onEnter: () => { section.style.zIndex = '10'; },
-        onLeaveBack: () => { section.style.zIndex = '2'; },
-      });
-
-      /* Map parallax + fade in */
+      /* Map parallax — subtle vertical drift as section scrolls through */
       gsap.fromTo(mapRef.current,
-        { yPercent: -4, opacity: 0 },
+        { yPercent: -6, opacity: 0 },
         {
-          yPercent: 4,
+          yPercent: 6,
           opacity: 1,
           ease: 'none',
           scrollTrigger: {
             trigger: section,
             start: 'top bottom',
-            end: 'top 20%',
+            end: 'bottom top',
             scrub: 0.6,
           },
         }
       );
 
-      /* Cards - fade in + slide up, scroll-driven */
+      /* Cards — fade in + slide up as section enters viewport */
       const cards = cardsRef.current.children;
       gsap.fromTo(cards,
-        { opacity: 0, y: 50 },
+        { opacity: 0, y: 40 },
         {
           opacity: 1, y: 0,
-          stagger: 0.08,
-          ease: 'none',
+          stagger: 0.12,
+          duration: 0.8,
+          ease: 'power3.out',
           scrollTrigger: {
             trigger: section,
-            start: 'top 45%',
-            end: 'top 5%',
-            scrub: 0.6,
+            start: 'top 60%',
+            toggleActions: 'play none none none',
           },
         }
       );
@@ -1733,13 +1722,13 @@ function ProjectPage() {
         <Typologies project={project} />
       </div>
 
-      {/* Location - GSAP pinned, z-index 2 covers hero, below z-index 3 content after */}
+      {/* Location — scrolls naturally, no pin */}
       <div style={{ position: 'relative', zIndex: 2 }}>
         <Location project={project} />
       </div>
 
-      {/* Content after map - z-index 3 scrolls over the pinned map */}
-      <div style={{ position: 'relative', zIndex: 3, background: C.bege }}>
+      {/* Content after map */}
+      <div style={{ position: 'relative', zIndex: 2, background: C.bege }}>
         <ProjectCTA project={project} />
         <ProjectFooter />
       </div>
