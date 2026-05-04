@@ -1364,18 +1364,6 @@ function Location({ project }) {
               </svg>
             </a>
           </div>
-          <div style={{ background: C.white, overflow: 'hidden' }}>
-            <div style={{ height: 200, overflow: 'hidden' }}>
-              <img src={project.hero} alt={project.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </div>
-            <div style={{ padding: '24px 28px' }}>
-              <h4 style={{ fontWeight: 500, fontSize: 18, color: C.ink, margin: '0 0 16px', letterSpacing: '-0.01em' }}>{project.name}</h4>
-              <FillButton href={'#'} onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                style={{ width: '100%', textAlign: 'center', display: 'block', padding: '14px 24px' }}>
-                Ver projecto
-              </FillButton>
-            </div>
-          </div>
         </div>
       </section>
     );
