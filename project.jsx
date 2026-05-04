@@ -883,8 +883,7 @@ function PhotoCarousel({ project }) {
   const rooms = project.rooms || [];
   const allImages = rooms.flatMap(r => r.images || []);
   const images = allImages.length > 0 ? allImages : [];
-  const currentRef = useRef(0);
-  const [, forceRender] = useState(0);
+  const [current, setCurrent] = useState(0);
   const [lightbox, setLightbox] = useState(null);
   const animatingRef = useRef(false);
   const sectionRef = useRef(null);
@@ -892,36 +891,34 @@ function PhotoCarousel({ project }) {
 
   if (images.length === 0) return null;
   const total = images.length;
-  const current = currentRef.current;
-  const getIdx = (offset) => ((current + offset) % total + total) % total;
 
-  // Subtle GSAP slide: crossfade images within their containers
+  // Slide widths as percentages
+  const centerW = isMobile ? 72 : 58;
+  const sideW = isMobile ? 16 : 22;
+  const gapPx = isMobile ? 10 : 16;
+
+  // Calculate track offset so current slide is centered
+  // Each slide occupies sideW%, gap is fixed px. We position with translateX.
+  const getTrackX = (idx) => {
+    // Each "step" = one slide width (sideW%) + gap
+    // We want slide[idx] at center position
+    return -(idx * (sideW + 1.2)); // 1.2% accounts for gap relative to container
+  };
+
+  // GSAP smooth slide
   const goTo = (idx) => {
     if (animatingRef.current || typeof gsap === 'undefined' || !trackRef.current) return;
     animatingRef.current = true;
     const normalized = ((idx % total) + total) % total;
-    const direction = idx > current ? 1 : -1;
-    const slides = trackRef.current.querySelectorAll('.pc-slide');
+    const targetX = getTrackX(normalized);
 
-    // Subtle shift + fade out
-    gsap.to(slides, {
-      x: -direction * 30,
-      opacity: 0,
-      duration: 0.35,
-      ease: 'power2.inOut',
-      stagger: direction * 0.04,
+    gsap.to(trackRef.current, {
+      x: targetX + '%',
+      duration: 0.7,
+      ease: 'power3.inOut',
       onComplete: () => {
-        currentRef.current = normalized;
-        forceRender(n => n + 1);
-        requestAnimationFrame(() => {
-          const newSlides = trackRef.current.querySelectorAll('.pc-slide');
-          gsap.fromTo(newSlides,
-            { x: direction * 30, opacity: 0 },
-            { x: 0, opacity: 1, duration: 0.45, ease: 'power2.out', stagger: direction * 0.05,
-              onComplete: () => { animatingRef.current = false; }
-            }
-          );
-        });
+        setCurrent(normalized);
+        animatingRef.current = false;
       }
     });
   };
@@ -929,13 +926,20 @@ function PhotoCarousel({ project }) {
   const prev = () => goTo(current - 1);
   const next = () => goTo(current + 1);
 
+  // Set initial position
+  useEffect(() => {
+    if (trackRef.current) {
+      trackRef.current.style.transform = 'translateX(' + getTrackX(0) + '%)';
+    }
+  }, []);
+
   // Gentle entrance on scroll
   useEffect(() => {
     if (typeof gsap === 'undefined' || !sectionRef.current) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo('.pc-slide',
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: 'power3.out', stagger: 0.1,
+      gsap.fromTo(sectionRef.current,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 1, ease: 'power3.out',
           scrollTrigger: { trigger: sectionRef.current, start: '0% 85%', toggleActions: 'play none none none' }
         }
       );
@@ -1020,8 +1024,8 @@ function PhotoCarousel({ project }) {
     );
   };
 
-  // 3 slides: left partial, center full, right partial
-  const offsets = [-1, 0, 1];
+  // Duplicate images for infinite feel: [last, ...all, first]
+  const extImages = [images[total - 1], ...images, images[0]];
 
   return (
     <section ref={sectionRef} style={{ padding: isMobile ? '40px 0' : '80px 0', background: C.bege, overflow: 'hidden', position: 'relative' }}>
@@ -1038,40 +1042,49 @@ function PhotoCarousel({ project }) {
           {arrowSvg('right')}
         </button>
 
-        <div ref={trackRef} style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          gap: isMobile ? 10 : 16,
-          height: isMobile ? 320 : 520, position: 'relative',
+        {/* Viewport clips the track */}
+        <div style={{
+          overflow: 'hidden',
+          height: isMobile ? 320 : 520,
+          borderRadius: isMobile ? 10 : 14,
         }}>
-          {offsets.map((offset) => {
-            const idx = getIdx(offset);
-            const isCenter = offset === 0;
-            return (
-              <div
-                key={offset}
-                className="pc-slide"
-                onClick={() => { if (isCenter) openLightbox(idx); else goTo(idx); }}
-                style={{
-                  flex: '0 0 auto',
-                  width: isCenter ? (isMobile ? '72%' : '58%') : (isMobile ? '16%' : '22%'),
-                  height: isCenter ? '100%' : '85%',
-                  borderRadius: isMobile ? 10 : 14,
-                  overflow: 'hidden',
-                  cursor: isCenter ? 'zoom-in' : 'pointer',
-                  boxShadow: isCenter ? '0 6px 32px rgba(0,0,0,0.1)' : '0 3px 12px rgba(0,0,0,0.06)',
-                }}
-              >
-                <img src={images[idx]} alt="" loading="lazy"
+          {/* Continuous track — all images laid out, GSAP slides it */}
+          <div ref={trackRef} style={{
+            display: 'flex', alignItems: 'center',
+            gap: gapPx,
+            height: '100%',
+            willChange: 'transform',
+            paddingLeft: 'calc(50% - ' + (centerW / 2) + '%)',
+          }}>
+            {images.map((src, i) => {
+              const isActive = i === current;
+              return (
+                <div
+                  key={i}
+                  onClick={() => { if (isActive) openLightbox(i); else goTo(i); }}
                   style={{
-                    width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-                    transition: 'transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    flex: '0 0 ' + (isActive ? centerW : sideW) + '%',
+                    width: (isActive ? centerW : sideW) + '%',
+                    height: isActive ? '100%' : '85%',
+                    borderRadius: isMobile ? 10 : 14,
+                    overflow: 'hidden',
+                    cursor: isActive ? 'zoom-in' : 'pointer',
+                    boxShadow: isActive ? '0 6px 32px rgba(0,0,0,0.1)' : '0 3px 12px rgba(0,0,0,0.06)',
+                    transition: 'flex 0.7s cubic-bezier(0.4,0,0.2,1), height 0.7s cubic-bezier(0.4,0,0.2,1), box-shadow 0.5s ease',
                   }}
-                  onMouseOver={e => { if (isCenter) e.currentTarget.style.transform = 'scale(1.03)'; }}
-                  onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
-                />
-              </div>
-            );
-          })}
+                >
+                  <img src={src} alt="" loading="lazy"
+                    style={{
+                      width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                      transition: 'transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    }}
+                    onMouseOver={e => { if (isActive) e.currentTarget.style.transform = 'scale(1.03)'; }}
+                    onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
