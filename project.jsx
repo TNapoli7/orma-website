@@ -710,13 +710,13 @@ function Gallery({ project }) {
     const section = sectionRef.current;
 
     const ctx = gsap.context(() => {
-      // Info card reveals FIRST — appears early in scroll
-      const info = section.querySelector('.gal-info');
-      if (info) {
-        gsap.fromTo(info,
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1, ease: 'power3.out',
-            scrollTrigger: { trigger: section, start: '0% 95%', toggleActions: 'play none none none' }
+      // Info card children reveal progressively (staggered)
+      const infoChildren = section.querySelectorAll('.gal-info > *');
+      if (infoChildren.length) {
+        gsap.fromTo(infoChildren,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', stagger: 0.15,
+            scrollTrigger: { trigger: section, start: '0% 90%', toggleActions: 'play none none none' }
           }
         );
       }
@@ -834,7 +834,7 @@ function Gallery({ project }) {
   return (
     <section ref={sectionRef} style={{
       position: 'relative', background: C.bege, zIndex: 2,
-      padding: '120px 0 120px',
+      padding: '80px 0 100px',
     }}>
       {/* ---- TOP ROW: image left + info center + image right ---- */}
       <div style={{
@@ -846,7 +846,7 @@ function Gallery({ project }) {
         {/* Image 1 — top-left, tall portrait, starts lower */}
         <div className="gal-img-1" style={{
           width: '100%', maxWidth: 380, aspectRatio: '3/4',
-          overflow: 'hidden', marginTop: 120,
+          overflow: 'hidden', marginTop: 80,
         }}>
           <img src={galleryImages[0]} alt="Interior" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
