@@ -1766,6 +1766,130 @@ function WhyOrma() {
 }
 
 // ============================================================
+// 6b. Sustainability — Farm Minerals style (full-screen image shrinks on scroll)
+// ============================================================
+function Sustainability() {
+  const isMobile = useIsMobile();
+  const sectionRef = useRef(null);
+  const imageRef = useRef(null);
+  const textRef = useRef(null);
+  const labelRef = useRef(null);
+
+  useEffect(() => {
+    if (isMobile || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: '+=100%',
+          pin: true,
+          scrub: 0.6,
+        },
+      });
+
+      tl.fromTo(imageRef.current,
+        { width: '100%', left: '0%', borderRadius: 0 },
+        { width: '48%', left: '52%', borderRadius: 16, duration: 1, ease: 'power2.inOut' },
+        0
+      );
+
+      tl.fromTo(labelRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' },
+        0.3
+      );
+
+      tl.fromTo(textRef.current,
+        { opacity: 0, x: -60 },
+        { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out' },
+        0.4
+      );
+    }, section);
+
+    return () => ctx.revert();
+  }, [isMobile]);
+
+  if (isMobile) {
+    return (
+      <section id="sustainability" style={{ background: C.bege, overflow: 'hidden' }}>
+        <div style={{ height: 300, overflow: 'hidden' }}>
+          <img src="https://images.unsplash.com/photo-1600585154526-ffa5f1a29abb?w=1400&q=80" alt="Sustainability"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </div>
+        <div style={{ padding: '48px 24px 80px' }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.green, textTransform: 'uppercase', fontWeight: 600, marginBottom: 24 }}>
+            Sustainability
+          </div>
+          <h2 style={{ fontWeight: 300, fontSize: 28, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 24px' }}>
+            Building with respect for what <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>lasts.</em>
+          </h2>
+          <p style={{ fontSize: 14, lineHeight: 1.8, color: C.green, margin: '0 0 16px' }}>
+            Every material, every decision, every detail - guided by the principle that responsible construction is better construction.
+          </p>
+          <p style={{ fontSize: 13, lineHeight: 1.8, color: 'rgba(92,100,87,0.7)', margin: 0 }}>
+            We design with longevity in mind. From energy-efficient envelopes to locally sourced materials, our projects reduce environmental impact without compromising on quality or comfort.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section ref={sectionRef} id="sustainability" style={{
+      position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', background: C.bege,
+    }}>
+      <div ref={imageRef} style={{
+        position: 'absolute', top: 0, left: '0%', width: '100%', height: '100%',
+        overflow: 'hidden', zIndex: 2,
+      }}>
+        <img src="https://images.unsplash.com/photo-1600585154526-ffa5f1a29abb?w=1800&q=80" alt="Sustainability"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(90deg, rgba(238,232,218,0.6) 0%, transparent 50%)',
+          pointerEvents: 'none',
+        }} />
+      </div>
+
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '50%', height: '100%', zIndex: 3, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 64px' }}>
+        <div ref={labelRef} style={{ opacity: 0, fontSize: 12, letterSpacing: '0.3em', color: C.green, textTransform: 'uppercase', fontWeight: 600, marginBottom: 40 }}>
+          Sustainability
+        </div>
+        <div ref={textRef} style={{ opacity: 0 }}>
+          <h2 style={{ fontWeight: 300, fontSize: 48, lineHeight: 1.15, letterSpacing: '-0.02em', color: C.ink, margin: '0 0 32px' }}>
+            Building with respect for what <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>lasts.</em>
+          </h2>
+          <p style={{ fontSize: 15, lineHeight: 1.8, color: C.green, margin: '0 0 20px', maxWidth: 480 }}>
+            Every material, every decision, every detail - guided by the principle that responsible construction is better construction.
+          </p>
+          <p style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(92,100,87,0.65)', margin: '0 0 40px', maxWidth: 480 }}>
+            We design with longevity in mind. From energy-efficient envelopes to locally sourced materials, our projects reduce environmental impact without compromising on quality or comfort.
+          </p>
+          <a href="#contact" onClick={e => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              padding: '16px 36px', background: C.green, color: C.bege,
+              borderRadius: 40, textDecoration: 'none', fontSize: 12,
+              letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600,
+              transition: 'background 0.3s ease',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = C.ink}
+            onMouseLeave={e => e.currentTarget.style.background = C.green}
+          >
+            Learn more
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================
 // 7. Contact Form — background photo + Orma logo
 // ============================================================
 function ContactForm() {
@@ -2195,6 +2319,7 @@ function DesktopHomepage() {
         <Pillars />
         <Projects />
         <WhyOrma />
+        <Sustainability />
         <ContactForm />
         <Footer />
       </div>

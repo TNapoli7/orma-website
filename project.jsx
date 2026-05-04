@@ -521,6 +521,145 @@ function ProjectNav({ projectName }) {
 }
 
 // ============================================================
+// Brochure download box — always visible on hero
+// ============================================================
+function BrochureBox({ projectName }) {
+  const isMobile = useIsMobile();
+  const [form, setForm] = useState({ nome: '', email: '', telefone: '' });
+  const [agreed, setAgreed] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!agreed) return;
+    setSubmitted(true);
+    // TODO: wire to actual download / form handler
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '12px 14px',
+    background: 'rgba(255,255,255,0.12)',
+    border: '1px solid rgba(255,255,255,0.2)',
+    borderRadius: 8,
+    color: C.white,
+    fontFamily: 'inherit',
+    fontSize: 13,
+    fontWeight: 400,
+    outline: 'none',
+    transition: 'border-color 0.2s',
+  };
+
+  if (submitted) {
+    return (
+      <div style={{
+        flex: '0 0 auto',
+        width: isMobile ? '100%' : 320,
+        background: 'rgba(31,32,34,0.65)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderRadius: 16,
+        padding: '32px 28px',
+        marginTop: isMobile ? 32 : 0,
+        textAlign: 'center',
+      }}>
+        <div style={{ fontSize: 28, marginBottom: 12 }}>✓</div>
+        <p style={{ color: C.white, fontSize: 15, fontWeight: 500, margin: '0 0 6px' }}>
+          Obrigado!
+        </p>
+        <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 13, margin: 0, lineHeight: 1.5 }}>
+          O download da brochura vai começar automaticamente.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      flex: '0 0 auto',
+      width: isMobile ? '100%' : 320,
+      background: 'rgba(31,32,34,0.65)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      borderRadius: 16,
+      padding: '28px 24px',
+      marginTop: isMobile ? 32 : 0,
+    }}>
+      <p style={{
+        fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase',
+        color: 'rgba(255,255,255,0.55)', fontWeight: 600, margin: '0 0 6px',
+      }}>Brochura</p>
+      <p style={{
+        fontSize: 18, fontWeight: 300, color: C.white, margin: '0 0 20px', lineHeight: 1.35,
+      }}>
+        Receba todos os<br />detalhes do {projectName || 'projecto'}
+      </p>
+
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <input
+          type="text" placeholder="Nome" required
+          value={form.nome}
+          onChange={e => setForm({ ...form, nome: e.target.value })}
+          style={inputStyle}
+          onFocus={e => e.target.style.borderColor = 'rgba(255,255,255,0.45)'}
+          onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'}
+        />
+        <input
+          type="email" placeholder="Email" required
+          value={form.email}
+          onChange={e => setForm({ ...form, email: e.target.value })}
+          style={inputStyle}
+          onFocus={e => e.target.style.borderColor = 'rgba(255,255,255,0.45)'}
+          onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'}
+        />
+        <input
+          type="tel" placeholder="Telefone" required
+          value={form.telefone}
+          onChange={e => setForm({ ...form, telefone: e.target.value })}
+          style={inputStyle}
+          onFocus={e => e.target.style.borderColor = 'rgba(255,255,255,0.45)'}
+          onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'}
+        />
+
+        <label style={{
+          display: 'flex', alignItems: 'flex-start', gap: 8,
+          cursor: 'pointer', marginTop: 4,
+        }}>
+          <input
+            type="checkbox" checked={agreed}
+            onChange={e => setAgreed(e.target.checked)}
+            style={{ marginTop: 2, accentColor: C.green }}
+          />
+          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', lineHeight: 1.45 }}>
+            Aceito os termos e condições e a política de privacidade.
+          </span>
+        </label>
+
+        <button type="submit" disabled={!agreed} style={{
+          marginTop: 6,
+          width: '100%',
+          padding: '14px 0',
+          background: agreed ? C.green : 'rgba(92,100,87,0.4)',
+          color: C.white,
+          border: 'none',
+          borderRadius: 40,
+          fontSize: 12,
+          fontWeight: 600,
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          fontFamily: 'inherit',
+          cursor: agreed ? 'pointer' : 'not-allowed',
+          transition: 'background 0.25s, opacity 0.25s',
+          opacity: agreed ? 1 : 0.6,
+        }}>
+          Download Brochura
+        </button>
+      </form>
+    </div>
+  );
+}
+
+// ============================================================
 // 1. Project Hero -full-bleed image with overlay text
 // ============================================================
 function ProjectHero({ project }) {
@@ -558,8 +697,12 @@ function ProjectHero({ project }) {
         position: 'absolute', bottom: 0, left: 0, right: 0,
         zIndex: 2,
         padding: isMobile ? '0 24px 48px' : '0 80px 80px',
+        display: isMobile ? 'block' : 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+        gap: 40,
       }}>
-        <div style={{ maxWidth: 900 }}>
+        <div style={{ maxWidth: 900, flex: '1 1 auto' }}>
           <div style={{
             fontSize: 11, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.7)',
             textTransform: 'uppercase', fontWeight: 600, marginBottom: 16,
@@ -580,6 +723,9 @@ function ProjectHero({ project }) {
             {project.tagline}
           </p>
         </div>
+
+        {/* Brochure download box */}
+        <BrochureBox projectName={project.name} />
       </div>
 
       {/* Scroll indicator */}
