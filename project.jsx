@@ -683,39 +683,26 @@ function Overview({ project }) {
 }
 
 // ============================================================
-// 3. Gallery — Pinned full-screen crossfade showcase (GSAP)
+// 3. Gallery — asymmetric images + project info card
 // ============================================================
 
 function Gallery({ project }) {
   const isMobile = useIsMobile();
   const sectionRef = useRef(null);
-  const headingRef = useRef(null);
+  const infoRef = useRef(null);
   const rooms = project.rooms || [];
 
-  // Pick 5 images from rooms for asymmetric layout
-  // Top row: img1 (left), img2 (right) — frame the heading
-  // Bottom row: img3 (left), img4 (center, dominant), img5 (right, landscape)
   const allImages = rooms.flatMap(r => r.images || []);
   const galleryImages = [
-    allImages[1] || allImages[0] || '',  // top-left: interior
-    allImages[2] || '',                   // top-right: exterior
-    allImages[3] || '',                   // bottom-left: garden
-    allImages[4] || '',                   // bottom-center: suite (dominant)
-    allImages[5] || allImages[0] || '',   // bottom-right: kitchen/detail
+    allImages[1] || allImages[0] || '',
+    allImages[2] || '',
+    allImages[3] || '',
+    allImages[4] || '',
+    allImages[5] || allImages[0] || '',
   ];
 
-  // Gallery heading text
-  const headingText = project.galleryHeading || 'Espaços pensados para viver em harmonia';
-
-  // Split text into words > chars for reveal animation
-  useEffect(() => {
-    if (!headingRef.current) return;
-    const words = headingText.split(' ');
-    headingRef.current.innerHTML = words.map(w => {
-      const chars = w.split('').map(c => '<span class="gal-char" style="display:inline-block;opacity:0.15">' + c + '</span>').join('');
-      return '<span style="display:inline-block;margin:0 0.15em">' + chars + '</span>';
-    }).join(' ');
-  }, [headingText]);
+  // Project info with icons
+  const infoStats = project.stats || [];
 
   // GSAP animations
   useEffect(() => {
@@ -723,31 +710,23 @@ function Gallery({ project }) {
     const section = sectionRef.current;
 
     const ctx = gsap.context(() => {
-      // Char-by-char reveal
-      const chars = section.querySelectorAll('.gal-char');
-      if (chars.length) {
-        gsap.fromTo(chars,
-          { opacity: 0.15 },
-          {
-            opacity: 1, stagger: 0.03, ease: 'none',
-            scrollTrigger: {
-              trigger: section.querySelector('.gal-text-wrap'),
-              start: '0% 80%',
-              end: '50% 50%',
-              scrub: 0.5,
-            }
+      // Info card reveal
+      const info = section.querySelector('.gal-info');
+      if (info) {
+        gsap.fromTo(info,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: info, start: '0% 85%', toggleActions: 'play none none none' }
           }
         );
       }
 
       if (!isMobile) {
-        // Top row parallax
         const img1 = section.querySelector('.gal-img-1');
         const img2 = section.querySelector('.gal-img-2');
         if (img1) gsap.fromTo(img1, { yPercent: 15, opacity: 0 }, { yPercent: -5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 100%', end: '60% 50%', scrub: 0.6 } });
         if (img2) gsap.fromTo(img2, { yPercent: -10, opacity: 0 }, { yPercent: 5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 100%', end: '60% 50%', scrub: 0.6 } });
 
-        // Bottom row parallax — staggered cascade
         const img3 = section.querySelector('.gal-img-3');
         const img4 = section.querySelector('.gal-img-4');
         const img5 = section.querySelector('.gal-img-5');
@@ -762,21 +741,79 @@ function Gallery({ project }) {
 
   if (!rooms.length) return null;
 
-  const textMuted = '#7E7975';
+  // Stat icon SVGs
+  const statIcon = (label) => {
+    const lbl = label.toLowerCase();
+    if (lbl.includes('unit') || lbl.includes('quarto') || lbl.includes('bedroom'))
+      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M3 21V7a2 2 0 012-2h14a2 2 0 012 2v14"/><path d="M3 15h18"/><path d="M3 15v-4a2 2 0 012-2h4v6"/></svg>;
+    if (lbl.includes('area') || lbl.includes('m²'))
+      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>;
+    if (lbl.includes('location') || lbl.includes('local'))
+      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>;
+    if (lbl.includes('typolog'))
+      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>;
+    if (lbl.includes('status'))
+      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>;
+    if (lbl.includes('architect'))
+      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>;
+    return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/></svg>;
+  };
+
+  // Info card component
+  const InfoCard = () => (
+    <div className="gal-info" ref={infoRef} style={{
+      maxWidth: isMobile ? '100%' : 400,
+      padding: isMobile ? '32px 24px' : '40px',
+    }}>
+      <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
+        O Projeto
+      </div>
+      <p style={{ fontWeight: 300, fontSize: isMobile ? 17 : 19, lineHeight: 1.7, color: C.ink, margin: '0 0 8px', letterSpacing: '-0.01em' }}>
+        {project.description}
+      </p>
+      {project.descriptionExtra && (
+        <p style={{ fontSize: 14, lineHeight: 1.7, color: C.green, margin: '0 0 28px', opacity: 0.8 }}>
+          {project.descriptionExtra}
+        </p>
+      )}
+      {/* Icon stats grid */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: '1fr 1fr',
+        gap: 0, borderTop: '1px solid rgba(92,100,87,0.12)',
+      }}>
+        {infoStats.map((stat, i) => (
+          <div key={stat.label} style={{
+            padding: '16px 12px 16px 0',
+            borderBottom: '1px solid rgba(92,100,87,0.08)',
+            borderRight: i % 2 === 0 ? '1px solid rgba(92,100,87,0.08)' : 'none',
+            paddingLeft: i % 2 !== 0 ? 16 : 0,
+            display: 'flex', alignItems: 'center', gap: 10,
+          }}>
+            <div style={{ color: C.clearGreen, flexShrink: 0 }}>{statIcon(stat.label)}</div>
+            <div>
+              <div style={{ fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 2 }}>
+                {stat.label}
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 500, color: C.ink }}>
+                {stat.value}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   // ========= MOBILE LAYOUT =========
   if (isMobile) {
     const mobileRatios = ['3/4', '4/5', '4/5', '3/4', '16/10'];
     return (
-      <section ref={sectionRef} style={{ background: C.bege, padding: '80px 0 60px' }}>
-        {/* Heading */}
-        <div className="gal-text-wrap" style={{ padding: '0 24px 48px', textAlign: 'center' }}>
-          <h2 ref={headingRef} style={{
-            fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(28px, 8vw, 44px)',
-            fontWeight: 800, color: textMuted, lineHeight: 1.2, letterSpacing: '-0.02em',
-          }} />
+      <section ref={sectionRef} style={{ background: C.bege, padding: '60px 0 60px' }}>
+        {/* Info first on mobile */}
+        <div style={{ padding: '0 24px 40px' }}>
+          <InfoCard />
         </div>
-        {/* Images — alternating sizes */}
+        {/* Images */}
         {galleryImages.filter(Boolean).map((img, i) => (
           <div key={i} className="mob-card" style={{
             padding: i % 2 === 0 ? '0 16px' : '0 40px',
@@ -791,79 +828,59 @@ function Gallery({ project }) {
     );
   }
 
-  // ========= DESKTOP LAYOUT — 5 images asymmetric cascade =========
+  // ========= DESKTOP LAYOUT — 5 images + info card =========
   return (
     <section ref={sectionRef} style={{
       position: 'relative', background: C.bege, zIndex: 2,
       padding: '0 0 120px',
     }}>
-      {/* ---- TOP ROW: 2 images framing the heading ---- */}
+      {/* ---- TOP ROW: image left + info center + image right ---- */}
       <div style={{
         position: 'relative',
-        display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
-        minHeight: '85vh', padding: '80px 48px 0', alignItems: 'start',
+        display: 'grid', gridTemplateColumns: '1fr 1.2fr 1fr',
+        minHeight: '75vh', padding: '80px 48px 0', alignItems: 'start',
+        gap: '0 40px',
       }}>
-        {/* Section counter */}
-        <div style={{ position: 'absolute', top: 80, left: 48, fontSize: 14, color: textMuted, opacity: 0.5, letterSpacing: '0.05em', zIndex: 5 }}>
-          002
-        </div>
-
         {/* Image 1 — top-left, tall portrait */}
         <div className="gal-img-1" style={{
-          gridColumn: 1, gridRow: 1,
           width: '100%', maxWidth: 380, aspectRatio: '3/4',
           overflow: 'hidden', marginTop: 60,
         }}>
           <img src={galleryImages[0]} alt="Interior" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
 
-        {/* Heading overlay — spans all columns */}
-        <div className="gal-text-wrap" style={{
-          gridColumn: '1 / -1', gridRow: '1',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-          padding: '0 40px', pointerEvents: 'none', zIndex: 3, minHeight: '70vh',
-        }}>
-          <h2 ref={headingRef} style={{
-            fontFamily: "'Mulish', sans-serif",
-            fontSize: 'clamp(40px, 5.5vw, 80px)',
-            fontWeight: 800, color: textMuted,
-            lineHeight: 1.15, letterSpacing: '-0.02em',
-          }} />
+        {/* Info card — center */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+          <InfoCard />
         </div>
 
-        {/* Image 2 — top-right, slightly smaller portrait */}
+        {/* Image 2 — top-right */}
         <div className="gal-img-2" style={{
-          gridColumn: 3, gridRow: 1,
-          width: '100%', maxWidth: 320, aspectRatio: '4/5',
+          width: '100%', maxWidth: 340, aspectRatio: '4/5',
           overflow: 'hidden', justifySelf: 'end',
         }}>
           <img src={galleryImages[1]} alt="Exterior" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
       </div>
 
-      {/* ---- BOTTOM ROW: 3 images in descending cascade ---- */}
+      {/* ---- BOTTOM ROW: 3 images cascade ---- */}
       <div style={{
         display: 'grid', gridTemplateColumns: '1fr 1.4fr 1fr',
         gap: '0 32px', padding: '0 48px', marginTop: -40,
         alignItems: 'start',
       }}>
-        {/* Image 3 — bottom-left, portrait */}
         <div className="gal-img-3" style={{
           width: '100%', maxWidth: 280, aspectRatio: '4/5',
           overflow: 'hidden', marginTop: 40, marginLeft: 20,
         }}>
           <img src={galleryImages[2]} alt="Jardim" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
-
-        {/* Image 4 — bottom-center, dominant tall portrait */}
         <div className="gal-img-4" style={{
           width: '100%', maxWidth: 420, aspectRatio: '3/4',
           overflow: 'hidden', justifySelf: 'center', marginTop: -60,
         }}>
           <img src={galleryImages[3]} alt="Suite" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
-
-        {/* Image 5 — bottom-right, landscape */}
         <div className="gal-img-5" style={{
           width: '100%', maxWidth: 340, aspectRatio: '16/10',
           overflow: 'hidden', justifySelf: 'end', marginTop: 100,
@@ -1706,7 +1723,6 @@ function ProjectPage() {
       <ProjectHero project={project} />
       {/* Content before map - scrolls over fixed hero */}
       <div style={{ position: 'relative', zIndex: 2 }}>
-        <Overview project={project} />
         <Gallery project={project} />
         <PhotoCarousel project={project} />
         <Typologies project={project} />
