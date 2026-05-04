@@ -1724,7 +1724,7 @@ function ProjectPage() {
       <ProjectNav projectName={project.name} />
       <ProjectHero project={project} />
       {/* Content before map - scrolls over fixed hero */}
-      <div style={{ position: 'relative', zIndex: 2 }}>
+      <div style={{ position: 'relative', zIndex: 2, background: C.bege }}>
         <Gallery project={project} />
         <PhotoCarousel project={project} />
         <Typologies project={project} />
