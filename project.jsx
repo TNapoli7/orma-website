@@ -1593,52 +1593,33 @@ function ProjectCTA({ project }) {
 
   return (
     <section id="project-contact" style={{
-      background: C.ink,
+      background: C.bege,
       padding: isMobile ? '80px 24px' : '120px 80px',
-      position: 'relative', overflow: 'hidden',
+      position: 'relative',
     }}>
-      {/* Subtle watermark */}
-      <div style={{
-        position: 'absolute', bottom: -20, right: -40,
-        fontWeight: 700, fontSize: isMobile ? 120 : 200,
-        letterSpacing: '-0.04em', textTransform: 'uppercase',
-        color: 'rgba(255,255,255,0.03)',
-        whiteSpace: 'nowrap', pointerEvents: 'none',
-        lineHeight: 0.85,
-      }}>{project.name}</div>
+      {/* Thin top divider */}
+      <div style={{ position: 'absolute', top: 0, left: isMobile ? 24 : 80, right: isMobile ? 24 : 80, height: 1, background: 'rgba(92,100,87,0.12)' }} />
 
       <div ref={revealRef} style={{
-        maxWidth: 800, margin: '0 auto', textAlign: 'center',
-        position: 'relative', zIndex: 2,
+        maxWidth: 640, margin: '0 auto', textAlign: 'center',
         willChange: 'opacity, transform',
       }}>
-        <div style={{
-          fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
-          textTransform: 'uppercase', fontWeight: 600, marginBottom: 24,
-        }}>
-          Interested?
-        </div>
         <h2 style={{
-          fontWeight: 300, fontSize: isMobile ? 32 : 48, lineHeight: 1.15,
-          letterSpacing: '-0.01em', color: C.bege, margin: '0 0 20px',
+          fontWeight: 300, fontSize: isMobile ? 28 : 42, lineHeight: 1.2,
+          letterSpacing: '-0.01em', color: C.ink, margin: '0 0 16px',
         }}>
-          Let's talk about <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>{project.name}.</em>
+          Interessado no <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>{project.name}</em>?
         </h2>
         <p style={{
-          fontSize: 16, lineHeight: 1.8, color: 'rgba(238,232,218,0.65)',
-          margin: '0 auto 44px', maxWidth: 500,
+          fontSize: 15, lineHeight: 1.8, color: C.green,
+          margin: '0 auto 40px', maxWidth: 420, opacity: 0.8,
         }}>
-          Whether you're looking for more details, floor plans, or pricing - our team is here.
+          Fale connosco para mais detalhes, plantas ou condições.
         </p>
 
-        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <FillButton href="index.html#contact">
-            Get in touch
-          </FillButton>
-          <FillButton href="tel:+351220000000" variant="outline">
-            Call us
-          </FillButton>
-        </div>
+        <FillButton href="index.html#contact">
+          Entrar em contacto
+        </FillButton>
       </div>
     </section>
   );
