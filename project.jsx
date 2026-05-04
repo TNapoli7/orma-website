@@ -893,10 +893,10 @@ function PhotoCarousel({ project }) {
   if (images.length === 0) return null;
   const total = images.length;
 
-  // Fixed pixel sizes for predictable positioning
+  // Fixed pixel sizes — large enough that only 3 slides are visible
   const gap = isMobile ? 10 : 16;
   const trackH = isMobile ? 320 : 520;
-  const slideW = isMobile ? 280 : 420; // each slide in px
+  const slideW = isMobile ? 280 : 680; // each slide in px
   const step = slideW + gap; // distance per slide
 
   // Triple the images: [...images, ...images, ...images]
