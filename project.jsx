@@ -1201,7 +1201,7 @@ function Typologies({ project }) {
         {/* Room detail */}
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 32 : 64, alignItems: 'start' }}>
           {/* Info */}
-          <div ref={detailRef} style={{ minHeight: isMobile ? 'auto' : 280 }}>
+          <div ref={detailRef} style={{ minHeight: isMobile ? 'auto' : 280, order: isMobile ? 2 : 0 }}>
             <h3 style={{ fontWeight: 500, fontSize: isMobile ? 32 : 48, color: C.bege, margin: 0, letterSpacing: '-0.02em' }}>
               {room.name}
             </h3>
@@ -1226,7 +1226,7 @@ function Typologies({ project }) {
           </div>
 
           {/* Image carousel */}
-          <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', height: isMobile ? 260 : 380 }}>
+          <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', height: isMobile ? 260 : 380, order: isMobile ? 1 : 0 }}>
             {/* Arrows */}
             <button style={imgArrow('left')} onClick={() => navImg(-1)}
               onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.55)'}
