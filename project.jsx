@@ -1091,137 +1091,208 @@ function PhotoCarousel({ project }) {
 }
 
 // ============================================================
-// 4. Typologies -tabs/cards per unit type
+// 4. Typologies — rooms with image carousel + lightbox
 // ============================================================
 function Typologies({ project }) {
   const isMobile = useIsMobile();
   const [active, setActive] = useState(0);
+  const [imgIdx, setImgIdx] = useState(0);
+  const [lightbox, setLightbox] = useState(null);
   const revealRef = useScrollReveal();
-  const typs = project.typologies;
+  const imgRef = useRef(null);
+  const rooms = project.rooms || [];
+
+  // Reset image index when switching room
+  const switchRoom = (i) => {
+    if (i === active) return;
+    // GSAP crossfade on the image
+    if (imgRef.current && typeof gsap !== 'undefined') {
+      gsap.to(imgRef.current, { opacity: 0, scale: 0.97, duration: 0.25, ease: 'power2.in', onComplete: () => {
+        setActive(i);
+        setImgIdx(0);
+        requestAnimationFrame(() => {
+          if (imgRef.current) gsap.fromTo(imgRef.current, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.35, ease: 'power2.out' });
+        });
+      }});
+    } else {
+      setActive(i);
+      setImgIdx(0);
+    }
+  };
+
+  const room = rooms[active];
+  if (!room) return null;
+  const roomImages = room.images || [];
+  const totalImg = roomImages.length;
+
+  // Image nav with GSAP
+  const navImg = (dir) => {
+    if (totalImg <= 1 || !imgRef.current || typeof gsap === 'undefined') return;
+    const next = ((imgIdx + dir) % totalImg + totalImg) % totalImg;
+    gsap.to(imgRef.current, { opacity: 0, x: -dir * 30, duration: 0.2, ease: 'power2.in', onComplete: () => {
+      setImgIdx(next);
+      requestAnimationFrame(() => {
+        if (imgRef.current) gsap.fromTo(imgRef.current, { opacity: 0, x: dir * 30 }, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' });
+      });
+    }});
+  };
+
+  // Lightbox
+  const openLb = () => {
+    setLightbox(imgIdx);
+    requestAnimationFrame(() => {
+      const ov = document.querySelector('.typ-lb');
+      const img = document.querySelector('.typ-lb-img');
+      if (ov && typeof gsap !== 'undefined') {
+        gsap.fromTo(ov, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' });
+        if (img) gsap.fromTo(img, { scale: 0.9 }, { scale: 1, duration: 0.4, ease: 'power3.out', delay: 0.08 });
+      }
+    });
+  };
+  const closeLb = () => {
+    const ov = document.querySelector('.typ-lb');
+    if (ov && typeof gsap !== 'undefined') {
+      gsap.to(ov, { opacity: 0, duration: 0.25, ease: 'power2.in', onComplete: () => setLightbox(null) });
+    } else setLightbox(null);
+  };
+  const navLb = (dir) => {
+    const img = document.querySelector('.typ-lb-img');
+    if (img && typeof gsap !== 'undefined') {
+      gsap.to(img, { x: -dir * 40, opacity: 0, duration: 0.2, ease: 'power2.in', onComplete: () => {
+        setLightbox(p => ((p + dir) % totalImg + totalImg) % totalImg);
+        requestAnimationFrame(() => {
+          const ni = document.querySelector('.typ-lb-img');
+          if (ni) gsap.fromTo(ni, { x: dir * 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
+        });
+      }});
+    }
+  };
+
+  const lbBtnStyle = { background: 'rgba(255,255,255,0.12)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' };
+
+  // Image arrow style (inside the image area)
+  const imgArrow = (side) => ({
+    position: 'absolute', top: '50%', transform: 'translateY(-50%)',
+    [side]: 12, zIndex: 5,
+    width: 36, height: 36, borderRadius: '50%',
+    background: 'rgba(0,0,0,0.35)', border: 'none',
+    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+    transition: 'background 0.2s',
+    opacity: totalImg > 1 ? 1 : 0,
+    pointerEvents: totalImg > 1 ? 'auto' : 'none',
+  });
 
   return (
-    <section style={{
-      background: C.green,
-      padding: isMobile ? '80px 24px' : '140px 80px',
-    }}>
-      <div ref={revealRef} style={{
-        maxWidth: 1200, margin: '0 auto',
-        willChange: 'opacity, transform',
-      }}>
-        <div style={{
-          fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
-          textTransform: 'uppercase', fontWeight: 600, marginBottom: 16,
-        }}>
-          Typologies
+    <section style={{ background: C.green, padding: isMobile ? '80px 24px' : '140px 80px' }}>
+      {/* Lightbox */}
+      {lightbox !== null && (
+        <div className="typ-lb" onClick={closeLb}
+          style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 99999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
+          <button onClick={e => { e.stopPropagation(); closeLb(); }}
+            style={{ ...lbBtnStyle, position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          {totalImg > 1 && (
+            <>
+              <button onClick={e => { e.stopPropagation(); navLb(-1); }}
+                style={{ ...lbBtnStyle, position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button onClick={e => { e.stopPropagation(); navLb(1); }}
+                style={{ ...lbBtnStyle, position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+              </button>
+            </>
+          )}
+          <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: 13, fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.1em' }}>
+            {lightbox + 1} / {totalImg}
+          </div>
+          <img className="typ-lb-img" src={roomImages[lightbox]} alt=""
+            style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 4 }} />
         </div>
-        <h2 style={{
-          fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2,
-          letterSpacing: '-0.01em', color: C.bege, margin: '0 0 48px',
-        }}>
+      )}
+
+      <div ref={revealRef} style={{ maxWidth: 1200, margin: '0 auto', willChange: 'opacity, transform' }}>
+        <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
+          Divisões
+        </div>
+        <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.bege, margin: '0 0 48px' }}>
           Spaces designed for <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>how you live.</em>
         </h2>
 
-        {/* Tab buttons */}
-        <div style={{
-          display: 'flex', gap: 12, marginBottom: 40,
-          flexWrap: 'wrap',
-        }}>
-          {typs.map((t, i) => (
-            <button
-              key={t.type}
-              onClick={() => setActive(i)}
+        {/* Room tabs */}
+        <div style={{ display: 'flex', gap: 12, marginBottom: 40, flexWrap: 'wrap' }}>
+          {rooms.map((r, i) => (
+            <button key={r.name} onClick={() => switchRoom(i)}
               style={{
                 padding: '12px 28px',
                 background: active === i ? C.bege : 'transparent',
                 color: active === i ? C.ink : C.bege,
                 border: active === i ? 'none' : '1px solid rgba(238,232,218,0.25)',
-                borderRadius: 40,
-                fontWeight: 500, fontSize: 13, letterSpacing: '0.1em',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-              }}
-            >
-              {t.type}
+                borderRadius: 40, fontWeight: 500, fontSize: 13, letterSpacing: '0.1em',
+                cursor: 'pointer', transition: 'all 0.3s ease',
+              }}>
+              {r.name}
             </button>
           ))}
         </div>
 
-        {/* Active typology detail */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-          gap: isMobile ? 32 : 64,
-          alignItems: 'start',
-        }}>
+        {/* Room detail */}
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 32 : 64, alignItems: 'start' }}>
           {/* Info */}
           <div>
-            <h3 style={{
-              fontWeight: 500, fontSize: isMobile ? 32 : 48,
-              color: C.bege, margin: 0, letterSpacing: '-0.02em',
-            }}>
-              {typs[active].type}
+            <h3 style={{ fontWeight: 500, fontSize: isMobile ? 32 : 48, color: C.bege, margin: 0, letterSpacing: '-0.02em' }}>
+              {room.name}
             </h3>
-
-            <div style={{
-              display: 'flex', gap: isMobile ? 24 : 40, marginTop: 24,
-            }}>
+            <div style={{ display: 'flex', gap: isMobile ? 24 : 40, marginTop: 24 }}>
               <div>
-                <div style={{
-                  fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase',
-                  color: C.clearGreen, fontWeight: 600, marginBottom: 6,
-                }}>Area</div>
-                <div style={{ fontSize: 18, fontWeight: 500, color: C.bege }}>{typs[active].area}</div>
-              </div>
-              <div>
-                <div style={{
-                  fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase',
-                  color: C.clearGreen, fontWeight: 600, marginBottom: 6,
-                }}>Bedrooms</div>
-                <div style={{ fontSize: 18, fontWeight: 500, color: C.bege }}>{typs[active].bedrooms}</div>
+                <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 6 }}>Área</div>
+                <div style={{ fontSize: 18, fontWeight: 500, color: C.bege }}>{room.area}</div>
               </div>
             </div>
-
-            <p style={{
-              fontSize: 15, lineHeight: 1.8, color: 'rgba(238,232,218,0.75)',
-              margin: '28px 0 0', maxWidth: 480,
-            }}>
-              {typs[active].description}
+            <p style={{ fontSize: 15, lineHeight: 1.8, color: 'rgba(238,232,218,0.75)', margin: '28px 0 0', maxWidth: 480 }}>
+              {room.detail}
             </p>
-
             <div style={{ marginTop: 40 }}>
               <FillButton
                 href={'#contact'}
-                onClick={e => {
-                  e.preventDefault();
-                  const el = document.getElementById('project-contact');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
+                onClick={e => { e.preventDefault(); const el = document.getElementById('project-contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
                 variant="outline"
-                style={{ color: C.bege, border: '1px solid rgba(238,232,218,0.3)', borderRadius: 6, padding: '14px 36px' }}
-              >
-                Request floor plan
+                style={{ color: C.bege, border: '1px solid rgba(238,232,218,0.3)', borderRadius: 6, padding: '14px 36px' }}>
+                Saber mais
               </FillButton>
             </div>
           </div>
 
-          {/* Placeholder for floor plan image */}
-          <div style={{
-            background: 'rgba(238,232,218,0.06)',
-            borderRadius: 6,
-            height: isMobile ? 240 : 360,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: '1px solid rgba(238,232,218,0.1)',
-          }}>
-            <div style={{ textAlign: 'center', color: 'rgba(238,232,218,0.3)' }}>
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <line x1="3" y1="9" x2="21" y2="9" />
-                <line x1="9" y1="21" x2="9" y2="9" />
-              </svg>
-              <div style={{ marginTop: 12, fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-                Floor plan
+          {/* Image carousel */}
+          <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', height: isMobile ? 260 : 380 }}>
+            {/* Arrows */}
+            <button style={imgArrow('left')} onClick={() => navImg(-1)}
+              onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.55)'}
+              onMouseOut={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button style={imgArrow('right')} onClick={() => navImg(1)}
+              onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.55)'}
+              onMouseOut={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            {/* Counter */}
+            {totalImg > 1 && (
+              <div style={{ position: 'absolute', bottom: 12, right: 14, zIndex: 5, background: 'rgba(0,0,0,0.4)', borderRadius: 20, padding: '4px 12px', color: '#fff', fontSize: 11, letterSpacing: '0.08em', fontFamily: "'DM Sans', sans-serif" }}>
+                {imgIdx + 1} / {totalImg}
               </div>
-            </div>
+            )}
+            {/* Image */}
+            <img
+              ref={imgRef}
+              src={roomImages[imgIdx] || ''}
+              alt={room.name}
+              onClick={openLb}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'zoom-in', transition: 'transform 0.5s ease' }}
+              onMouseOver={e => e.currentTarget.style.transform = 'scale(1.03)'}
+              onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+            />
           </div>
         </div>
       </div>
