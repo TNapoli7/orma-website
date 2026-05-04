@@ -749,16 +749,16 @@ function Gallery({ project }) {
   if (isMobile) {
     const mobileRatios = ['3/4', '4/5', '4/5', '3/4', '16/10'];
     return (
-      <section ref={sectionRef} style={{ background: C.bege, padding: '60px 0 60px' }}>
+      <section ref={sectionRef} style={{ background: C.bege, padding: '48px 0 32px' }}>
         {/* Info first on mobile */}
-        <div style={{ padding: '0 24px 40px' }}>
+        <div style={{ padding: '0 24px 24px' }}>
           <InfoCard />
         </div>
         {/* Images */}
         {galleryImages.filter(Boolean).map((img, i) => (
           <div key={i} className="mob-card" style={{
             padding: i % 2 === 0 ? '0 16px' : '0 40px',
-            marginBottom: 16,
+            marginBottom: 12,
           }}>
             <div style={{ width: '100%', aspectRatio: mobileRatios[i] || '3/4', overflow: 'hidden', background: C.grey }}>
               <img src={img} alt={'Gallery ' + (i + 1)} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
@@ -917,9 +917,9 @@ function PhotoCarousel({ project }) {
   // Arrow style
   const arrowBtn = (side) => ({
     position: 'absolute', top: '50%', transform: 'translateY(-50%)',
-    [side]: isMobile ? 10 : 20, zIndex: 10,
-    width: isMobile ? 38 : 48, height: isMobile ? 38 : 48,
-    borderRadius: '50%', background: 'rgba(255,255,255,0.8)', border: 'none',
+    [side]: isMobile ? 8 : 20, zIndex: 10,
+    width: isMobile ? 32 : 48, height: isMobile ? 32 : 48,
+    borderRadius: '50%', background: isMobile ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.8)', border: 'none',
     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)', transition: 'all 0.3s ease',
   });
@@ -988,7 +988,7 @@ function PhotoCarousel({ project }) {
   };
 
   return (
-    <section ref={sectionRef} style={{ padding: isMobile ? '40px 0' : '80px 0', background: C.bege, overflow: 'hidden', position: 'relative' }}>
+    <section ref={sectionRef} style={{ padding: isMobile ? '20px 0' : '80px 0', background: C.bege, overflow: 'hidden', position: 'relative' }}>
       {renderLightbox()}
       <div ref={containerRef} style={{ position: 'relative', width: '100%' }}>
         <button style={arrowBtn('left')} onClick={prev}
@@ -1556,9 +1556,11 @@ function ProjectCTA({ project }) {
           Fale connosco para mais detalhes, plantas ou condições.
         </p>
 
-        <FillButton href="index.html#contact">
-          Entrar em contacto
-        </FillButton>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <FillButton href="index.html#contact">
+            Entrar em contacto
+          </FillButton>
+        </div>
       </div>
     </section>
   );
@@ -1735,6 +1737,7 @@ function ProjectPage() {
 }
 
 function FloatingButtons() {
+  const isMobile = useIsMobile();
   const [showTop, setShowTop] = useState(false);
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 400);
@@ -1744,8 +1747,8 @@ function FloatingButtons() {
 
   return (
     <div style={{
-      position: 'fixed', bottom: 28, right: 28, zIndex: 180,
-      display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center',
+      position: 'fixed', bottom: isMobile ? 16 : 28, right: isMobile ? 16 : 28, zIndex: 180,
+      display: 'flex', flexDirection: 'column', gap: isMobile ? 8 : 12, alignItems: 'center',
     }}>
       <a
         href="https://wa.me/351XXXXXXXXX"
@@ -1753,7 +1756,7 @@ function FloatingButtons() {
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
         style={{
-          width: 52, height: 52, borderRadius: '50%',
+          width: isMobile ? 44 : 52, height: isMobile ? 44 : 52, borderRadius: '50%',
           background: C.green, display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
           transition: 'transform 0.25s ease, box-shadow 0.25s ease',
@@ -1770,7 +1773,7 @@ function FloatingButtons() {
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Scroll to top"
         style={{
-          width: 40, height: 40, borderRadius: '50%',
+          width: isMobile ? 34 : 40, height: isMobile ? 34 : 40, borderRadius: '50%',
           background: C.green, border: 'none',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxShadow: '0 3px 10px rgba(0,0,0,0.15)',
