@@ -711,7 +711,7 @@ function SustainabilityV2() {
       {/* Custom DRAG cursor — desktop only */}
       {!isMobile && (
         <div ref={cursorRef} style={{
-          position: 'absolute', width: 80, height: 80, borderRadius: '50%',
+          position: 'absolute', width: 96, height: 96, borderRadius: '50%',
           background: C.terracota, display: 'flex', alignItems: 'center', justifyContent: 'center',
           pointerEvents: 'none', zIndex: 20,
           opacity: showCursor ? 1 : 0,
@@ -762,38 +762,27 @@ function SustainabilityV2() {
             <div style={{
               fontWeight: 300, fontSize: isMobile ? 64 : 96, lineHeight: 1,
               letterSpacing: '-0.04em', color: C.bege,
-              marginBottom: 20, opacity: 0.9,
+              marginBottom: 10, opacity: 0.9,
               userSelect: 'none',
             }}>
               {m.year}
             </div>
 
-            {/* Card */}
+            {/* Image */}
             <div style={{
-              background: 'rgba(238,232,218,0.06)',
               borderRadius: 12, overflow: 'hidden',
-              border: '1px solid rgba(238,232,218,0.08)',
-              transition: 'border-color 0.3s ease',
-            }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(238,232,218,0.2)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(238,232,218,0.08)'}
-            >
-              {/* Card image */}
-              <div style={{ height: isMobile ? 200 : 260, overflow: 'hidden' }}>
-                <img src={m.img} alt={m.title} draggable="false"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none', transition: 'transform 0.6s ease' }}
-                />
-              </div>
+              height: isMobile ? 220 : 280,
+            }}>
+              <img src={m.img} alt={m.title} draggable="false"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none', transition: 'transform 0.6s ease' }}
+              />
+            </div>
 
-              {/* Card text */}
-              <div style={{ padding: isMobile ? '20px 20px 24px' : '24px 28px 32px' }}>
-                <h3 style={{ fontWeight: 500, fontSize: isMobile ? 18 : 20, color: C.bege, margin: '0 0 12px', letterSpacing: '-0.01em' }}>
-                  {m.title}
-                </h3>
-                <p style={{ fontSize: 14, lineHeight: 1.7, color: 'rgba(238,232,218,0.6)', margin: 0 }}>
-                  {m.desc}
-                </p>
-              </div>
+            {/* Text — outside image, below */}
+            <div style={{ paddingTop: isMobile ? 16 : 20 }}>
+              <p style={{ fontSize: 14, lineHeight: 1.7, color: 'rgba(238,232,218,0.7)', margin: 0 }}>
+                {m.desc}
+              </p>
             </div>
           </div>
         ))}
@@ -923,7 +912,6 @@ function TestPage() {
       <Hero />
       <WhyOrma />
       <SustainabilityV1 />
-      <SectionDivider label="End of V1 / Start of V2" />
       <SustainabilityV2 />
       <Footer />
     </div>
