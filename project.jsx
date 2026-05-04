@@ -195,10 +195,10 @@ function FillButton({ children, href, onClick, variant = 'solid', style = {} }) 
   const baseStyle = {
     position: 'relative', overflow: 'hidden',
     display: 'inline-block',
-    padding: '16px 40px',
-    fontWeight: 600, fontSize: 12, letterSpacing: '0.2em',
+    padding: '16px 36px',
+    fontWeight: isSolid ? 600 : 500, fontSize: 12, letterSpacing: '0.2em',
     textTransform: 'uppercase', textDecoration: 'none',
-    borderRadius: isSolid ? 6 : 40,
+    borderRadius: 40,
     cursor: 'pointer', border: 'none',
     transition: 'border-color 0.4s ease',
     ...(isSolid
@@ -450,13 +450,16 @@ function MenuDrawer({ open, onClose }) {
 function ProjectNav({ projectName }) {
   const isMobile = useIsMobile();
   const [visible, setVisible] = useState(true);
+  const [inHero, setInHero] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const lastScroll = useRef(0);
 
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
-      if (y < 200) {
+      const heroH = window.innerHeight;
+      setInHero(y < heroH * 0.85);
+      if (y < heroH * 0.5) {
         setVisible(true);
       } else if (y < lastScroll.current) {
         setVisible(true);
@@ -477,15 +480,15 @@ function ProjectNav({ projectName }) {
         top: 0, left: 0, right: 0,
         height: 80,
         padding: isMobile ? '0 20px' : '0 48px',
-        background: 'rgba(92,100,87,0.95)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        background: inHero ? 'transparent' : 'rgba(92,100,87,0.95)',
+        backdropFilter: inHero ? 'none' : 'blur(12px)',
+        WebkitBackdropFilter: inHero ? 'none' : 'blur(12px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         zIndex: 150,
         transform: visible || menuOpen ? 'translateY(0)' : 'translateY(-100%)',
-        transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+        transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease',
       }}>
         {/* Logo -links to homepage */}
         <a href="index.html" style={{ display: 'block', lineHeight: 0 }}>
@@ -606,79 +609,6 @@ function ProjectHero({ project }) {
     {/* Spacer so content starts after hero */}
     <div style={{ height: '100vh' }} />
     </>
-  );
-}
-
-// ============================================================
-// 2. Overview -description + stats grid
-// ============================================================
-function Overview({ project }) {
-  const isMobile = useIsMobile();
-  const revealRef = useScrollReveal();
-
-  return (
-    <section style={{
-      background: C.bege,
-      padding: isMobile ? '80px 24px' : '140px 80px',
-    }}>
-      <div ref={revealRef} style={{
-        maxWidth: 1200, margin: '0 auto',
-        display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1fr',
-        gap: isMobile ? 48 : 100,
-        willChange: 'opacity, transform',
-      }}>
-        {/* Left -text */}
-        <div>
-          <div style={{
-            fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
-            textTransform: 'uppercase', fontWeight: 600, marginBottom: 24,
-          }}>
-            The Project
-          </div>
-          <p style={{
-            fontWeight: 300, fontSize: isMobile ? 20 : 26, lineHeight: 1.6,
-            letterSpacing: '-0.01em', color: C.ink, margin: 0,
-          }}>
-            {project.description}
-          </p>
-          <p style={{
-            fontSize: 15, lineHeight: 1.8, color: C.green,
-            margin: '28px 0 0',
-          }}>
-            {project.descriptionExtra}
-          </p>
-        </div>
-
-        {/* Right -stats grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 0,
-        }}>
-          {project.stats.map((stat, i) => (
-            <div key={stat.label} style={{
-              padding: isMobile ? '20px 16px' : '28px 24px',
-              borderTop: '1px solid rgba(92,100,87,0.12)',
-              borderRight: i % 2 === 0 ? '1px solid rgba(92,100,87,0.12)' : 'none',
-            }}>
-              <div style={{
-                fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase',
-                color: C.clearGreen, fontWeight: 600, marginBottom: 8,
-              }}>
-                {stat.label}
-              </div>
-              <div style={{
-                fontSize: isMobile ? 18 : 22, fontWeight: 500,
-                color: C.ink, letterSpacing: '-0.01em',
-              }}>
-                {stat.value}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -1239,7 +1169,7 @@ function Typologies({ project }) {
           Divisões
         </div>
         <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.bege, margin: '0 0 48px' }}>
-          Spaces designed for <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>how you live.</em>
+          Espaços pensados para <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>a sua vida.</em>
         </h2>
 
         {/* Room tabs */}
@@ -1626,25 +1556,99 @@ function ProjectCTA({ project }) {
 }
 
 // ============================================================
-// 7. Footer -simplified for project page
+// 7. Footer — global (same as homepage)
 // ============================================================
 function ProjectFooter() {
   const isMobile = useIsMobile();
+  const footerRef = useScrollReveal();
 
   return (
     <footer style={{
       background: '#3D4239', color: C.bege,
-      padding: isMobile ? '32px 24px' : '40px 64px',
+      position: 'relative', overflow: 'hidden',
     }}>
+      {/* Giant watermark */}
       <div style={{
-        maxWidth: 1280, margin: '0 auto',
-        display: 'flex',
-        flexDirection: isMobile ? 'column' : 'row',
-        justifyContent: 'space-between',
-        alignItems: isMobile ? 'flex-start' : 'center',
-        gap: isMobile ? 16 : 0,
-        fontSize: 12, color: 'rgba(177,180,169,0.6)', letterSpacing: '0.04em',
+        position: 'absolute', bottom: isMobile ? -30 : -40, left: '50%',
+        transform: 'translateX(-50%)',
+        fontWeight: 700, fontSize: isMobile ? 160 : 280,
+        letterSpacing: '-0.04em', textTransform: 'uppercase',
+        color: 'rgba(255,255,255,0.04)',
+        whiteSpace: 'nowrap', pointerEvents: 'none',
+        lineHeight: 0.85,
+      }}>orma.</div>
+
+      <div ref={footerRef} style={{
+        maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2,
+        padding: isMobile ? '80px 24px 32px' : '120px 64px 40px',
+        willChange: 'opacity, transform',
       }}>
+        {/* Top — CTA headline + contact info */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1.6fr 1fr',
+          gap: isMobile ? 48 : 80,
+          paddingBottom: isMobile ? 56 : 80,
+        }}>
+          {/* Left — Big CTA */}
+          <div>
+            <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.clearGreen, textTransform: 'uppercase', fontWeight: 600, marginBottom: 28 }}>Contacto</div>
+            <h2 style={{ fontWeight: 300, fontSize: isMobile ? 36 : 56, lineHeight: 1.1, letterSpacing: '-0.02em', color: C.bege, margin: 0 }}>
+              Fale connosco sobre a sua próxima <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>casa.</em>
+            </h2>
+            <div style={{ display: 'flex', gap: 16, marginTop: isMobile ? 32 : 44, flexWrap: 'wrap' }}>
+              <FillButton href="index.html#contact">Entrar em contacto</FillButton>
+              <FillButton href="index.html#projects" variant="outline">Os nossos projetos</FillButton>
+            </div>
+          </div>
+
+          {/* Right — Contact details */}
+          <div style={{ paddingTop: isMobile ? 0 : 16 }}>
+            {[
+              { label: 'Email', value: 'info@orma.pt', href: 'mailto:info@orma.pt' },
+              { label: 'Telefone', value: '+351 220 000 000', href: 'tel:+351220000000' },
+              { label: 'Morada', value: 'Rua de Cedofeita 123\nPorto, Portugal' },
+            ].map((item, i) => (
+              <div key={item.label} style={{
+                borderTop: i === 0 ? '1px solid rgba(238,232,218,0.12)' : 'none',
+                borderBottom: '1px solid rgba(238,232,218,0.12)',
+                padding: '20px 0',
+              }}>
+                <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 6 }}>{item.label}</div>
+                {item.href ? (
+                  <a href={item.href} style={{ fontSize: 15, color: C.bege, lineHeight: 1.5, textDecoration: 'none', transition: 'opacity 0.3s' }}>{item.value}</a>
+                ) : (
+                  <div style={{ fontSize: 15, color: C.bege, lineHeight: 1.5, whiteSpace: 'pre-line' }}>{item.value}</div>
+                )}
+              </div>
+            ))}
+            {/* Social icons */}
+            <div style={{ display: 'flex', gap: 20, marginTop: 24 }}>
+              {[
+                { name: 'Instagram', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" /></svg> },
+                { name: 'LinkedIn', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg> },
+                { name: 'Facebook', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg> },
+              ].map(s => (
+                <a key={s.name} href="#" aria-label={s.name} style={{ color: C.clearGreen, transition: 'color 0.3s', display: 'flex', alignItems: 'center' }}
+                  onMouseEnter={e => e.currentTarget.style.color = C.bege}
+                  onMouseLeave={e => e.currentTarget.style.color = C.clearGreen}
+                >{s.icon}</a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div style={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          justifyContent: 'space-between',
+          alignItems: isMobile ? 'flex-start' : 'center',
+          gap: isMobile ? 16 : 0,
+          paddingTop: 20,
+          borderTop: '1px solid rgba(238,232,218,0.08)',
+          fontSize: 12, color: 'rgba(177,180,169,0.6)', letterSpacing: '0.04em',
+        }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <a href="index.html" style={{ lineHeight: 0 }}>
             <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="Orma" loading="lazy" style={{ height: 18, opacity: 0.5 }} />
@@ -1654,6 +1658,7 @@ function ProjectFooter() {
         <div style={{ display: 'flex', gap: 24 }}>
           <a href="#" style={{ color: 'rgba(177,180,169,0.6)', textDecoration: 'none' }}>Privacy Policy</a>
           <a href="#" style={{ color: 'rgba(177,180,169,0.6)', textDecoration: 'none' }}>Terms & Conditions</a>
+        </div>
         </div>
       </div>
     </footer>
