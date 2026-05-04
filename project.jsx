@@ -710,23 +710,25 @@ function Gallery({ project }) {
     const section = sectionRef.current;
 
     const ctx = gsap.context(() => {
-      // Info card reveal
+      // Info card reveals FIRST — appears early in scroll
       const info = section.querySelector('.gal-info');
       if (info) {
         gsap.fromTo(info,
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
-            scrollTrigger: { trigger: info, start: '0% 85%', toggleActions: 'play none none none' }
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+            scrollTrigger: { trigger: section, start: '0% 95%', toggleActions: 'play none none none' }
           }
         );
       }
 
       if (!isMobile) {
+        // Top images reveal AFTER text — delayed start, scrub tied to section
         const img1 = section.querySelector('.gal-img-1');
         const img2 = section.querySelector('.gal-img-2');
-        if (img1) gsap.fromTo(img1, { yPercent: 15, opacity: 0 }, { yPercent: -5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 100%', end: '60% 50%', scrub: 0.6 } });
-        if (img2) gsap.fromTo(img2, { yPercent: -10, opacity: 0 }, { yPercent: 5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '0% 100%', end: '60% 50%', scrub: 0.6 } });
+        if (img1) gsap.fromTo(img1, { yPercent: 20, opacity: 0 }, { yPercent: -5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '15% 85%', end: '55% 40%', scrub: 0.6 } });
+        if (img2) gsap.fromTo(img2, { yPercent: -8, opacity: 0 }, { yPercent: 5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '20% 85%', end: '55% 40%', scrub: 0.6 } });
 
+        // Bottom row — even later, triggered by their own position
         const img3 = section.querySelector('.gal-img-3');
         const img4 = section.querySelector('.gal-img-4');
         const img5 = section.querySelector('.gal-img-5');
@@ -832,32 +834,32 @@ function Gallery({ project }) {
   return (
     <section ref={sectionRef} style={{
       position: 'relative', background: C.bege, zIndex: 2,
-      padding: '0 0 120px',
+      padding: '120px 0 120px',
     }}>
       {/* ---- TOP ROW: image left + info center + image right ---- */}
       <div style={{
         position: 'relative',
         display: 'grid', gridTemplateColumns: '1fr 1.2fr 1fr',
-        minHeight: '75vh', padding: '80px 48px 0', alignItems: 'start',
+        minHeight: '75vh', padding: '0 48px', alignItems: 'start',
         gap: '0 40px',
       }}>
-        {/* Image 1 — top-left, tall portrait */}
+        {/* Image 1 — top-left, tall portrait, starts lower */}
         <div className="gal-img-1" style={{
           width: '100%', maxWidth: 380, aspectRatio: '3/4',
-          overflow: 'hidden', marginTop: 60,
+          overflow: 'hidden', marginTop: 120,
         }}>
           <img src={galleryImages[0]} alt="Interior" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
 
-        {/* Info card — center */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        {/* Info card — center, starts higher so it appears first */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 20 }}>
           <InfoCard />
         </div>
 
-        {/* Image 2 — top-right */}
+        {/* Image 2 — top-right, also delayed */}
         <div className="gal-img-2" style={{
           width: '100%', maxWidth: 340, aspectRatio: '4/5',
-          overflow: 'hidden', justifySelf: 'end',
+          overflow: 'hidden', justifySelf: 'end', marginTop: 60,
         }}>
           <img src={galleryImages[1]} alt="Exterior" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
