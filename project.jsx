@@ -1121,16 +1121,19 @@ function Typologies({ project }) {
   const imgRef = useRef(null);
   const rooms = project.rooms || [];
 
+  const detailRef = useRef(null);
+
   // Reset image index when switching room
   const switchRoom = (i) => {
     if (i === active) return;
-    // GSAP crossfade on the image
-    if (imgRef.current && typeof gsap !== 'undefined') {
-      gsap.to(imgRef.current, { opacity: 0, scale: 0.97, duration: 0.25, ease: 'power2.in', onComplete: () => {
+    const targets = [imgRef.current, detailRef.current].filter(Boolean);
+    if (targets.length && typeof gsap !== 'undefined') {
+      gsap.to(targets, { opacity: 0, y: 8, duration: 0.22, ease: 'power2.in', onComplete: () => {
         setActive(i);
         setImgIdx(0);
         requestAnimationFrame(() => {
-          if (imgRef.current) gsap.fromTo(imgRef.current, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.35, ease: 'power2.out' });
+          const t2 = [imgRef.current, detailRef.current].filter(Boolean);
+          if (t2.length) gsap.fromTo(t2, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out', stagger: 0.06 });
         });
       }});
     } else {
@@ -1259,7 +1262,7 @@ function Typologies({ project }) {
         {/* Room detail */}
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 32 : 64, alignItems: 'start' }}>
           {/* Info */}
-          <div>
+          <div ref={detailRef} style={{ minHeight: isMobile ? 'auto' : 280 }}>
             <h3 style={{ fontWeight: 500, fontSize: isMobile ? 32 : 48, color: C.bege, margin: 0, letterSpacing: '-0.02em' }}>
               {room.name}
             </h3>
@@ -1343,7 +1346,7 @@ function Location({ project }) {
       ScrollTrigger.create({
         trigger: section,
         start: 'top top',
-        end: '+=60%',
+        end: '+=80%',
         pin: true,
         pinSpacing: true,
         onEnter: () => { section.style.zIndex = '10'; },
@@ -1736,7 +1739,7 @@ function ProjectPage() {
       </div>
 
       {/* Content after map - z-index 3 scrolls over the pinned map */}
-      <div style={{ position: 'relative', zIndex: 3 }}>
+      <div style={{ position: 'relative', zIndex: 3, background: C.bege }}>
         <ProjectCTA project={project} />
         <ProjectFooter />
       </div>
