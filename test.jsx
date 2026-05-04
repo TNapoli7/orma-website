@@ -485,36 +485,327 @@ function WhyOrma() {
 }
 
 // ============================================================
-// Sustainability — placeholder for new section
+// SS1 — Farm Minerals style: full-screen image shrinks on scroll
+// Image starts full-bleed, pinned section scrolls to reveal
+// text on left + image shrinks to right half
 // ============================================================
-function Sustainability() {
+function SustainabilityV1() {
   const isMobile = useIsMobile();
-  const sectionRef = useScrollReveal();
+  const sectionRef = useRef(null);
+  const imageRef = useRef(null);
+  const textRef = useRef(null);
+  const labelRef = useRef(null);
+
+  useEffect(() => {
+    if (isMobile || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: '+=100%',
+          pin: true,
+          scrub: 0.6,
+        },
+      });
+
+      // Image: starts full-width, shrinks to right half
+      tl.fromTo(imageRef.current,
+        { width: '100%', left: '0%', borderRadius: 0 },
+        { width: '48%', left: '52%', borderRadius: 16, duration: 1, ease: 'power2.inOut' },
+        0
+      );
+
+      // Label fade in
+      tl.fromTo(labelRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' },
+        0.3
+      );
+
+      // Text slides in from left
+      tl.fromTo(textRef.current,
+        { opacity: 0, x: -60 },
+        { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out' },
+        0.4
+      );
+    }, section);
+
+    return () => ctx.revert();
+  }, [isMobile]);
+
+  // Mobile: simple stacked layout
+  if (isMobile) {
+    return (
+      <section id="ss1" style={{ background: C.bege, overflow: 'hidden' }}>
+        <div style={{ height: 300, overflow: 'hidden' }}>
+          <img src="https://images.unsplash.com/photo-1518005068251-37900150dfca?w=1400&q=80" alt="Sustainability"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </div>
+        <div style={{ padding: '48px 24px 80px' }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.green, textTransform: 'uppercase', fontWeight: 600, marginBottom: 24 }}>
+            Sustainability - V1
+          </div>
+          <h2 style={{ fontWeight: 300, fontSize: 28, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 24px' }}>
+            Building with respect for what <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>lasts.</em>
+          </h2>
+          <p style={{ fontSize: 14, lineHeight: 1.8, color: C.green, margin: '0 0 16px' }}>
+            Every material, every decision, every detail - guided by the principle that responsible construction is better construction.
+          </p>
+          <p style={{ fontSize: 13, lineHeight: 1.8, color: 'rgba(92,100,87,0.7)', margin: 0 }}>
+            We design with longevity in mind. From energy-efficient envelopes to locally sourced materials, our projects reduce environmental impact without compromising on quality or comfort.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section ref={sectionRef} id="sustainability" style={{
-      position: 'relative', background: C.bege,
-      padding: isMobile ? '80px 24px' : '140px 64px', overflow: 'hidden',
+    <section ref={sectionRef} id="ss1" style={{
+      position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', background: C.bege,
     }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-        <div style={{ fontSize: 12, letterSpacing: '0.3em', color: C.green, textTransform: 'uppercase', fontWeight: 600, marginBottom: isMobile ? 32 : 56 }}>
-          Sustainability
-        </div>
-
+      {/* Image — starts full, shrinks to right */}
+      <div ref={imageRef} style={{
+        position: 'absolute', top: 0, left: '0%', width: '100%', height: '100%',
+        overflow: 'hidden', zIndex: 2,
+      }}>
+        <img src="https://images.unsplash.com/photo-1518005068251-37900150dfca?w=1800&q=80" alt="Sustainability"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        {/* Gradient overlay for initial state */}
         <div style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          minHeight: 400, textAlign: 'center',
-          border: '2px dashed rgba(92,100,87,0.2)', borderRadius: 16, padding: isMobile ? 32 : 64,
-        }}>
-          <div style={{ width: 80, height: 80, marginBottom: 32, opacity: 0.3 }}>
-            <TreeMark opacity={1} />
-          </div>
-          <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 44, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 20px' }}>
-            New section goes here
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(90deg, rgba(238,232,218,0.6) 0%, transparent 50%)',
+          pointerEvents: 'none',
+        }} />
+      </div>
+
+      {/* Text — left column, appears on scroll */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '50%', height: '100%', zIndex: 3, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 64px' }}>
+        <div ref={labelRef} style={{ opacity: 0, fontSize: 12, letterSpacing: '0.3em', color: C.green, textTransform: 'uppercase', fontWeight: 600, marginBottom: 40 }}>
+          Sustainability - V1
+        </div>
+        <div ref={textRef} style={{ opacity: 0 }}>
+          <h2 style={{ fontWeight: 300, fontSize: 48, lineHeight: 1.15, letterSpacing: '-0.02em', color: C.ink, margin: '0 0 32px' }}>
+            Building with respect for what <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>lasts.</em>
           </h2>
-          <p style={{ fontSize: 16, lineHeight: 1.7, color: C.green, maxWidth: 520, margin: 0 }}>
-            This is the placeholder for the sustainability section. Content and layout to be defined.
+          <p style={{ fontSize: 15, lineHeight: 1.8, color: C.green, margin: '0 0 20px', maxWidth: 480 }}>
+            Every material, every decision, every detail - guided by the principle that responsible construction is better construction.
           </p>
+          <p style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(92,100,87,0.65)', margin: '0 0 40px', maxWidth: 480 }}>
+            We design with longevity in mind. From energy-efficient envelopes to locally sourced materials, our projects reduce environmental impact without compromising on quality or comfort.
+          </p>
+          <a href="#contact" onClick={e => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              padding: '16px 36px', background: C.green, color: C.bege,
+              borderRadius: 40, textDecoration: 'none', fontSize: 12,
+              letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600,
+              transition: 'background 0.3s ease',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = C.ink}
+            onMouseLeave={e => e.currentTarget.style.background = C.green}
+          >
+            Learn more
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================
+// Section Divider
+// ============================================================
+function SectionDivider({ label }) {
+  return (
+    <div style={{
+      background: C.ink, padding: '40px 64px', textAlign: 'center',
+      fontSize: 13, letterSpacing: '0.3em', textTransform: 'uppercase',
+      fontWeight: 600, color: C.terracota,
+    }}>
+      {label}
+    </div>
+  );
+}
+
+// ============================================================
+// SS2 — Locogen style: draggable horizontal carousel with
+// large year headings, image cards, and custom DRAG cursor
+// ============================================================
+function SustainabilityV2() {
+  const isMobile = useIsMobile();
+  const trackRef = useRef(null);
+  const containerRef = useRef(null);
+  const cursorRef = useRef(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+  const [showCursor, setShowCursor] = useState(false);
+
+  const milestones = [
+    { year: '2024', title: 'Lir 725 Breaks Ground', desc: 'Construction begins on our first residential project in Porto, designed with passive-house principles and a minimal carbon footprint.', img: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80' },
+    { year: '2023', title: 'Sustainability Charter', desc: 'Orma formally commits to sourcing 80% of construction materials within a 150km radius, reducing transport emissions and supporting local industry.', img: 'https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?w=800&q=80' },
+    { year: '2022', title: 'Energy A+ Standard', desc: 'All future Orma projects are designed to achieve Energy Certificate A+ rating as a baseline, exceeding national requirements.', img: 'https://images.unsplash.com/photo-1473090826765-d54ac2fdc1eb?w=800&q=80' },
+    { year: '2021', title: 'Community Reinvestment', desc: 'We establish the policy of reinvesting 100% of net income back into the communities where our projects are built.', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80' },
+    { year: '2020', title: 'Orma Founded', desc: 'The company is established with a clear vision: build homes that are as responsible as they are refined.', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80' },
+  ];
+
+  // Custom DRAG cursor
+  const handleMouseMove = (e) => {
+    if (!cursorRef.current || !containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    cursorRef.current.style.left = (e.clientX - rect.left) + 'px';
+    cursorRef.current.style.top = (e.clientY - rect.top) + 'px';
+  };
+
+  // Drag-to-scroll
+  const handleMouseDown = (e) => {
+    isDragging.current = true;
+    startX.current = e.pageX - trackRef.current.offsetLeft;
+    scrollLeft.current = trackRef.current.scrollLeft;
+    trackRef.current.style.cursor = 'grabbing';
+    if (cursorRef.current) cursorRef.current.style.transform = 'translate(-50%, -50%) scale(0.85)';
+  };
+
+  const handleMouseUp = () => {
+    isDragging.current = false;
+    if (trackRef.current) trackRef.current.style.cursor = 'grab';
+    if (cursorRef.current) cursorRef.current.style.transform = 'translate(-50%, -50%) scale(1)';
+  };
+
+  const handleMouseMoveTrack = (e) => {
+    if (!isDragging.current) return;
+    e.preventDefault();
+    const x = e.pageX - trackRef.current.offsetLeft;
+    const walk = (x - startX.current) * 1.8;
+    trackRef.current.scrollLeft = scrollLeft.current - walk;
+  };
+
+  // Touch drag for mobile
+  const touchStart = useRef(0);
+  const touchScrollLeft = useRef(0);
+  const handleTouchStart = (e) => {
+    touchStart.current = e.touches[0].pageX;
+    touchScrollLeft.current = trackRef.current.scrollLeft;
+  };
+  const handleTouchMove = (e) => {
+    const x = e.touches[0].pageX;
+    const walk = (x - touchStart.current) * 1.5;
+    trackRef.current.scrollLeft = touchScrollLeft.current - walk;
+  };
+
+  return (
+    <section ref={containerRef} id="ss2" style={{
+      position: 'relative', background: C.green, overflow: 'hidden',
+      padding: isMobile ? '60px 0 80px' : '100px 0 120px',
+      cursor: 'none',
+    }}
+    onMouseMove={handleMouseMove}
+    onMouseEnter={() => !isMobile && setShowCursor(true)}
+    onMouseLeave={() => { setShowCursor(false); handleMouseUp(); }}
+    >
+      {/* Custom DRAG cursor — desktop only */}
+      {!isMobile && (
+        <div ref={cursorRef} style={{
+          position: 'absolute', width: 80, height: 80, borderRadius: '50%',
+          background: C.terracota, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          pointerEvents: 'none', zIndex: 20,
+          opacity: showCursor ? 1 : 0,
+          transform: 'translate(-50%, -50%)',
+          transition: 'opacity 0.25s ease, transform 0.15s ease',
+        }}>
+          <span style={{ fontSize: 11, letterSpacing: '0.15em', fontWeight: 600, color: C.white, textTransform: 'uppercase' }}>
+            Drag
+          </span>
+        </div>
+      )}
+
+      {/* Section label */}
+      <div style={{ padding: isMobile ? '0 24px 40px' : '0 64px 60px' }}>
+        <div style={{ fontSize: 12, letterSpacing: '0.3em', color: C.bege, textTransform: 'uppercase', fontWeight: 600, marginBottom: 20, opacity: 0.7 }}>
+          Sustainability - V2
+        </div>
+        <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 44, lineHeight: 1.15, letterSpacing: '-0.02em', color: C.white, margin: 0, maxWidth: 600 }}>
+          Our journey towards <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>impact.</em>
+        </h2>
+      </div>
+
+      {/* Draggable track */}
+      <div
+        ref={trackRef}
+        style={{
+          display: 'flex', gap: isMobile ? 20 : 32,
+          overflowX: 'auto', overflowY: 'hidden',
+          padding: isMobile ? '0 24px' : '0 64px',
+          cursor: isMobile ? 'default' : 'grab',
+          scrollbarWidth: 'none', msOverflowStyle: 'none',
+          WebkitOverflowScrolling: 'touch',
+          userSelect: 'none',
+        }}
+        onMouseDown={!isMobile ? handleMouseDown : undefined}
+        onMouseUp={!isMobile ? handleMouseUp : undefined}
+        onMouseLeave={!isMobile ? handleMouseUp : undefined}
+        onMouseMove={!isMobile ? handleMouseMoveTrack : undefined}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+      >
+        {milestones.map((m, i) => (
+          <div key={i} style={{
+            flexShrink: 0,
+            width: isMobile ? '80vw' : 420,
+          }}>
+            {/* Year */}
+            <div style={{
+              fontWeight: 300, fontSize: isMobile ? 64 : 96, lineHeight: 1,
+              letterSpacing: '-0.04em', color: C.bege,
+              marginBottom: 20, opacity: 0.9,
+              userSelect: 'none',
+            }}>
+              {m.year}
+            </div>
+
+            {/* Card */}
+            <div style={{
+              background: 'rgba(238,232,218,0.06)',
+              borderRadius: 12, overflow: 'hidden',
+              border: '1px solid rgba(238,232,218,0.08)',
+              transition: 'border-color 0.3s ease',
+            }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(238,232,218,0.2)'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(238,232,218,0.08)'}
+            >
+              {/* Card image */}
+              <div style={{ height: isMobile ? 200 : 260, overflow: 'hidden' }}>
+                <img src={m.img} alt={m.title} draggable="false"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none', transition: 'transform 0.6s ease' }}
+                />
+              </div>
+
+              {/* Card text */}
+              <div style={{ padding: isMobile ? '20px 20px 24px' : '24px 28px 32px' }}>
+                <h3 style={{ fontWeight: 500, fontSize: isMobile ? 18 : 20, color: C.bege, margin: '0 0 12px', letterSpacing: '-0.01em' }}>
+                  {m.title}
+                </h3>
+                <p style={{ fontSize: 14, lineHeight: 1.7, color: 'rgba(238,232,218,0.6)', margin: 0 }}>
+                  {m.desc}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* End spacer */}
+        <div style={{ flexShrink: 0, width: isMobile ? 24 : 64 }} />
+      </div>
+
+      {/* Scroll hint bar */}
+      <div style={{ padding: isMobile ? '32px 24px 0' : '48px 64px 0', maxWidth: 600 }}>
+        <div style={{ height: 2, background: 'rgba(238,232,218,0.1)', borderRadius: 1, position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: '30%', background: C.terracota, borderRadius: 1, transition: 'width 0.3s ease' }} />
         </div>
       </div>
     </section>
@@ -631,7 +922,9 @@ function TestPage() {
       <Nav />
       <Hero />
       <WhyOrma />
-      <Sustainability />
+      <SustainabilityV1 />
+      <SectionDivider label="End of V1 / Start of V2" />
+      <SustainabilityV2 />
       <Footer />
     </div>
   );
