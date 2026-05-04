@@ -1,4 +1,4 @@
-/* global React */
+/* global React, gsap, ScrollTrigger */
 const { useState, useEffect, useRef } = React;
 
 // ============================================================
@@ -188,18 +188,115 @@ function TreeMark({ opacity = 0.08, style = {} }) {
 }
 
 // ============================================================
-// SiteImage
+// RollingNumber - animated counter
 // ============================================================
-function SiteImage({ src, style = {} }) {
+function RollingNumber({ value, suffix = '', duration = 1800 }) {
+  const ref = useRef(null);
+  const [display, setDisplay] = useState(0);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !hasAnimated.current) {
+        hasAnimated.current = true;
+        const num = parseInt(value, 10) || 0;
+        const start = performance.now();
+        const animate = (now) => {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+          setDisplay(Math.round(eased * num));
+          if (progress < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+      }
+    }, { threshold: 0.3 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [value, duration]);
+
+  return React.createElement('span', { ref }, display + suffix);
+}
+
+// ============================================================
+// STAT_ICONS - SVG icons for WhyUs stats
+// ============================================================
+const STAT_ICONS = {
+  years: function() {
+    return React.createElement('svg', { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none' },
+      React.createElement('circle', { cx: 12, cy: 12, r: 9, stroke: C.clearGreen, strokeWidth: 1.5 }),
+      React.createElement('path', { d: 'M12 7L12 12L16 14', stroke: C.clearGreen, strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' })
+    );
+  },
+  projects: function() {
+    return React.createElement('svg', { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none' },
+      React.createElement('rect', { x: 3, y: 3, width: 7, height: 7, rx: 1, stroke: C.clearGreen, strokeWidth: 1.5 }),
+      React.createElement('rect', { x: 14, y: 3, width: 7, height: 7, rx: 1, stroke: C.clearGreen, strokeWidth: 1.5 }),
+      React.createElement('rect', { x: 3, y: 14, width: 7, height: 7, rx: 1, stroke: C.clearGreen, strokeWidth: 1.5 }),
+      React.createElement('rect', { x: 14, y: 14, width: 7, height: 7, rx: 1, stroke: C.clearGreen, strokeWidth: 1.5 })
+    );
+  },
+  reinvest: function() {
+    return React.createElement('svg', { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none' },
+      React.createElement('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10', stroke: C.clearGreen, strokeWidth: 1.5, strokeLinecap: 'round' }),
+      React.createElement('path', { d: 'M22 2L22 8L16 8', stroke: C.clearGreen, strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }),
+      React.createElement('path', { d: 'M22 8L18 4', stroke: C.clearGreen, strokeWidth: 1.5, strokeLinecap: 'round' })
+    );
+  },
+};
+
+// ============================================================
+// Service Icons - custom SVGs for each service
+// ============================================================
+function ServiceIconStrategy() {
   return (
-    <div style={{
-      backgroundImage: `url(${src})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      ...style,
-    }} />
+    <svg width="38" height="38" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="15" cy="15" r="10" stroke={C.green} strokeWidth="1.5"/>
+      <path d="M15 5L15 25" stroke={C.green} strokeWidth="1" opacity="0.4"/>
+      <path d="M5 15L25 15" stroke={C.green} strokeWidth="1" opacity="0.4"/>
+      <path d="M15 5L15 8" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M15 22L15 25" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M5 15L8 15" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M22 15L25 15" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="15" cy="15" r="3" stroke={C.green} strokeWidth="1.5"/>
+      <path d="M15 12L15 9" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
   );
 }
+
+function ServiceIconEvents() {
+  return (
+    <svg width="38" height="38" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="8" width="22" height="18" rx="1.5" stroke={C.green} strokeWidth="1.5"/>
+      <path d="M4 12H26" stroke={C.green} strokeWidth="1.2"/>
+      <path d="M10 8V5" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M20 8V5" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="10" cy="18" r="1.5" stroke={C.green} strokeWidth="1" opacity="0.6"/>
+      <circle cx="15" cy="18" r="1.5" stroke={C.green} strokeWidth="1" opacity="0.6"/>
+      <circle cx="20" cy="18" r="1.5" fill={C.green} opacity="0.4"/>
+      <circle cx="10" cy="22" r="1.5" stroke={C.green} strokeWidth="1" opacity="0.4"/>
+    </svg>
+  );
+}
+
+function ServiceIconSports() {
+  return (
+    <svg width="38" height="38" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 27L4 10L15 4L26 10L26 27" stroke={C.green} strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M4 27H26" stroke={C.green} strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M4 10L26 10" stroke={C.green} strokeWidth="1" opacity="0.4"/>
+      <path d="M10 10L10 27" stroke={C.green} strokeWidth="1" opacity="0.3"/>
+      <path d="M20 10L20 27" stroke={C.green} strokeWidth="1" opacity="0.3"/>
+      <circle cx="15" cy="18" r="3" stroke={C.green} strokeWidth="1.3"/>
+      <path d="M15 15L15 21" stroke={C.green} strokeWidth="0.8" opacity="0.5"/>
+      <path d="M12 18L18 18" stroke={C.green} strokeWidth="0.8" opacity="0.5"/>
+    </svg>
+  );
+}
+
+const SERVICE_SVG = { strategy: ServiceIconStrategy, events: ServiceIconEvents, sports: ServiceIconSports };
 
 // ============================================================
 // MenuSubLink
@@ -464,18 +561,39 @@ function Nav() {
 }
 
 // ============================================================
-// 1. ConsultancyHero
+// Inject keyframes
+// ============================================================
+(function injectKeyframes() {
+  if (document.getElementById('consultancy-keyframes')) return;
+  const style = document.createElement('style');
+  style.id = 'consultancy-keyframes';
+  style.textContent = `
+    @keyframes scrollPulse {
+      0%, 100% { transform: scaleY(1); opacity: 0.6; }
+      50% { transform: scaleY(1.6); opacity: 1; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+// ============================================================
+// 1. ConsultancyHero - fixed background, content scrolls over
 // ============================================================
 function ConsultancyHero() {
   const isMobile = useIsMobile();
 
   return (
     <section style={{
-      position: 'relative',
+      position: 'fixed',
+      top: 0, left: 0,
       width: '100%',
       height: '100vh',
-      minHeight: 600,
       overflow: 'hidden',
+      zIndex: 1,
     }}>
       <div style={{
         position: 'absolute', inset: 0,
@@ -485,8 +603,9 @@ function ConsultancyHero() {
       }} />
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(180deg, rgba(31,32,34,0.35) 0%, rgba(31,32,34,0.55) 100%)',
+        background: 'linear-gradient(180deg, rgba(31,32,34,0.15) 0%, rgba(31,32,34,0.55) 100%)',
       }} />
+
       <div style={{
         position: 'relative', zIndex: 2,
         height: '100%',
@@ -498,64 +617,65 @@ function ConsultancyHero() {
         <div style={{
           fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase',
           fontWeight: 600, color: 'rgba(255,255,255,0.7)', marginBottom: 20,
-        }}>Consultoria</div>
+          animation: 'fadeIn 0.8s ease-out 0.3s both',
+        }}>CONSULTORIA</div>
         <h1 style={{
           fontWeight: 300, fontSize: isMobile ? 40 : 64,
           lineHeight: 1.08, letterSpacing: '-0.02em',
           color: C.white, margin: 0, maxWidth: 700,
+          animation: 'fadeIn 0.8s ease-out 0.5s both',
         }}>Clarity at Scale</h1>
         <p style={{
           fontWeight: 300, fontSize: isMobile ? 16 : 18,
           lineHeight: 1.7, color: 'rgba(255,255,255,0.8)',
           margin: 0, marginTop: 24, maxWidth: 600,
+          animation: 'fadeIn 0.8s ease-out 0.7s both',
         }}>
           We help businesses, sports entities and brands simplify complexity, optimize operations and deliver memorable events.
         </p>
       </div>
+
+      {/* Scroll indicator */}
+      <div style={{
+        position: 'absolute', bottom: 32, left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+        zIndex: 3,
+        animation: 'fadeIn 1s ease-out 1.2s both',
+      }}>
+        <div style={{
+          width: 1, height: 32, background: 'rgba(255,255,255,0.4)',
+          transformOrigin: 'top center',
+          animation: 'scrollPulse 2s ease-in-out infinite',
+        }} />
+      </div>
     </section>
   );
 }
 
 // ============================================================
-// 2. TailoredByDesign
+// 2. Approach - WordReveal with TreeMark watermark
 // ============================================================
-function TailoredByDesign() {
+function Approach() {
   const isMobile = useIsMobile();
-  const revealRef = useScrollReveal();
-
   return (
-    <section ref={revealRef} style={{
-      background: C.white,
-      padding: isMobile ? '80px 24px' : '120px 64px',
-      willChange: 'opacity, transform',
+    <section style={{
+      position: 'relative',
+      background: C.bege,
+      padding: isMobile ? '80px 24px 100px' : '180px 64px 200px',
+      overflow: 'hidden',
+      textAlign: 'center',
     }}>
-      <div style={{
-        maxWidth: 1280, margin: '0 auto',
-        display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-        gap: isMobile ? 48 : 80,
-        alignItems: 'center',
-      }}>
-        <div>
-          <div style={{
-            fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase',
-            fontWeight: 600, color: C.green, marginBottom: 28,
-          }}>A Nossa Abordagem</div>
-          <WordReveal
-            text="There is no universal model for growth. Orma builds custom frameworks that align with each client's industry, culture, and ambition."
-            style={{
-              fontWeight: 300, fontSize: isMobile ? 28 : 42,
-              lineHeight: 1.2, letterSpacing: '-0.01em',
-              color: C.ink, margin: 0,
-            }}
-          />
-        </div>
-        <SiteImage
-          src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=80"
+      <div style={{ position: 'absolute', left: '50%', top: '50%', width: isMobile ? 400 : 760, height: isMobile ? 400 : 760, transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
+        <TreeMark opacity={0.07} />
+      </div>
+      <div style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <WordReveal
+          text="There is no universal model for growth. Orma builds custom frameworks that align with each client's industry, culture, and ambition."
+          italic="industry, culture, and ambition."
           style={{
-            width: '100%',
-            height: isMobile ? 320 : 480,
-            borderRadius: 4,
+            fontWeight: 300, fontSize: isMobile ? 24 : 38, lineHeight: 1.5,
+            letterSpacing: '-0.015em', color: C.ink, margin: 0, textWrap: 'balance',
           }}
         />
       </div>
@@ -564,213 +684,532 @@ function TailoredByDesign() {
 }
 
 // ============================================================
-// 3. Services
+// 3. Services - GSAP animated vertical timeline (Pillars pattern)
 // ============================================================
-function Services() {
-  const isMobile = useIsMobile();
-  const revealRef = useScrollReveal();
-
-  const services = [
-    {
-      num: '01',
-      title: 'Strategic, Operational & Project Consulting',
-      desc: 'From organizational design to process optimization, we simplify structures and streamline operations.',
-    },
-    {
-      num: '02',
-      title: 'Event Strategy & Operational Management',
-      desc: 'End-to-end event planning - from venue selection and logistics to on-site execution and post-event analysis.',
-    },
-    {
-      num: '03',
-      title: 'Sports Consulting & Professional Match Operations',
-      desc: 'Advisory for clubs, federations and sporting organizations - matchday operations, venue strategy and fan experience.',
-    },
-  ];
-
-  return (
-    <section ref={revealRef} style={{
-      background: C.bege,
-      padding: isMobile ? '80px 24px' : '120px 64px',
-      willChange: 'opacity, transform',
-    }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-        <div style={{
-          fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase',
-          fontWeight: 600, color: C.green, marginBottom: 16,
-        }}>Servicos</div>
-        <h2 style={{
-          fontWeight: 300, fontSize: isMobile ? 32 : 48,
-          lineHeight: 1.1, letterSpacing: '-0.02em',
-          color: C.ink, margin: 0, marginBottom: isMobile ? 48 : 64,
-        }}>What we deliver</h2>
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-          gap: isMobile ? 40 : 48,
-        }}>
-          {services.map((s) => (
-            <ServiceCard key={s.num} {...s} isMobile={isMobile} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ServiceCard({ num, title, desc, isMobile }) {
+function ServiceCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRef, titleRef, treeRef, isMobile }) {
   const [hovered, setHovered] = useState(false);
+  const IconComponent = SERVICE_SVG[item.kind];
+  const treeRotations = [-8, 6, 12];
+  const treeSizes = [220, 200, 190];
+
+  if (isMobile) {
+    return (
+      <div ref={itemRef} style={{
+        display: 'flex',
+        marginBottom: index < 2 ? 40 : 0,
+        opacity: 0,
+      }}>
+        {/* Left: timeline rail */}
+        <div style={{
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          width: 32, flexShrink: 0, paddingTop: 4,
+        }}>
+          <div ref={dotRef} style={{
+            width: 12, height: 12, borderRadius: '50%',
+            background: C.green, border: '2.5px solid ' + C.white,
+            boxShadow: '0 0 0 3px rgba(92,100,87,0.15)',
+            flexShrink: 0,
+            transform: 'scale(0)',
+          }} />
+          <div ref={connectorRef} style={{
+            width: 1, flex: 1,
+            background: index < 2 ? 'linear-gradient(to bottom, ' + C.green + ', ' + C.clearGreen + ')' : 'transparent',
+            marginTop: 6,
+            transformOrigin: 'top center',
+            transform: 'scaleY(0)',
+          }} />
+        </div>
+
+        {/* Right: card content */}
+        <div style={{
+          flex: 1,
+          padding: '28px 24px 28px',
+          background: C.bege,
+          borderRadius: 6,
+          marginLeft: 12,
+        }}>
+          <div ref={iconRef} style={{
+            width: 48, height: 48, borderRadius: '50%',
+            background: C.white,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: 16,
+            boxShadow: '0 2px 12px rgba(92,100,87,0.1)',
+            transform: 'scale(0)',
+          }}>
+            {IconComponent && <IconComponent />}
+          </div>
+          <div style={{ overflow: 'hidden', marginBottom: 10 }}>
+            <h3 ref={titleRef} style={{
+              fontWeight: 600, fontSize: 18, color: C.ink,
+              margin: 0, letterSpacing: '-0.01em', lineHeight: 1.3,
+              transform: 'translateY(100%)',
+            }}>{item.title}</h3>
+          </div>
+          <div style={{ width: 24, height: 2, background: C.terracota, marginBottom: 12, borderRadius: 1, opacity: 0.6 }} />
+          <p style={{
+            fontSize: 13, lineHeight: 1.7, color: C.green, margin: 0,
+          }}>{item.body}</p>
+        </div>
+
+        <div ref={treeRef} style={{ display: 'none' }} />
+      </div>
+    );
+  }
 
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        borderTop: `2px solid ${C.green}`,
-        padding: isMobile ? '32px 0' : '36px 0',
-        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
-        transition: 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
-      }}
-    >
-      <div style={{
-        fontSize: 13, fontWeight: 600, color: C.clearGreen,
-        letterSpacing: '0.1em', marginBottom: 16,
-      }}>{num}</div>
-      <h3 style={{
-        fontWeight: 500, fontSize: isMobile ? 20 : 22,
-        lineHeight: 1.3, color: C.ink, margin: 0, marginBottom: 14,
-      }}>{title}</h3>
-      <p style={{
-        fontWeight: 300, fontSize: 16, lineHeight: 1.7,
-        color: 'rgba(31,32,34,0.7)', margin: 0,
-      }}>{desc}</p>
+    <div style={{
+      display: 'flex', alignItems: 'center',
+      justifyContent: isLeft ? 'flex-start' : 'flex-end',
+      position: 'relative',
+      marginBottom: index < 2 ? 140 : 0,
+    }}>
+      {/* Tree on the OPPOSITE side */}
+      {!isLeft && (
+        <div ref={treeRef} className="service-tree" style={{
+          width: 'calc(50% - 80px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          marginRight: 'auto',
+          pointerEvents: 'none',
+        }}>
+          <div style={{
+            width: treeSizes[index], height: treeSizes[index],
+            transform: 'rotate(' + treeRotations[index] + 'deg)',
+          }}>
+            <TreeMark opacity={1} style={{ filter: 'sepia(1) saturate(0.3) hue-rotate(60deg) brightness(0.92)' }} />
+          </div>
+        </div>
+      )}
+
+      {/* Timeline dot */}
+      <div ref={dotRef} style={{
+        position: 'absolute', left: '50%', top: '50%',
+        width: 16, height: 16, borderRadius: '50%',
+        background: C.green, border: '3px solid ' + C.white,
+        transform: 'translate(-50%, -50%) scale(0)',
+        zIndex: 3,
+        boxShadow: '0 0 0 5px rgba(92,100,87,0.15)',
+      }} />
+
+      {/* Connector line */}
+      <div ref={connectorRef} style={{
+        position: 'absolute', top: '50%',
+        height: 1,
+        background: 'linear-gradient(' + (isLeft ? 'to right' : 'to left') + ', ' + C.clearGreen + ', ' + C.green + ')',
+        zIndex: 2,
+        transformOrigin: isLeft ? 'right center' : 'left center',
+        transform: 'scaleX(0)',
+        ...(isLeft
+          ? { left: 'calc(50% - 60px)', width: 60 }
+          : { right: 'calc(50% - 60px)', width: 60, left: 'auto' }
+        ),
+      }} />
+
+      {/* Content card */}
+      <div
+        ref={itemRef}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          width: 'calc(50% - 80px)',
+          opacity: 0,
+          padding: '48px 48px 44px',
+          background: C.bege,
+          borderRadius: 6,
+          position: 'relative',
+          boxShadow: hovered
+            ? '0 12px 40px rgba(31,32,34,0.08), 0 2px 8px rgba(31,32,34,0.04)'
+            : '0 4px 20px rgba(31,32,34,0.04), 0 1px 4px rgba(31,32,34,0.02)',
+          transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
+          transition: 'box-shadow 0.4s ease, transform 0.4s ease',
+          ...(isLeft ? { marginRight: 'auto' } : { marginLeft: 'auto' }),
+        }}
+      >
+        <div ref={iconRef} style={{
+          width: 72, height: 72, borderRadius: '50%',
+          background: C.white,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          marginBottom: 28,
+          boxShadow: '0 2px 12px rgba(92,100,87,0.1)',
+          transform: 'scale(0)',
+        }}>
+          {IconComponent && <IconComponent />}
+        </div>
+
+        <div style={{ overflow: 'hidden', marginBottom: 16 }}>
+          <h3 ref={titleRef} style={{
+            fontWeight: 600, fontSize: 24, color: C.ink,
+            margin: 0, letterSpacing: '-0.01em', lineHeight: 1.3,
+            transform: 'translateY(100%)',
+          }}>{item.title}</h3>
+        </div>
+
+        <div style={{ width: 32, height: 2, background: C.terracota, marginBottom: 18, borderRadius: 1, opacity: 0.6 }} />
+
+        <p style={{
+          fontSize: 15, lineHeight: 1.8, color: C.green, margin: 0,
+        }}>{item.body}</p>
+      </div>
+
+      {/* Tree on the OPPOSITE side */}
+      {isLeft && (
+        <div ref={treeRef} className="service-tree" style={{
+          width: 'calc(50% - 80px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          marginLeft: 'auto',
+          pointerEvents: 'none',
+        }}>
+          <div style={{
+            width: treeSizes[index], height: treeSizes[index],
+            transform: 'rotate(' + treeRotations[index] + 'deg)',
+          }}>
+            <TreeMark opacity={1} style={{ filter: 'sepia(1) saturate(0.3) hue-rotate(60deg) brightness(0.92)' }} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ============================================================
-// 4. BattleTested
-// ============================================================
-function BattleTested() {
+function Services() {
   const isMobile = useIsMobile();
+  const sectionRef = useRef(null);
+  const lineRef = useRef(null);
+  const itemRefs = useRef([]);
+  const dotRefs = useRef([]);
+  const connectorRefs = useRef([]);
+  const iconRefs = useRef([]);
+  const titleRefs = useRef([]);
+  const treeRefs = useRef([]);
+
+  const items = [
+    { kind: 'strategy', title: 'Strategic & Operational Consulting', body: 'From organizational design to process optimization, we simplify structures and streamline operations so your team can focus on what matters.' },
+    { kind: 'events', title: 'Event Strategy & Management', body: 'End-to-end event planning - from venue selection and logistics to on-site execution and post-event analysis. Every detail, every time.' },
+    { kind: 'sports', title: 'Sports & Match Operations', body: 'Advisory for clubs, federations and sporting organizations - matchday operations, venue strategy and fan experience design.' },
+  ];
+
+  useEffect(() => {
+    if (typeof gsap === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const triggers = [];
+
+    // Animate the vertical line drawing (desktop only)
+    const line = lineRef.current;
+    if (line) {
+      const lineTween = gsap.fromTo(line,
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 55%',
+            end: 'bottom 35%',
+            scrub: 0.6,
+          },
+        }
+      );
+      triggers.push(lineTween.scrollTrigger);
+    }
+
+    // Animate each service card with staggered internal elements
+    itemRefs.current.forEach((el, i) => {
+      if (!el) return;
+      const isLeft = i % 2 === 0;
+      const connector = connectorRefs.current[i];
+      const icon = iconRefs.current[i];
+      const title = titleRefs.current[i];
+      const dot = dotRefs.current[i];
+
+      const isMob = window.innerWidth < 768;
+      const cardTween = gsap.fromTo(el,
+        { opacity: 0, x: isMob ? 0 : (isLeft ? -80 : 80), y: isMob ? 40 : 30 },
+        {
+          opacity: 1, x: 0, y: 0,
+          duration: 1.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+      triggers.push(cardTween.scrollTrigger);
+
+      // Dot bounce
+      if (dot) {
+        const dotTween = gsap.fromTo(dot,
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1, opacity: 1,
+            duration: 0.6,
+            ease: 'back.out(3)',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 72%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(dotTween.scrollTrigger);
+      }
+
+      // Connector line draw
+      if (connector) {
+        const conProp = isMob ? 'scaleY' : 'scaleX';
+        const conTween = gsap.fromTo(connector,
+          { [conProp]: 0 },
+          {
+            [conProp]: 1,
+            duration: isMob ? 0.9 : 0.7,
+            delay: 0.2,
+            ease: 'power2.inOut',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 72%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(conTween.scrollTrigger);
+      }
+
+      // Icon scale in
+      if (icon) {
+        const iconTween = gsap.fromTo(icon,
+          { scale: 0 },
+          {
+            scale: 1,
+            duration: 0.7,
+            delay: 0.3,
+            ease: 'back.out(2)',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 75%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(iconTween.scrollTrigger);
+      }
+
+      // Title clip reveal
+      if (title) {
+        const titleTween = gsap.fromTo(title,
+          { y: '100%' },
+          {
+            y: '0%',
+            duration: 0.8,
+            delay: 0.45,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 75%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(titleTween.scrollTrigger);
+      }
+
+      // Tree on opposite side — subtle fade + scale
+      const tree = treeRefs.current[i];
+      if (tree) {
+        const treeTween = gsap.fromTo(tree,
+          { opacity: 0, scale: 0.85 },
+          {
+            opacity: 1, scale: 1,
+            duration: 1.2,
+            delay: 0.5,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 80%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(treeTween.scrollTrigger);
+      }
+    });
+
+    return () => triggers.forEach(t => t && t.kill());
+  }, []);
 
   return (
-    <section style={{
-      background: C.green,
-      padding: isMobile ? '100px 24px' : '140px 64px',
+    <section ref={sectionRef} style={{
+      background: C.white,
+      padding: isMobile ? '80px 24px 80px' : '140px 64px 180px',
       position: 'relative',
       overflow: 'hidden',
     }}>
-      <div style={{
-        position: 'absolute', right: -60, bottom: -40,
-        width: 400, height: 400, opacity: 0.06, pointerEvents: 'none',
-      }}>
-        <TreeMark opacity={1} />
-      </div>
-      <div style={{
-        maxWidth: 900, margin: '0 auto',
-        position: 'relative', zIndex: 2,
-      }}>
+      {/* Section heading */}
+      <div style={{ textAlign: 'center', marginBottom: isMobile ? 48 : 100, position: 'relative', zIndex: 1 }}>
+        <div style={{
+          fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
+          textTransform: 'uppercase', fontWeight: 600, marginBottom: 20,
+        }}>Our Services</div>
         <WordReveal
-          text="Orma is shaped by years of international consulting experience at Deloitte, combined with hands-on operational leadership. Strategy is only valuable when it translates into action."
+          text="From strategy to execution - integrated solutions for complex challenges."
+          italic="complex challenges."
           style={{
-            fontWeight: 300, fontSize: isMobile ? 26 : 38,
-            lineHeight: 1.35, letterSpacing: '-0.01em',
-            color: C.bege, margin: 0, textAlign: 'center',
+            fontWeight: 300, fontSize: isMobile ? 22 : 32, lineHeight: 1.5,
+            letterSpacing: '-0.01em', color: C.ink, margin: '0 auto',
+            maxWidth: 640, textWrap: 'balance',
           }}
         />
       </div>
-    </section>
-  );
-}
 
-// ============================================================
-// 5. EndToEnd
-// ============================================================
-function EndToEnd() {
-  const isMobile = useIsMobile();
-  const revealRef = useScrollReveal();
+      {/* Timeline container */}
+      <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        {/* Central vertical line — hidden on mobile */}
+        {!isMobile && (
+          <div style={{
+            position: 'absolute', left: '50%', top: 0, bottom: 0,
+            width: 1, marginLeft: -0.5,
+          }}>
+            <div ref={lineRef} style={{
+              width: '100%', height: '100%',
+              background: 'linear-gradient(to bottom, ' + C.clearGreen + ', ' + C.green + ', ' + C.clearGreen + ')',
+              transformOrigin: 'top center',
+              transform: 'scaleY(0)',
+            }} />
+          </div>
+        )}
 
-  return (
-    <section ref={revealRef} style={{
-      background: C.white,
-      padding: isMobile ? '80px 24px' : '120px 64px',
-      willChange: 'opacity, transform',
-    }}>
-      <div style={{
-        maxWidth: 720, margin: '0 auto', textAlign: 'center',
-      }}>
-        <div style={{
-          fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase',
-          fontWeight: 600, color: C.green, marginBottom: 28,
-        }}>Integracao</div>
-        <p style={{
-          fontWeight: 300, fontSize: isMobile ? 22 : 28,
-          lineHeight: 1.5, color: C.ink, margin: 0,
-          letterSpacing: '-0.01em',
-        }}>
-          Strategy, operations, project delivery and events are treated as one connected system - because they are.
-        </p>
+        {/* Service items */}
+        {items.map((it, i) => {
+          const isLeft = i % 2 === 0;
+          return (
+            <ServiceCard
+              key={it.title}
+              item={it}
+              index={i}
+              isLeft={isLeft}
+              isMobile={isMobile}
+              itemRef={el => itemRefs.current[i] = el}
+              dotRef={el => dotRefs.current[i] = el}
+              connectorRef={el => connectorRefs.current[i] = el}
+              iconRef={el => iconRefs.current[i] = el}
+              titleRef={el => titleRefs.current[i] = el}
+              treeRef={el => treeRefs.current[i] = el}
+            />
+          );
+        })}
       </div>
     </section>
   );
 }
 
 // ============================================================
-// 6. WhyUs
+// 4. BattleTested - GSAP pinned scroll (Farm Minerals pattern)
 // ============================================================
-function WhyUs() {
+function BattleTested() {
   const isMobile = useIsMobile();
-  const revealRef = useScrollReveal();
+  const sectionRef = useRef(null);
+  const imageRef = useRef(null);
+  const textRef = useRef(null);
+  const labelRef = useRef(null);
 
-  const points = [
-    { value: '10+', label: 'Years of consulting experience' },
-    { value: '50+', label: 'Events managed internationally' },
-    { value: '3', label: 'Core practice areas' },
-    { value: '100%', label: 'Execution-driven approach' },
-  ];
+  useEffect(() => {
+    if (isMobile || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: '+=100%',
+          pin: true,
+          scrub: 0.6,
+        },
+      });
+
+      tl.fromTo(imageRef.current,
+        { width: '100%', left: '0%', borderRadius: 0 },
+        { width: '48%', left: '52%', borderRadius: 16, duration: 1, ease: 'power2.inOut' },
+        0
+      );
+
+      tl.fromTo(labelRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' },
+        0.3
+      );
+
+      tl.fromTo(textRef.current,
+        { opacity: 0, x: -60 },
+        { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out' },
+        0.4
+      );
+    }, section);
+
+    return () => ctx.revert();
+  }, [isMobile]);
+
+  if (isMobile) {
+    return (
+      <section style={{ background: C.bege, overflow: 'hidden' }}>
+        <div style={{ height: 300, overflow: 'hidden' }}>
+          <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1800&q=80" alt="Track Record"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </div>
+        <div style={{ padding: '48px 24px 80px' }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.green, textTransform: 'uppercase', fontWeight: 600, marginBottom: 24 }}>
+            TRACK RECORD
+          </div>
+          <h2 style={{ fontWeight: 300, fontSize: 24, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 24px' }}>
+            Shaped by decades of international experience
+          </h2>
+          <p style={{ fontSize: 14, lineHeight: 1.8, color: C.green, margin: '0 0 16px' }}>
+            Orma is shaped by years of international consulting experience at Deloitte, combined with hands-on operational leadership. Strategy is only valuable when it translates into action.
+          </p>
+          <p style={{ fontSize: 13, lineHeight: 1.8, color: 'rgba(92,100,87,0.7)', margin: 0 }}>
+            Strategy, operations, project delivery and events are treated as one connected system - because they are.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section ref={revealRef} style={{
-      background: C.grey,
-      padding: isMobile ? '80px 24px' : '120px 64px',
-      willChange: 'opacity, transform',
+    <section ref={sectionRef} style={{
+      position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', background: C.bege,
     }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <div ref={imageRef} style={{
+        position: 'absolute', top: 0, left: '0%', width: '100%', height: '100%',
+        overflow: 'hidden', zIndex: 2,
+      }}>
+        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1800&q=80" alt="Track Record"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         <div style={{
-          fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase',
-          fontWeight: 600, color: C.green, marginBottom: 28,
-        }}>Porque a Orma</div>
-        <p style={{
-          fontWeight: 300, fontSize: isMobile ? 17 : 18,
-          lineHeight: 1.7, color: 'rgba(31,32,34,0.8)',
-          margin: 0, marginBottom: isMobile ? 48 : 64, maxWidth: 680,
-        }}>
-          With over a decade of experience in international consulting, event management, and sports operations, Orma combines strategic depth with operational precision.
-        </p>
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(90deg, rgba(238,232,218,0.6) 0%, transparent 50%)',
+          pointerEvents: 'none',
+        }} />
+      </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
-          gap: isMobile ? 32 : 48,
-        }}>
-          {points.map((p, i) => (
-            <div key={i} style={{
-              borderTop: `1px solid ${C.clearGreen}`,
-              paddingTop: 20,
-            }}>
-              <div style={{
-                fontWeight: 300, fontSize: isMobile ? 36 : 48,
-                lineHeight: 1, color: C.green,
-                letterSpacing: '-0.02em', marginBottom: 8,
-              }}>{p.value}</div>
-              <div style={{
-                fontWeight: 400, fontSize: 14, lineHeight: 1.5,
-                color: 'rgba(31,32,34,0.6)', letterSpacing: '0.02em',
-              }}>{p.label}</div>
-            </div>
-          ))}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '50%', height: '100%', zIndex: 3, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 64px' }}>
+        <div ref={labelRef} style={{ opacity: 0, fontSize: 12, letterSpacing: '0.3em', color: C.green, textTransform: 'uppercase', fontWeight: 600, marginBottom: 40 }}>
+          TRACK RECORD
+        </div>
+        <div ref={textRef} style={{ opacity: 0 }}>
+          <h2 style={{ fontWeight: 300, fontSize: 36, lineHeight: 1.15, letterSpacing: '-0.02em', color: C.ink, margin: '0 0 32px' }}>
+            Shaped by decades of international experience
+          </h2>
+          <p style={{ fontSize: 15, lineHeight: 1.8, color: C.green, margin: '0 0 20px', maxWidth: 480 }}>
+            Orma is shaped by years of international consulting experience at Deloitte, combined with hands-on operational leadership. Strategy is only valuable when it translates into action.
+          </p>
+          <p style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(92,100,87,0.65)', margin: 0, maxWidth: 480 }}>
+            Strategy, operations, project delivery and events are treated as one connected system - because they are.
+          </p>
         </div>
       </div>
     </section>
@@ -778,157 +1217,191 @@ function WhyUs() {
 }
 
 // ============================================================
-// 7. ContactForm
+// 5. WhyUs - GSAP animated section (WhyOrma pattern)
 // ============================================================
-function ContactForm() {
+function WhyUs() {
   const isMobile = useIsMobile();
-  const revealRef = useScrollReveal();
-  const [form, setForm] = useState({ nome: '', email: '', telefone: '', mensagem: '', termos: false });
-  const [submitted, setSubmitted] = useState(false);
+  const sectionRef = useRef(null);
+  const labelRef = useRef(null);
+  const textColRef = useRef(null);
+  const communityRef = useRef(null);
+  const cardRefs = useRef([]);
+  const borderRefs = useRef([]);
 
-  const inputStyle = {
-    width: '100%',
-    padding: '16px 20px',
-    fontSize: 15, fontWeight: 300,
-    fontFamily: '"General Sans", system-ui, sans-serif',
-    color: C.white,
-    background: 'rgba(255,255,255,0.08)',
-    border: '1px solid rgba(255,255,255,0.15)',
-    borderRadius: 8,
-    outline: 'none',
-    backdropFilter: 'blur(8px)',
-    WebkitBackdropFilter: 'blur(8px)',
-    transition: 'border-color 0.3s, background 0.3s',
-  };
+  const whyRevealText = 'With over a decade of experience in international consulting, event management, and sports operations, Orma combines strategic depth with operational precision.';
+  const communityText = 'We partner with organizations that value clarity - from global brands to local institutions - delivering results that last beyond the engagement.';
 
-  const handleChange = (field) => (e) => {
-    const val = field === 'termos' ? e.target.checked : e.target.value;
-    setForm(prev => ({ ...prev, [field]: val }));
-  };
+  const stats = [
+    { num: '10', suffix: '+', label: 'Years of experience', icon: 'years' },
+    { num: '50', suffix: '+', label: 'Projects delivered', icon: 'projects' },
+    { num: '100', suffix: '%', label: 'Execution-driven', icon: 'reinvest' },
+  ];
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
-  };
+  useEffect(() => {
+    if (typeof gsap === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const triggers = [];
+
+    // Section label fade in
+    if (labelRef.current) {
+      const t = gsap.fromTo(labelRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: section, start: 'top 75%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    }
+
+    // Left column — text block slides up
+    if (textColRef.current) {
+      const t = gsap.fromTo(textColRef.current,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 0.15,
+          scrollTrigger: { trigger: section, start: 'top 70%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    }
+
+    // Community paragraph fade in (delayed)
+    if (communityRef.current) {
+      const t = gsap.fromTo(communityRef.current,
+        { opacity: 0, y: 24 },
+        { opacity: 0.65, y: 0, duration: 0.9, ease: 'power2.out', delay: 0.6,
+          scrollTrigger: { trigger: section, start: 'top 70%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    }
+
+    // Stat cards — staggered fade up with border draw
+    cardRefs.current.forEach((card, i) => {
+      if (!card) return;
+      const t = gsap.fromTo(card,
+        { opacity: 0, y: 40, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out',
+          delay: 0.2 + i * 0.15,
+          scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    });
+
+    // Border draw — terracota border height animates from 0 to 100%
+    borderRefs.current.forEach((border, i) => {
+      if (!border) return;
+      const t = gsap.fromTo(border,
+        { scaleY: 0 },
+        { scaleY: 1, duration: 0.7, ease: 'power2.out',
+          delay: 0.4 + i * 0.15,
+          scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    });
+
+    return () => triggers.forEach(t => t && t.kill());
+  }, []);
 
   return (
-    <section id="contact" ref={revealRef} style={{
-      background: C.green,
-      padding: isMobile ? '80px 24px' : '120px 64px',
+    <section ref={sectionRef} style={{
       position: 'relative',
+      background: C.green,
+      padding: isMobile ? '80px 24px' : '140px 64px',
       overflow: 'hidden',
-      willChange: 'opacity, transform',
     }}>
-      <div style={{ maxWidth: 640, margin: '0 auto', position: 'relative', zIndex: 2 }}>
-        <h2 style={{
-          fontWeight: 300, fontSize: isMobile ? 30 : 42,
-          lineHeight: 1.15, letterSpacing: '-0.02em',
-          color: C.bege, margin: 0, marginBottom: 48,
-          textAlign: 'center',
-        }}>
-          Vamos conversar sobre o seu projecto
-        </h2>
+      <div style={{ position: 'absolute', right: -240, bottom: -200, width: 800, height: 800, pointerEvents: 'none' }}>
+        <TreeMark opacity={0.08} />
+      </div>
 
-        {submitted ? (
-          <div style={{ textAlign: 'center', color: C.bege }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>&#10003;</div>
-            <p style={{ fontWeight: 300, fontSize: 18, lineHeight: 1.6 }}>
-              Obrigado pela sua mensagem. Entraremos em contacto brevemente.
+      <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <div ref={labelRef} style={{
+          fontSize: 12, letterSpacing: '0.3em', color: C.bege,
+          textTransform: 'uppercase', fontWeight: 600, marginBottom: isMobile ? 32 : 56,
+          opacity: 0,
+        }}>Why Orma</div>
+
+        <div style={isMobile
+          ? { display: 'flex', flexDirection: 'column', gap: 40 }
+          : { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'start' }
+        }>
+
+          {/* LEFT — Narrative text */}
+          <div>
+            <div ref={textColRef} style={{ opacity: 0 }}>
+              <WordReveal
+                text={whyRevealText}
+                style={{
+                  fontSize: isMobile ? 20 : 28, lineHeight: 1.55, color: C.white, margin: 0, fontWeight: 300,
+                  letterSpacing: '-0.01em',
+                }}
+              />
+            </div>
+            <p ref={communityRef} style={{
+              fontSize: isMobile ? 14 : 15, lineHeight: 1.8, color: C.bege, margin: '36px 0 0', fontWeight: 400, opacity: 0,
+              maxWidth: 480,
+            }}>
+              {communityText}
             </p>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-            gap: 20,
-          }}>
-            <input
-              type="text" placeholder="Nome" required
-              value={form.nome} onChange={handleChange('nome')}
-              style={inputStyle}
-              onFocus={e => e.target.style.borderColor = 'rgba(255,255,255,0.4)'}
-              onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.15)'}
-            />
-            <input
-              type="email" placeholder="Email" required
-              value={form.email} onChange={handleChange('email')}
-              style={inputStyle}
-              onFocus={e => e.target.style.borderColor = 'rgba(255,255,255,0.4)'}
-              onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.15)'}
-            />
-            <input
-              type="tel" placeholder="Telefone"
-              value={form.telefone} onChange={handleChange('telefone')}
-              style={{ ...inputStyle, gridColumn: isMobile ? 'auto' : '1 / -1' }}
-              onFocus={e => e.target.style.borderColor = 'rgba(255,255,255,0.4)'}
-              onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.15)'}
-            />
-            <textarea
-              placeholder="Mensagem" rows={5} required
-              value={form.mensagem} onChange={handleChange('mensagem')}
-              style={{
-                ...inputStyle,
-                gridColumn: isMobile ? 'auto' : '1 / -1',
-                resize: 'vertical',
-                minHeight: 120,
-              }}
-              onFocus={e => e.target.style.borderColor = 'rgba(255,255,255,0.4)'}
-              onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.15)'}
-            />
-            <label style={{
-              gridColumn: isMobile ? 'auto' : '1 / -1',
-              display: 'flex', alignItems: 'flex-start', gap: 12,
-              fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,0.6)',
-              lineHeight: 1.5, cursor: 'pointer',
+
+          {/* RIGHT — Stats grid */}
+          <div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+              gap: 16,
             }}>
-              <input
-                type="checkbox" required
-                checked={form.termos} onChange={handleChange('termos')}
-                style={{ marginTop: 3, accentColor: C.terracota }}
-              />
-              Aceito os Termos e Condicoes e a Politica de Privacidade.
-            </label>
-            <div style={{ gridColumn: isMobile ? 'auto' : '1 / -1', textAlign: 'center', marginTop: 8 }}>
-              <button type="submit" style={{
-                position: 'relative', overflow: 'hidden',
-                padding: '16px 40px',
-                background: C.terracota, color: C.white,
-                border: 'none', borderRadius: 40,
-                fontFamily: '"General Sans", system-ui, sans-serif',
-                fontWeight: 600, fontSize: 12, letterSpacing: '0.15em',
-                textTransform: 'uppercase', cursor: 'pointer',
-                transition: 'transform 0.2s ease',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'scale(1.03)';
-                const fill = e.currentTarget.querySelector('.form-btn-fill');
-                if (fill) fill.style.transform = 'translateX(0)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'scale(1)';
-                const fill = e.currentTarget.querySelector('.form-btn-fill');
-                if (fill) fill.style.transform = 'translateX(-101%)';
-              }}
-              >
-                <span className="form-btn-fill" style={{
-                  position: 'absolute', inset: 0,
-                  background: 'rgba(255,255,255,0.15)',
-                  transform: 'translateX(-101%)',
-                  transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  borderRadius: 'inherit',
-                }} />
-                <span style={{ position: 'relative', zIndex: 1 }}>Enviar Mensagem</span>
-              </button>
+              {stats.map((stat, i) => {
+                const IconComp = STAT_ICONS[stat.icon];
+                const isFullWidth = i === 2;
+                return (
+                  <div key={i} ref={el => cardRefs.current[i] = el} style={{
+                    padding: isMobile ? '24px 20px' : '28px 24px',
+                    background: 'rgba(238,232,218,0.08)',
+                    borderRadius: 8,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    opacity: 0,
+                    ...(isFullWidth && !isMobile ? { gridColumn: '1 / -1' } : {}),
+                  }}>
+                    {/* Animated terracota border */}
+                    <div ref={el => borderRefs.current[i] = el} style={{
+                      position: 'absolute', left: 0, top: 0, bottom: 0,
+                      width: 3, background: C.terracota, borderRadius: '3px 0 0 3px',
+                      transformOrigin: 'top center', transform: 'scaleY(0)',
+                    }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                      {IconComp && React.createElement(IconComp)}
+                      <div style={{
+                        fontSize: 10, letterSpacing: '0.2em', color: 'rgba(238,232,218,0.7)',
+                        textTransform: 'uppercase', fontWeight: 600,
+                      }}>{stat.label}</div>
+                    </div>
+                    <div style={{
+                      fontWeight: 500, fontSize: isMobile ? 48 : 56, lineHeight: 1, letterSpacing: '-0.03em',
+                      color: C.bege,
+                    }}>
+                      <RollingNumber value={stat.num} suffix={stat.suffix} />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          </form>
-        )}
+          </div>
+
+        </div>
       </div>
     </section>
   );
 }
 
 // ============================================================
-// 8. Footer
+// 6. Footer - EXACT copy from homepage
 // ============================================================
 function Footer() {
   const isMobile = useIsMobile();
@@ -939,6 +1412,7 @@ function Footer() {
       background: '#3D4239', color: C.bege,
       position: 'relative', overflow: 'hidden',
     }}>
+      {/* Giant watermark "orma." text */}
       <div style={{
         position: 'absolute', bottom: isMobile ? -30 : -40, left: '50%',
         transform: 'translateX(-50%)',
@@ -960,6 +1434,7 @@ function Footer() {
           gap: isMobile ? 48 : 80,
           paddingBottom: isMobile ? 56 : 80,
         }}>
+          {/* Left — Big CTA */}
           <div>
             <div style={{
               fontSize: 11, letterSpacing: '0.3em', color: C.clearGreen,
@@ -973,7 +1448,7 @@ function Footer() {
             </h2>
 
             <div style={{ display: 'flex', gap: 16, marginTop: isMobile ? 32 : 44, flexWrap: 'wrap' }}>
-              <a href="#contact" onClick={e => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} style={{
+              <a href="index.html#contact" style={{
                 position: 'relative', overflow: 'hidden',
                 display: 'inline-block', padding: '16px 36px',
                 background: C.terracota, color: C.white,
@@ -1027,6 +1502,7 @@ function Footer() {
             </div>
           </div>
 
+          {/* Right — Contact details */}
           <div style={{ paddingTop: isMobile ? 0 : 16 }}>
             {[
               { label: 'Email', value: 'info@orma.pt', href: 'mailto:info@orma.pt' },
@@ -1056,6 +1532,7 @@ function Footer() {
               </div>
             ))}
 
+            {/* Social links */}
             <div style={{ display: 'flex', gap: 20, marginTop: 24 }}>
               {[
                 { name: 'Instagram', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" /></svg> },
@@ -1074,6 +1551,7 @@ function Footer() {
           </div>
         </div>
 
+        {/* Bottom bar */}
         <div style={{
           display: 'flex',
           flexDirection: isMobile ? 'column' : 'row',
@@ -1115,25 +1593,7 @@ function FloatingButtons() {
       position: 'fixed', bottom: 28, right: 28, zIndex: 180,
       display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center',
     }}>
-      <a
-        href="https://wa.me/351220000000"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp"
-        style={{
-          width: 52, height: 52, borderRadius: '50%',
-          background: C.green, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
-          transition: 'transform 0.25s ease, box-shadow 0.25s ease',
-          textDecoration: 'none',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.22)'; }}
-        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)'; }}
-      >
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-      </a>
+      {/* Scroll to top */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Scroll to top"
@@ -1152,6 +1612,26 @@ function FloatingButtons() {
           <path d="M8 14V2M3 6l5-4 5 4" />
         </svg>
       </button>
+      {/* WhatsApp */}
+      <a
+        href="https://wa.me/351220000000"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp"
+        style={{
+          width: 52, height: 52, borderRadius: '50%',
+          background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
+          transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+          textDecoration: 'none',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.22)'; }}
+        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)'; }}
+      >
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+      </a>
     </div>
   );
 }
@@ -1164,20 +1644,20 @@ function ConsultancyPage() {
     <div style={{
       width: '100%',
       minHeight: '100vh',
-      overflow: 'hidden',
-      background: C.white,
-      position: 'relative',
       fontFamily: '"General Sans", system-ui, sans-serif',
     }}>
       <Nav />
       <ConsultancyHero />
-      <TailoredByDesign />
-      <Services />
-      <BattleTested />
-      <EndToEnd />
-      <WhyUs />
-      <ContactForm />
-      <Footer />
+      {/* Spacer for fixed hero */}
+      <div style={{ height: '100vh' }} />
+      {/* Content scrolls over the fixed hero */}
+      <div style={{ position: 'relative', zIndex: 3, background: C.white }}>
+        <Approach />
+        <Services />
+        <BattleTested />
+        <WhyUs />
+        <Footer />
+      </div>
       <FloatingButtons />
     </div>
   );

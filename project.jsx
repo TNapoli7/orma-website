@@ -529,19 +529,25 @@ function BrochureBox({ projectName }) {
   const [agreed, setAgreed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  const handlePhone = (e) => {
+    const val = e.target.value.replace(/[^0-9+\-\s()]/g, '');
+    setForm({ ...form, telefone: val });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!agreed) return;
+    const digits = form.telefone.replace(/\D/g, '');
+    if (digits.length < 9) return;
     setSubmitted(true);
-    // TODO: wire to actual download / form handler
   };
 
   const inputStyle = {
     width: '100%',
-    padding: '12px 14px',
+    padding: '10px 12px',
     background: 'rgba(255,255,255,0.12)',
     border: '1px solid rgba(255,255,255,0.2)',
-    borderRadius: 8,
+    borderRadius: 6,
     color: C.white,
     fontFamily: 'inherit',
     fontSize: 13,
@@ -554,21 +560,21 @@ function BrochureBox({ projectName }) {
     return (
       <div style={{
         flex: '0 0 auto',
-        width: isMobile ? '100%' : 320,
+        width: isMobile ? '100%' : 280,
         background: 'rgba(31,32,34,0.65)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderRadius: 16,
-        padding: '32px 28px',
-        marginTop: isMobile ? 32 : 0,
+        borderRadius: 14,
+        padding: '24px 20px',
+        marginTop: isMobile ? 28 : 0,
         textAlign: 'center',
       }}>
-        <div style={{ fontSize: 28, marginBottom: 12 }}>✓</div>
-        <p style={{ color: C.white, fontSize: 15, fontWeight: 500, margin: '0 0 6px' }}>
+        <div style={{ fontSize: 24, marginBottom: 8 }}>✓</div>
+        <p style={{ color: C.white, fontSize: 14, fontWeight: 500, margin: '0 0 4px' }}>
           Obrigado!
         </p>
-        <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 13, margin: 0, lineHeight: 1.5 }}>
-          O download da brochura vai começar automaticamente.
+        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12, margin: 0, lineHeight: 1.4 }}>
+          O download vai começar automaticamente.
         </p>
       </div>
     );
@@ -577,25 +583,25 @@ function BrochureBox({ projectName }) {
   return (
     <div style={{
       flex: '0 0 auto',
-      width: isMobile ? '100%' : 320,
+      width: isMobile ? '100%' : 280,
       background: 'rgba(31,32,34,0.65)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
-      borderRadius: 16,
-      padding: '28px 24px',
-      marginTop: isMobile ? 32 : 0,
+      borderRadius: 14,
+      padding: '20px 18px',
+      marginTop: isMobile ? 28 : 0,
     }}>
       <p style={{
-        fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase',
-        color: 'rgba(255,255,255,0.55)', fontWeight: 600, margin: '0 0 6px',
+        fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase',
+        color: 'rgba(255,255,255,0.5)', fontWeight: 600, margin: '0 0 4px',
       }}>Brochura</p>
       <p style={{
-        fontSize: 18, fontWeight: 300, color: C.white, margin: '0 0 20px', lineHeight: 1.35,
+        fontSize: 15, fontWeight: 300, color: C.white, margin: '0 0 14px', lineHeight: 1.3,
       }}>
-        Receba todos os<br />detalhes do {projectName || 'projecto'}
+        Receba os detalhes do {projectName || 'projecto'}
       </p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <input
           type="text" placeholder="Nome" required
           value={form.nome}
@@ -614,36 +620,38 @@ function BrochureBox({ projectName }) {
         />
         <input
           type="tel" placeholder="Telefone" required
+          inputMode="numeric"
+          pattern="[\d\s+\-()]{9,}"
           value={form.telefone}
-          onChange={e => setForm({ ...form, telefone: e.target.value })}
+          onChange={handlePhone}
           style={inputStyle}
           onFocus={e => e.target.style.borderColor = 'rgba(255,255,255,0.45)'}
           onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'}
         />
 
         <label style={{
-          display: 'flex', alignItems: 'flex-start', gap: 8,
-          cursor: 'pointer', marginTop: 4,
+          display: 'flex', alignItems: 'center', gap: 6,
+          cursor: 'pointer', marginTop: 2,
         }}>
           <input
             type="checkbox" checked={agreed}
             onChange={e => setAgreed(e.target.checked)}
-            style={{ marginTop: 2, accentColor: C.green }}
+            style={{ accentColor: C.green, flexShrink: 0 }}
           />
-          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', lineHeight: 1.45 }}>
-            Aceito os termos e condições e a política de privacidade.
+          <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
+            Aceito os termos e a política de privacidade.
           </span>
         </label>
 
         <button type="submit" disabled={!agreed} style={{
-          marginTop: 6,
+          marginTop: 4,
           width: '100%',
-          padding: '14px 0',
+          padding: '12px 0',
           background: agreed ? C.green : 'rgba(92,100,87,0.4)',
           color: C.white,
           border: 'none',
           borderRadius: 40,
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: 600,
           letterSpacing: '0.15em',
           textTransform: 'uppercase',
