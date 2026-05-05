@@ -35,6 +35,50 @@ const PROJECTS = {
       { label: 'Architecture', value: '[TBD]' },
       { label: 'Area', value: '[TBD]' },
     ],
+    galleries: {
+      interior: [
+        {
+          name: 'Casas de Banho',
+          images: [
+            'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1920&q=80',
+            'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1920&q=80',
+            'https://images.unsplash.com/photo-1620626011761-996317b8d101?w=1920&q=80',
+          ],
+        },
+        {
+          name: 'Cozinhas',
+          images: [
+            'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80',
+            'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80',
+            'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1920&q=80',
+          ],
+        },
+        {
+          name: 'Quartos',
+          images: [
+            'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1920&q=80',
+            'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1920&q=80',
+          ],
+        },
+      ],
+      exterior: [
+        {
+          name: 'Jardim',
+          images: [
+            'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80',
+            'https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=1920&q=80',
+            'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80',
+          ],
+        },
+        {
+          name: 'Estacionamento',
+          images: [
+            'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?w=1920&q=80',
+            'https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?w=1920&q=80',
+          ],
+        },
+      ],
+    },
     rooms: [
       {
         name: 'Sala',
@@ -65,10 +109,10 @@ const PROJECTS = {
       },
     ],
     typologies: [
-      { type: 'T1', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
-      { type: 'T2', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
-      { type: 'T3', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
-      { type: 'T4', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
+      { type: 'T1', area: '[TBD] m²', bedrooms: 1, wc: 1, disposicao: 'Sala + Cozinha open space, 1 Quarto, 1 WC, Varanda', planta: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80', description: '[Description - to be provided]' },
+      { type: 'T2', area: '[TBD] m²', bedrooms: 2, wc: 2, disposicao: 'Sala + Cozinha open space, 2 Quartos (1 suite), 2 WC, Varanda', planta: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80', description: '[Description - to be provided]' },
+      { type: 'T3', area: '[TBD] m²', bedrooms: 3, wc: 3, disposicao: 'Sala, Cozinha, 3 Quartos (1 suite), 3 WC, Varanda, Lugar de garagem', planta: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80', description: '[Description - to be provided]' },
+      { type: 'T4', area: '[TBD] m²', bedrooms: 4, wc: 4, disposicao: 'Sala, Cozinha, 4 Quartos (1 suite), 4 WC, Terraço, 2 Lugares de garagem', planta: 'https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=1200&q=80', description: '[Description - to be provided]' },
     ],
     locationInfo: {
       address: '[Address - to be provided]',
@@ -102,6 +146,47 @@ const PROJECTS = {
       { label: 'Architecture', value: '[TBD]' },
       { label: 'Plot', value: '[TBD]' },
     ],
+    galleries: {
+      interior: [
+        {
+          name: 'Casas de Banho',
+          images: [
+            'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1920&q=80',
+            'https://images.unsplash.com/photo-1620626011761-996317b8d101?w=1920&q=80',
+          ],
+        },
+        {
+          name: 'Cozinhas',
+          images: [
+            'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80',
+            'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80',
+          ],
+        },
+        {
+          name: 'Quartos',
+          images: [
+            'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1920&q=80',
+            'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=1920&q=80',
+          ],
+        },
+      ],
+      exterior: [
+        {
+          name: 'Jardim',
+          images: [
+            'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80',
+            'https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=1920&q=80',
+          ],
+        },
+        {
+          name: 'Estacionamento',
+          images: [
+            'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?w=1920&q=80',
+            'https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?w=1920&q=80',
+          ],
+        },
+      ],
+    },
     rooms: [
       {
         name: 'Sala',
@@ -132,8 +217,8 @@ const PROJECTS = {
       },
     ],
     typologies: [
-      { type: 'T3', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
-      { type: 'T4', area: '[TBD]', bedrooms: '[TBD]', description: '[Description - to be provided]' },
+      { type: 'T3', area: '[TBD] m²', bedrooms: 3, wc: 3, disposicao: 'Sala, Cozinha, 3 Quartos (1 suite), 3 WC, Jardim privativo, Lugar de garagem', planta: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80', description: '[Description - to be provided]' },
+      { type: 'T4', area: '[TBD] m²', bedrooms: 4, wc: 4, disposicao: 'Sala, Cozinha, 4 Quartos (1 suite), 4 WC, Jardim privativo, Terraço, 2 Lugares de garagem', planta: 'https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=1200&q=80', description: '[Description - to be provided]' },
     ],
     locationInfo: {
       address: '[Address - to be provided]',
@@ -972,7 +1057,234 @@ function ConceptRender({ project }) {
 }
 
 // ============================================================
-// 3b. PhotoCarousel — infinite loop, no white gaps
+// 3b. Galleries — Interior (left) + Exterior (right), side by side
+// ============================================================
+function GalleryColumn({ title, categories, side }) {
+  const isMobile = useIsMobile();
+  const [activeCat, setActiveCat] = useState(0);
+  const [imgIdx, setImgIdx] = useState(0);
+  const [lightbox, setLightbox] = useState(null);
+  const imgRef = useRef(null);
+
+  const cat = categories[activeCat];
+  const images = cat ? cat.images : [];
+  const total = images.length;
+
+  const switchCat = (i) => {
+    if (i === activeCat) return;
+    if (imgRef.current && typeof gsap !== 'undefined') {
+      gsap.to(imgRef.current, { opacity: 0, scale: 0.97, duration: 0.2, ease: 'power2.in', onComplete: () => {
+        setActiveCat(i);
+        setImgIdx(0);
+        requestAnimationFrame(() => {
+          if (imgRef.current) gsap.fromTo(imgRef.current, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.35, ease: 'power2.out' });
+        });
+      }});
+    } else {
+      setActiveCat(i);
+      setImgIdx(0);
+    }
+  };
+
+  const navImg = (dir) => {
+    if (total <= 1 || !imgRef.current || typeof gsap === 'undefined') return;
+    const next = ((imgIdx + dir) % total + total) % total;
+    gsap.to(imgRef.current, { opacity: 0, x: -dir * 25, duration: 0.18, ease: 'power2.in', onComplete: () => {
+      setImgIdx(next);
+      requestAnimationFrame(() => {
+        if (imgRef.current) gsap.fromTo(imgRef.current, { opacity: 0, x: dir * 25 }, { opacity: 1, x: 0, duration: 0.28, ease: 'power2.out' });
+      });
+    }});
+  };
+
+  // Lightbox
+  const openLb = () => {
+    setLightbox(imgIdx);
+    requestAnimationFrame(() => {
+      const ov = document.querySelector('.gal-lb-' + side);
+      const img = document.querySelector('.gal-lb-img-' + side);
+      if (ov && typeof gsap !== 'undefined') {
+        gsap.fromTo(ov, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' });
+        if (img) gsap.fromTo(img, { scale: 0.9 }, { scale: 1, duration: 0.4, ease: 'power3.out', delay: 0.08 });
+      }
+    });
+  };
+  const closeLb = () => {
+    const ov = document.querySelector('.gal-lb-' + side);
+    if (ov && typeof gsap !== 'undefined') {
+      gsap.to(ov, { opacity: 0, duration: 0.25, ease: 'power2.in', onComplete: () => setLightbox(null) });
+    } else setLightbox(null);
+  };
+  const navLb = (dir) => {
+    const img = document.querySelector('.gal-lb-img-' + side);
+    if (img && typeof gsap !== 'undefined') {
+      gsap.to(img, { x: -dir * 40, opacity: 0, duration: 0.2, ease: 'power2.in', onComplete: () => {
+        setLightbox(p => ((p + dir) % total + total) % total);
+        requestAnimationFrame(() => {
+          const ni = document.querySelector('.gal-lb-img-' + side);
+          if (ni) gsap.fromTo(ni, { x: dir * 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
+        });
+      }});
+    }
+  };
+
+  const lbBtnStyle = { background: 'rgba(255,255,255,0.12)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' };
+
+  const arrowBtn = (s) => ({
+    position: 'absolute', top: '50%', transform: 'translateY(-50%)',
+    [s]: 12, zIndex: 5,
+    width: 36, height: 36, borderRadius: '50%',
+    background: 'rgba(0,0,0,0.35)', border: 'none',
+    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+    transition: 'background 0.2s',
+    opacity: total > 1 ? 1 : 0,
+    pointerEvents: total > 1 ? 'auto' : 'none',
+  });
+
+  return (
+    <div style={{ flex: 1, minWidth: 0 }}>
+      {/* Lightbox */}
+      {lightbox !== null && (
+        <div className={'gal-lb-' + side} onClick={closeLb}
+          style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 99999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
+          <button onClick={e => { e.stopPropagation(); closeLb(); }}
+            style={{ ...lbBtnStyle, position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          {total > 1 && (
+            <>
+              <button onClick={e => { e.stopPropagation(); navLb(-1); }}
+                style={{ ...lbBtnStyle, position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button onClick={e => { e.stopPropagation(); navLb(1); }}
+                style={{ ...lbBtnStyle, position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+              </button>
+            </>
+          )}
+          <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: 13, fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.1em' }}>
+            {lightbox + 1} / {total}
+          </div>
+          <img className={'gal-lb-img-' + side} src={images[lightbox]} alt=""
+            style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 4 }} />
+        </div>
+      )}
+
+      {/* Title */}
+      <div className="gal-animate" style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 12 }}>
+        {title}
+      </div>
+
+      {/* Sub-category tabs */}
+      <div className="gal-animate" style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+        {categories.map((c, i) => (
+          <button key={c.name} onClick={() => switchCat(i)}
+            style={{
+              padding: '8px 20px',
+              background: activeCat === i ? C.ink : 'transparent',
+              color: activeCat === i ? C.bege : C.ink,
+              border: activeCat === i ? 'none' : '1px solid rgba(31,32,34,0.2)',
+              borderRadius: 30, fontWeight: 500, fontSize: 12, letterSpacing: '0.08em',
+              cursor: 'pointer', transition: 'all 0.3s ease',
+              fontFamily: "'DM Sans', sans-serif",
+            }}>
+            {c.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Image area */}
+      <div className="gal-animate" style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', height: isMobile ? 240 : 380, background: C.grey }}>
+        {/* Nav arrows */}
+        <button style={arrowBtn('left')} onClick={() => navImg(-1)}
+          onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.55)'}
+          onMouseOut={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button style={arrowBtn('right')} onClick={() => navImg(1)}
+          onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.55)'}
+          onMouseOut={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+        {/* Counter */}
+        {total > 1 && (
+          <div style={{ position: 'absolute', bottom: 12, right: 14, zIndex: 5, background: 'rgba(0,0,0,0.4)', borderRadius: 20, padding: '4px 12px', color: '#fff', fontSize: 11, letterSpacing: '0.08em', fontFamily: "'DM Sans', sans-serif" }}>
+            {imgIdx + 1} / {total}
+          </div>
+        )}
+        {/* Image */}
+        <img
+          ref={imgRef}
+          src={images[imgIdx] || ''}
+          alt={cat ? cat.name : ''}
+          onClick={openLb}
+          loading="lazy"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'zoom-in', transition: 'transform 0.5s ease' }}
+          onMouseOver={e => e.currentTarget.style.transform = 'scale(1.03)'}
+          onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+        />
+      </div>
+
+      {/* Category name below image */}
+      <div style={{ marginTop: 14, fontSize: 13, fontWeight: 500, letterSpacing: '0.04em', color: C.ink, opacity: 0.6 }}>
+        {cat ? cat.name : ''}
+      </div>
+    </div>
+  );
+}
+
+function Galleries({ project }) {
+  const isMobile = useIsMobile();
+  const sectionRef = useRef(null);
+  const galleries = project.galleries;
+
+  if (!galleries) return null;
+  const interior = galleries.interior || [];
+  const exterior = galleries.exterior || [];
+  if (interior.length === 0 && exterior.length === 0) return null;
+
+  // GSAP scroll reveal
+  useEffect(() => {
+    if (typeof gsap === 'undefined' || !sectionRef.current) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      const items = sectionRef.current.querySelectorAll('.gal-animate');
+      gsap.fromTo(items,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08,
+          scrollTrigger: { trigger: sectionRef.current, start: '0% 80%', toggleActions: 'play none none none' }
+        }
+      );
+    }, sectionRef.current);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section ref={sectionRef} style={{ background: C.bege, padding: isMobile ? '60px 24px' : '100px 80px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 48px' }}>
+          Galeria <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>do projeto</em>
+        </h2>
+        <div style={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: isMobile ? 48 : 40,
+        }}>
+          {interior.length > 0 && (
+            <GalleryColumn title="Interior" categories={interior} side="interior" />
+          )}
+          {exterior.length > 0 && (
+            <GalleryColumn title="Exterior" categories={exterior} side="exterior" />
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================
+// 3c. PhotoCarousel — infinite loop, no white gaps
 // ============================================================
 function PhotoCarousel({ project }) {
   const isMobile = useIsMobile();
@@ -1187,61 +1499,55 @@ function PhotoCarousel({ project }) {
 }
 
 // ============================================================
-// 4. Typologies — rooms with image carousel + lightbox
+// 4. Typologies — enriched tabs with m², disposição, planta
 // ============================================================
 function Typologies({ project }) {
   const isMobile = useIsMobile();
   const [active, setActive] = useState(0);
-  const [imgIdx, setImgIdx] = useState(0);
-  const [lightbox, setLightbox] = useState(null);
-  const revealRef = useScrollReveal();
-  const imgRef = useRef(null);
-  const rooms = project.rooms || [];
+  const sectionRef = useRef(null);
+  const contentRef = useRef(null);
+  const [lightbox, setLightbox] = useState(false);
+  const typologies = project.typologies || [];
 
-  const detailRef = useRef(null);
+  if (typologies.length === 0) return null;
+  const typo = typologies[active];
 
-  // Reset image index when switching room
-  const switchRoom = (i) => {
+  const switchTypo = (i) => {
     if (i === active) return;
-    const targets = [imgRef.current, detailRef.current].filter(Boolean);
-    if (targets.length && typeof gsap !== 'undefined') {
-      gsap.to(targets, { opacity: 0, y: 8, duration: 0.22, ease: 'power2.in', onComplete: () => {
+    if (contentRef.current && typeof gsap !== 'undefined') {
+      gsap.to(contentRef.current, { opacity: 0, y: 10, duration: 0.22, ease: 'power2.in', onComplete: () => {
         setActive(i);
-        setImgIdx(0);
         requestAnimationFrame(() => {
-          const t2 = [imgRef.current, detailRef.current].filter(Boolean);
-          if (t2.length) gsap.fromTo(t2, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out', stagger: 0.06 });
+          if (contentRef.current) gsap.fromTo(contentRef.current, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' });
         });
       }});
     } else {
       setActive(i);
-      setImgIdx(0);
     }
   };
 
-  const room = rooms[active];
-  if (!room) return null;
-  const roomImages = room.images || [];
-  const totalImg = roomImages.length;
+  // GSAP scroll reveal
+  useEffect(() => {
+    if (typeof gsap === 'undefined' || !sectionRef.current) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      const items = sectionRef.current.querySelectorAll('.typ-animate');
+      gsap.fromTo(items,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.1,
+          scrollTrigger: { trigger: sectionRef.current, start: '0% 80%', toggleActions: 'play none none none' }
+        }
+      );
+    }, sectionRef.current);
+    return () => ctx.revert();
+  }, []);
 
-  // Image nav with GSAP
-  const navImg = (dir) => {
-    if (totalImg <= 1 || !imgRef.current || typeof gsap === 'undefined') return;
-    const next = ((imgIdx + dir) % totalImg + totalImg) % totalImg;
-    gsap.to(imgRef.current, { opacity: 0, x: -dir * 30, duration: 0.2, ease: 'power2.in', onComplete: () => {
-      setImgIdx(next);
-      requestAnimationFrame(() => {
-        if (imgRef.current) gsap.fromTo(imgRef.current, { opacity: 0, x: dir * 30 }, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' });
-      });
-    }});
-  };
-
-  // Lightbox
+  // Lightbox for planta
   const openLb = () => {
-    setLightbox(imgIdx);
+    setLightbox(true);
     requestAnimationFrame(() => {
-      const ov = document.querySelector('.typ-lb');
-      const img = document.querySelector('.typ-lb-img');
+      const ov = document.querySelector('.typ-planta-lb');
+      const img = document.querySelector('.typ-planta-img');
       if (ov && typeof gsap !== 'undefined') {
         gsap.fromTo(ov, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' });
         if (img) gsap.fromTo(img, { scale: 0.9 }, { scale: 1, duration: 0.4, ease: 'power3.out', delay: 0.08 });
@@ -1249,80 +1555,47 @@ function Typologies({ project }) {
     });
   };
   const closeLb = () => {
-    const ov = document.querySelector('.typ-lb');
+    const ov = document.querySelector('.typ-planta-lb');
     if (ov && typeof gsap !== 'undefined') {
-      gsap.to(ov, { opacity: 0, duration: 0.25, ease: 'power2.in', onComplete: () => setLightbox(null) });
-    } else setLightbox(null);
-  };
-  const navLb = (dir) => {
-    const img = document.querySelector('.typ-lb-img');
-    if (img && typeof gsap !== 'undefined') {
-      gsap.to(img, { x: -dir * 40, opacity: 0, duration: 0.2, ease: 'power2.in', onComplete: () => {
-        setLightbox(p => ((p + dir) % totalImg + totalImg) % totalImg);
-        requestAnimationFrame(() => {
-          const ni = document.querySelector('.typ-lb-img');
-          if (ni) gsap.fromTo(ni, { x: dir * 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
-        });
-      }});
-    }
+      gsap.to(ov, { opacity: 0, duration: 0.25, ease: 'power2.in', onComplete: () => setLightbox(false) });
+    } else setLightbox(false);
   };
 
-  const lbBtnStyle = { background: 'rgba(255,255,255,0.12)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' };
-
-  // Image arrow style (inside the image area)
-  const imgArrow = (side) => ({
-    position: 'absolute', top: '50%', transform: 'translateY(-50%)',
-    [side]: 12, zIndex: 5,
-    width: 36, height: 36, borderRadius: '50%',
-    background: 'rgba(0,0,0,0.35)', border: 'none',
-    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    transition: 'background 0.2s',
-    opacity: totalImg > 1 ? 1 : 0,
-    pointerEvents: totalImg > 1 ? 'auto' : 'none',
-  });
+  // Stat mini-block
+  const StatBlock = ({ label, value, icon }) => (
+    <div style={{ textAlign: 'center', minWidth: 80 }}>
+      <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 8 }}>{label}</div>
+      <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 500, color: C.bege, letterSpacing: '-0.02em' }}>{value}</div>
+    </div>
+  );
 
   return (
-    <section style={{ background: C.green, padding: isMobile ? '80px 24px' : '140px 80px' }}>
-      {/* Lightbox */}
-      {lightbox !== null && (
-        <div className="typ-lb" onClick={closeLb}
+    <section ref={sectionRef} style={{ background: C.green, padding: isMobile ? '80px 24px' : '140px 80px' }}>
+      {/* Planta lightbox */}
+      {lightbox && typo.planta && (
+        <div className="typ-planta-lb" onClick={closeLb}
           style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 99999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
           <button onClick={e => { e.stopPropagation(); closeLb(); }}
-            style={{ ...lbBtnStyle, position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
+            style={{ position: 'absolute', top: 20, right: 20, zIndex: 10, width: 44, height: 44, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
-          {totalImg > 1 && (
-            <>
-              <button onClick={e => { e.stopPropagation(); navLb(-1); }}
-                style={{ ...lbBtnStyle, position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-              </button>
-              <button onClick={e => { e.stopPropagation(); navLb(1); }}
-                style={{ ...lbBtnStyle, position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
-              </button>
-            </>
-          )}
-          <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: 13, fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.1em' }}>
-            {lightbox + 1} / {totalImg}
-          </div>
-          <img className="typ-lb-img" src={roomImages[lightbox]} alt=""
+          <img className="typ-planta-img" src={typo.planta} alt={'Planta ' + typo.type}
             style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 4 }} />
         </div>
       )}
 
-      <div ref={revealRef} style={{ maxWidth: 1200, margin: '0 auto', willChange: 'opacity, transform' }}>
-        <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
-          Divisões
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div className="typ-animate" style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
+          Tipologias
         </div>
-        <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.bege, margin: '0 0 48px' }}>
-          Espaços pensados para <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>a sua vida.</em>
+        <h2 className="typ-animate" style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.bege, margin: '0 0 48px' }}>
+          Encontre a tipologia <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>ideal.</em>
         </h2>
 
-        {/* Room tabs */}
-        <div style={{ display: 'flex', gap: 12, marginBottom: 40, flexWrap: 'wrap' }}>
-          {rooms.map((r, i) => (
-            <button key={r.name} onClick={() => switchRoom(i)}
+        {/* Typology tabs */}
+        <div className="typ-animate" style={{ display: 'flex', gap: 12, marginBottom: 40, flexWrap: 'wrap' }}>
+          {typologies.map((t, i) => (
+            <button key={t.type} onClick={() => switchTypo(i)}
               style={{
                 padding: '12px 28px',
                 background: active === i ? C.bege : 'transparent',
@@ -1331,68 +1604,143 @@ function Typologies({ project }) {
                 borderRadius: 40, fontWeight: 500, fontSize: 13, letterSpacing: '0.1em',
                 cursor: 'pointer', transition: 'all 0.3s ease',
               }}>
-              {r.name}
+              {t.type}
             </button>
           ))}
         </div>
 
-        {/* Room detail */}
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 32 : 64, alignItems: 'start' }}>
-          {/* Info */}
-          <div ref={detailRef} style={{ minHeight: isMobile ? 'auto' : 280, order: isMobile ? 2 : 0 }}>
-            <h3 style={{ fontWeight: 500, fontSize: isMobile ? 32 : 48, color: C.bege, margin: 0, letterSpacing: '-0.02em' }}>
-              {room.name}
+        {/* Typology content */}
+        <div ref={contentRef} style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? 32 : 64,
+          alignItems: 'start',
+        }}>
+          {/* Left: info */}
+          <div style={{ order: isMobile ? 2 : 0 }}>
+            <h3 style={{ fontWeight: 500, fontSize: isMobile ? 36 : 52, color: C.bege, margin: 0, letterSpacing: '-0.02em' }}>
+              {typo.type}
             </h3>
-            <div style={{ display: 'flex', gap: isMobile ? 24 : 40, marginTop: 24 }}>
-              <div>
-                <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 6 }}>Área</div>
-                <div style={{ fontSize: 18, fontWeight: 500, color: C.bege }}>{room.area}</div>
-              </div>
+
+            {/* Stats row */}
+            <div style={{ display: 'flex', gap: isMobile ? 24 : 40, marginTop: 28, flexWrap: 'wrap' }}>
+              <StatBlock label="Área" value={typo.area} />
+              <StatBlock label="Quartos" value={typo.bedrooms} />
+              <StatBlock label="WC" value={typo.wc} />
             </div>
-            <p style={{ fontSize: 15, lineHeight: 1.8, color: 'rgba(238,232,218,0.75)', margin: '28px 0 0', maxWidth: 480 }}>
-              {room.detail}
-            </p>
+
+            {/* Disposição */}
+            <div style={{ marginTop: 32 }}>
+              <div style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 10 }}>Disposição</div>
+              <p style={{ fontSize: 15, lineHeight: 1.9, color: 'rgba(238,232,218,0.75)', margin: 0, maxWidth: 480 }}>
+                {typo.disposicao}
+              </p>
+            </div>
+
+            {/* CTA */}
             <div style={{ marginTop: 40 }}>
               <FillButton
                 href={'#contact'}
                 onClick={e => { e.preventDefault(); const el = document.getElementById('project-contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
                 variant="outline"
                 style={{ color: C.bege, border: '1px solid rgba(238,232,218,0.3)', borderRadius: 6, padding: '14px 36px' }}>
-                Saber mais
+                Pedir informações
               </FillButton>
             </div>
           </div>
 
-          {/* Image carousel */}
-          <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', height: isMobile ? 260 : 380, order: isMobile ? 1 : 0 }}>
-            {/* Arrows */}
-            <button style={imgArrow('left')} onClick={() => navImg(-1)}
-              onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.55)'}
-              onMouseOut={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <button style={imgArrow('right')} onClick={() => navImg(1)}
-              onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.55)'}
-              onMouseOut={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
-            </button>
-            {/* Counter */}
-            {totalImg > 1 && (
-              <div style={{ position: 'absolute', bottom: 12, right: 14, zIndex: 5, background: 'rgba(0,0,0,0.4)', borderRadius: 20, padding: '4px 12px', color: '#fff', fontSize: 11, letterSpacing: '0.08em', fontFamily: "'DM Sans', sans-serif" }}>
-                {imgIdx + 1} / {totalImg}
+          {/* Right: planta image */}
+          <div style={{ order: isMobile ? 1 : 0 }}>
+            {typo.planta ? (
+              <div
+                onClick={openLb}
+                style={{
+                  position: 'relative', borderRadius: 10, overflow: 'hidden',
+                  height: isMobile ? 260 : 400, cursor: 'zoom-in',
+                  background: C.grey,
+                }}>
+                <div style={{
+                  position: 'absolute', top: 14, left: 14, zIndex: 5,
+                  background: 'rgba(0,0,0,0.5)', borderRadius: 20, padding: '5px 14px',
+                  color: '#fff', fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase',
+                  fontFamily: "'DM Sans', sans-serif", fontWeight: 600,
+                }}>
+                  Planta
+                </div>
+                <img
+                  src={typo.planta}
+                  alt={'Planta ' + typo.type}
+                  loading="lazy"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s ease' }}
+                  onMouseOver={e => e.currentTarget.style.transform = 'scale(1.03)'}
+                  onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                />
+              </div>
+            ) : (
+              <div style={{
+                height: isMobile ? 260 : 400, borderRadius: 10, background: 'rgba(238,232,218,0.06)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: '1px dashed rgba(238,232,218,0.15)',
+              }}>
+                <span style={{ fontSize: 13, letterSpacing: '0.1em', color: 'rgba(238,232,218,0.3)', textTransform: 'uppercase' }}>Planta em breve</span>
               </div>
             )}
-            {/* Image */}
-            <img
-              ref={imgRef}
-              src={roomImages[imgIdx] || ''}
-              alt={room.name}
-              onClick={openLb}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'zoom-in', transition: 'transform 0.5s ease' }}
-              onMouseOver={e => e.currentTarget.style.transform = 'scale(1.03)'}
-              onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
-            />
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================
+// 4b. Acabamentos — placeholder section
+// ============================================================
+function Acabamentos() {
+  const isMobile = useIsMobile();
+  const revealRef = useScrollReveal();
+
+  const placeholders = [
+    { label: 'Pavimentos', icon: 'M3 21h18M3 3h18M3 12h18M9 3v18M15 3v18' },
+    { label: 'Cozinha', icon: 'M3 6h18v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6zM3 6V4a1 1 0 011-1h16a1 1 0 011 1v2M10 10h4' },
+    { label: 'Casas de Banho', icon: 'M4 12h16M4 12a2 2 0 00-2 2v2a2 2 0 002 2h16a2 2 0 002-2v-2a2 2 0 00-2-2M6 12V6a2 2 0 012-2h1a2 2 0 012 2v6' },
+    { label: 'Carpintarias', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
+  ];
+
+  return (
+    <section style={{ background: C.bege, padding: isMobile ? '60px 24px 80px' : '100px 80px 120px' }}>
+      <div ref={revealRef} style={{ maxWidth: 1200, margin: '0 auto', willChange: 'opacity, transform' }}>
+        <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
+          Acabamentos
+        </div>
+        <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 48px' }}>
+          Detalhes que fazem <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>a diferença.</em>
+        </h2>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
+          gap: isMobile ? 16 : 24,
+        }}>
+          {placeholders.map((p) => (
+            <div key={p.label} style={{
+              background: C.grey,
+              borderRadius: 12,
+              padding: isMobile ? '32px 20px' : '48px 28px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              gap: 16,
+              border: '1px dashed rgba(31,32,34,0.1)',
+              minHeight: isMobile ? 140 : 180,
+            }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C.clearGreen} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d={p.icon} />
+              </svg>
+              <span style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(31,32,34,0.4)' }}>
+                {p.label}
+              </span>
+              <span style={{ fontSize: 11, letterSpacing: '0.06em', color: 'rgba(31,32,34,0.25)', fontStyle: 'italic' }}>
+                Em breve
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -1841,8 +2189,10 @@ function ProjectPage() {
       {/* Content before map - scrolls over fixed hero */}
       <div style={{ position: 'relative', zIndex: 2, background: C.bege }}>
         <ConceptRender project={project} />
+        <Galleries project={project} />
         <PhotoCarousel project={project} />
         <Typologies project={project} />
+        <Acabamentos />
       </div>
 
       {/* Location — scrolls naturally, no pin */}
