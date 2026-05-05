@@ -881,27 +881,6 @@ function ConceptRender({ project }) {
   const sectionRef = useRef(null);
   const textRef = useRef(null);
   const imageRef = useRef(null);
-  const statsRef = useRef(null);
-
-  const infoStats = project.stats || [];
-
-  // Stat icon SVGs
-  const statIcon = (label) => {
-    const lbl = label.toLowerCase();
-    if (lbl.includes('unit') || lbl.includes('quarto') || lbl.includes('bedroom'))
-      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M3 21V7a2 2 0 012-2h14a2 2 0 012 2v14"/><path d="M3 15h18"/><path d="M3 15v-4a2 2 0 012-2h4v6"/></svg>;
-    if (lbl.includes('area') || lbl.includes('m²'))
-      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>;
-    if (lbl.includes('location') || lbl.includes('local'))
-      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>;
-    if (lbl.includes('typolog'))
-      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>;
-    if (lbl.includes('status'))
-      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>;
-    if (lbl.includes('architect'))
-      return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>;
-    return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/></svg>;
-  };
 
   // GSAP animations
   useEffect(() => {
@@ -945,20 +924,6 @@ function ConceptRender({ project }) {
       triggers.push(t.scrollTrigger);
     }
 
-    // Stats grid — staggered after text
-    if (statsRef.current) {
-      const statEls = statsRef.current.querySelectorAll('.cr-stat');
-      if (statEls.length) {
-        const t = gsap.fromTo(statEls,
-          { y: 24, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.08, delay: 0.3,
-            scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' }
-          }
-        );
-        triggers.push(t.scrollTrigger);
-      }
-    }
-
     return () => triggers.forEach(t => t && t.kill());
   }, [isMobile]);
 
@@ -973,9 +938,9 @@ function ConceptRender({ project }) {
         flexDirection: 'column',
         gridTemplateColumns: isMobile ? '1fr' : '1fr 1.1fr',
         gap: isMobile ? 48 : 80,
-        alignItems: 'start',
+        alignItems: 'center',
       }}>
-        {/* LEFT — Concept text */}
+        {/* LEFT — Concept text only */}
         <div ref={textRef}>
           <div className="cr-animate" style={{
             fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
@@ -986,54 +951,19 @@ function ConceptRender({ project }) {
 
           <h2 className="cr-animate" style={{
             fontWeight: 300, fontSize: isMobile ? 28 : 38, lineHeight: 1.4,
-            letterSpacing: '-0.02em', color: C.ink, margin: '0 0 20px', opacity: 0,
+            letterSpacing: '-0.02em', color: C.ink, margin: '0 0 24px', opacity: 0,
           }}>
             {project.description}
           </h2>
 
           {project.descriptionExtra && (
             <p className="cr-animate" style={{
-              fontSize: isMobile ? 15 : 16, lineHeight: 1.75, color: C.green,
-              margin: '0 0 40px', opacity: 0,
+              fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
+              margin: 0, opacity: 0, maxWidth: 520,
             }}>
               {project.descriptionExtra}
             </p>
           )}
-
-          {/* Stats grid */}
-          <div ref={statsRef} style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr',
-            gap: 0, borderTop: '1px solid rgba(92,100,87,0.12)',
-          }}>
-            {infoStats.map((stat, i) => (
-              <div key={stat.label} className="cr-stat" style={{
-                padding: '16px 12px 16px 0',
-                borderBottom: '1px solid rgba(92,100,87,0.08)',
-                borderRight: i % 2 === 0 ? '1px solid rgba(92,100,87,0.08)' : 'none',
-                paddingLeft: i % 2 !== 0 ? 16 : 0,
-                display: 'flex', alignItems: 'center', gap: 10,
-                opacity: 0,
-              }}
-              onMouseEnter={e => {
-                const icon = e.currentTarget.querySelector('.stat-icon');
-                if (icon) icon.style.transform = 'translateY(-3px)';
-              }}
-              onMouseLeave={e => {
-                const icon = e.currentTarget.querySelector('.stat-icon');
-                if (icon) icon.style.transform = 'translateY(0)';
-              }}>
-                <div className="stat-icon" style={{ color: C.clearGreen, flexShrink: 0, transition: 'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94)' }}>{statIcon(stat.label)}</div>
-                <div>
-                  <div style={{ fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 2 }}>
-                    {stat.label}
-                  </div>
-                  <div style={{ fontSize: 15, fontWeight: 500, color: C.ink }}>
-                    {stat.value}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* RIGHT — Render image */}
