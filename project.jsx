@@ -989,42 +989,126 @@ function ConceptRender({ project }) {
 // ============================================================
 // 3b. Galleries — Interior (left) + Exterior (right), side by side
 // ============================================================
-function GalleryColumn({ title, categories, side }) {
+function GalleryColumn({ title, categories, side, delay }) {
   const isMobile = useIsMobile();
   const [activeCat, setActiveCat] = useState(0);
   const [imgIdx, setImgIdx] = useState(0);
   const [lightbox, setLightbox] = useState(null);
+  const columnRef = useRef(null);
   const imgRef = useRef(null);
+  const imgWrapRef = useRef(null);
+  const tabsRef = useRef(null);
 
   const cat = categories[activeCat];
   const images = cat ? cat.images : [];
   const total = images.length;
 
+  // GSAP entrance — clip-path reveal on image, stagger on text/tabs
+  useEffect(() => {
+    if (typeof gsap === 'undefined' || !columnRef.current) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: columnRef.current, start: 'top 80%', toggleActions: 'play none none none' },
+        delay: delay || 0,
+      });
+
+      // Title label slides in
+      tl.fromTo(columnRef.current.querySelector('.gc-label'),
+        { opacity: 0, x: -30 },
+        { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out' },
+        0
+      );
+
+      // Tabs stagger in
+      const tabs = columnRef.current.querySelectorAll('.gc-tab');
+      if (tabs.length) {
+        tl.fromTo(tabs,
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.07 },
+          0.15
+        );
+      }
+
+      // Image container — clip-path reveal (curtain from left)
+      if (imgWrapRef.current) {
+        tl.fromTo(imgWrapRef.current,
+          { clipPath: 'inset(0 100% 0 0)' },
+          { clipPath: 'inset(0 0% 0 0)', duration: 1.0, ease: 'power4.inOut' },
+          0.2
+        );
+        // Simultaneously, the image inside scales down from 1.15 to 1 (Ken Burns settle)
+        if (imgRef.current) {
+          tl.fromTo(imgRef.current,
+            { scale: 1.15 },
+            { scale: 1, duration: 1.4, ease: 'power2.out' },
+            0.2
+          );
+        }
+      }
+
+      // Category label below fades in
+      tl.fromTo(columnRef.current.querySelector('.gc-cat-label'),
+        { opacity: 0, y: 10 },
+        { opacity: 0.6, y: 0, duration: 0.5, ease: 'power2.out' },
+        0.9
+      );
+    }, columnRef.current);
+    return () => ctx.revert();
+  }, []);
+
+  // Category switch — cinematic crossfade
   const switchCat = (i) => {
     if (i === activeCat) return;
-    if (imgRef.current && typeof gsap !== 'undefined') {
-      gsap.to(imgRef.current, { opacity: 0, scale: 0.97, duration: 0.2, ease: 'power2.in', onComplete: () => {
-        setActiveCat(i);
-        setImgIdx(0);
+    if (imgWrapRef.current && typeof gsap !== 'undefined') {
+      const tl = gsap.timeline();
+      // Close curtain
+      tl.to(imgWrapRef.current, {
+        clipPath: 'inset(0 0 0 100%)', duration: 0.35, ease: 'power2.in',
+        onComplete: () => {
+          setActiveCat(i);
+          setImgIdx(0);
+        }
+      });
+      // Re-open curtain with new image
+      tl.call(() => {
         requestAnimationFrame(() => {
-          if (imgRef.current) gsap.fromTo(imgRef.current, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.35, ease: 'power2.out' });
+          if (imgRef.current) gsap.set(imgRef.current, { scale: 1.1 });
+          gsap.fromTo(imgWrapRef.current,
+            { clipPath: 'inset(0 100% 0 0)' },
+            { clipPath: 'inset(0 0% 0 0)', duration: 0.5, ease: 'power3.out' }
+          );
+          if (imgRef.current) {
+            gsap.to(imgRef.current, { scale: 1, duration: 0.8, ease: 'power2.out' });
+          }
         });
-      }});
+      }, null, '+=0.05');
     } else {
       setActiveCat(i);
       setImgIdx(0);
     }
   };
 
+  // Image navigation — slide + scale
   const navImg = (dir) => {
     if (total <= 1 || !imgRef.current || typeof gsap === 'undefined') return;
     const next = ((imgIdx + dir) % total + total) % total;
-    gsap.to(imgRef.current, { opacity: 0, x: -dir * 25, duration: 0.18, ease: 'power2.in', onComplete: () => {
-      setImgIdx(next);
+    const tl = gsap.timeline();
+    tl.to(imgRef.current, {
+      x: -dir * 60, opacity: 0, scale: 0.95,
+      duration: 0.25, ease: 'power2.in',
+      onComplete: () => setImgIdx(next),
+    });
+    tl.call(() => {
       requestAnimationFrame(() => {
-        if (imgRef.current) gsap.fromTo(imgRef.current, { opacity: 0, x: dir * 25 }, { opacity: 1, x: 0, duration: 0.28, ease: 'power2.out' });
+        if (imgRef.current) {
+          gsap.fromTo(imgRef.current,
+            { x: dir * 60, opacity: 0, scale: 1.05 },
+            { x: 0, opacity: 1, scale: 1, duration: 0.4, ease: 'power3.out' }
+          );
+        }
       });
-    }});
+    }, null, '+=0.02');
   };
 
   // Lightbox
@@ -1035,7 +1119,7 @@ function GalleryColumn({ title, categories, side }) {
       const img = document.querySelector('.gal-lb-img-' + side);
       if (ov && typeof gsap !== 'undefined') {
         gsap.fromTo(ov, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' });
-        if (img) gsap.fromTo(img, { scale: 0.9 }, { scale: 1, duration: 0.4, ease: 'power3.out', delay: 0.08 });
+        if (img) gsap.fromTo(img, { scale: 0.88, y: 30 }, { scale: 1, y: 0, duration: 0.5, ease: 'power3.out', delay: 0.08 });
       }
     });
   };
@@ -1048,31 +1132,32 @@ function GalleryColumn({ title, categories, side }) {
   const navLb = (dir) => {
     const img = document.querySelector('.gal-lb-img-' + side);
     if (img && typeof gsap !== 'undefined') {
-      gsap.to(img, { x: -dir * 40, opacity: 0, duration: 0.2, ease: 'power2.in', onComplete: () => {
+      gsap.to(img, { x: -dir * 50, opacity: 0, scale: 0.95, duration: 0.22, ease: 'power2.in', onComplete: () => {
         setLightbox(p => ((p + dir) % total + total) % total);
         requestAnimationFrame(() => {
           const ni = document.querySelector('.gal-lb-img-' + side);
-          if (ni) gsap.fromTo(ni, { x: dir * 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
+          if (ni) gsap.fromTo(ni, { x: dir * 50, opacity: 0, scale: 1.05 }, { x: 0, opacity: 1, scale: 1, duration: 0.35, ease: 'power3.out' });
         });
       }});
     }
   };
 
-  const lbBtnStyle = { background: 'rgba(255,255,255,0.12)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' };
+  const lbBtnStyle = { background: 'rgba(255,255,255,0.12)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' };
 
   const arrowBtn = (s) => ({
     position: 'absolute', top: '50%', transform: 'translateY(-50%)',
-    [s]: 12, zIndex: 5,
-    width: 36, height: 36, borderRadius: '50%',
-    background: 'rgba(0,0,0,0.35)', border: 'none',
+    [s]: isMobile ? 10 : 16, zIndex: 5,
+    width: isMobile ? 34 : 40, height: isMobile ? 34 : 40, borderRadius: '50%',
+    background: 'rgba(255,255,255,0.85)', border: 'none',
     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-    transition: 'background 0.2s',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
     opacity: total > 1 ? 1 : 0,
     pointerEvents: total > 1 ? 'auto' : 'none',
   });
 
   return (
-    <div style={{ flex: 1, minWidth: 0 }}>
+    <div ref={columnRef} style={{ flex: 1, minWidth: 0 }}>
       {/* Lightbox */}
       {lightbox !== null && (
         <div className={'gal-lb-' + side} onClick={closeLb}
@@ -1101,45 +1186,57 @@ function GalleryColumn({ title, categories, side }) {
         </div>
       )}
 
-      {/* Title */}
-      <div className="gal-animate" style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 12 }}>
+      {/* Title label */}
+      <div className="gc-label" style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16, opacity: 0 }}>
         {title}
       </div>
 
       {/* Sub-category tabs */}
-      <div className="gal-animate" style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+      <div ref={tabsRef} style={{ display: 'flex', gap: 8, marginBottom: 28, flexWrap: 'wrap' }}>
         {categories.map((c, i) => (
-          <button key={c.name} onClick={() => switchCat(i)}
+          <button key={c.name} className="gc-tab" onClick={() => switchCat(i)}
             style={{
-              padding: '8px 20px',
+              padding: '10px 22px',
               background: activeCat === i ? C.ink : 'transparent',
               color: activeCat === i ? C.bege : C.ink,
-              border: activeCat === i ? 'none' : '1px solid rgba(31,32,34,0.2)',
+              border: activeCat === i ? 'none' : '1px solid rgba(31,32,34,0.18)',
               borderRadius: 30, fontWeight: 500, fontSize: 12, letterSpacing: '0.08em',
-              cursor: 'pointer', transition: 'all 0.3s ease',
+              cursor: 'pointer', transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
               fontFamily: "'DM Sans', sans-serif",
-            }}>
+              opacity: 0,
+            }}
+            onMouseEnter={e => { if (activeCat !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.5)'; e.currentTarget.style.background = 'rgba(31,32,34,0.04)'; } }}
+            onMouseLeave={e => { if (activeCat !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.18)'; e.currentTarget.style.background = 'transparent'; } }}>
             {c.name}
           </button>
         ))}
       </div>
 
-      {/* Image area */}
-      <div className="gal-animate" style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', height: isMobile ? 240 : 380, background: C.grey }}>
-        {/* Nav arrows */}
+      {/* Image area with clip-path reveal */}
+      <div ref={imgWrapRef} style={{
+        position: 'relative', borderRadius: 12, overflow: 'hidden',
+        height: isMobile ? 260 : 420, background: C.grey,
+        clipPath: 'inset(0 100% 0 0)',
+      }}>
+        {/* Nav arrows — refined white style */}
         <button style={arrowBtn('left')} onClick={() => navImg(-1)}
-          onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.55)'}
-          onMouseOut={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)'; e.currentTarget.style.background = '#fff'; }}
+          onMouseOut={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}>
+          <svg width={isMobile ? 14 : 16} height={isMobile ? 14 : 16} viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <button style={arrowBtn('right')} onClick={() => navImg(1)}
-          onMouseOver={e => e.currentTarget.style.background = 'rgba(0,0,0,0.55)'}
-          onMouseOut={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+          onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)'; e.currentTarget.style.background = '#fff'; }}
+          onMouseOut={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}>
+          <svg width={isMobile ? 14 : 16} height={isMobile ? 14 : 16} viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
         </button>
-        {/* Counter */}
+        {/* Counter badge */}
         {total > 1 && (
-          <div style={{ position: 'absolute', bottom: 12, right: 14, zIndex: 5, background: 'rgba(0,0,0,0.4)', borderRadius: 20, padding: '4px 12px', color: '#fff', fontSize: 11, letterSpacing: '0.08em', fontFamily: "'DM Sans', sans-serif" }}>
+          <div style={{
+            position: 'absolute', bottom: 14, right: 16, zIndex: 5,
+            background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+            borderRadius: 20, padding: '5px 14px', color: '#fff', fontSize: 11,
+            letterSpacing: '0.1em', fontFamily: "'DM Sans', sans-serif", fontWeight: 500,
+          }}>
             {imgIdx + 1} / {total}
           </div>
         )}
@@ -1150,14 +1247,18 @@ function GalleryColumn({ title, categories, side }) {
           alt={cat ? cat.name : ''}
           onClick={openLb}
           loading="lazy"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'zoom-in', transition: 'transform 0.5s ease' }}
-          onMouseOver={e => e.currentTarget.style.transform = 'scale(1.03)'}
+          style={{
+            width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+            cursor: 'zoom-in', transition: 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)',
+            willChange: 'transform',
+          }}
+          onMouseOver={e => e.currentTarget.style.transform = 'scale(1.04)'}
           onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
         />
       </div>
 
       {/* Category name below image */}
-      <div style={{ marginTop: 14, fontSize: 13, fontWeight: 500, letterSpacing: '0.04em', color: C.ink, opacity: 0.6 }}>
+      <div className="gc-cat-label" style={{ marginTop: 16, fontSize: 13, fontWeight: 500, letterSpacing: '0.06em', color: C.ink, opacity: 0 }}>
         {cat ? cat.name : ''}
       </div>
     </div>
@@ -1167,6 +1268,7 @@ function GalleryColumn({ title, categories, side }) {
 function Galleries({ project }) {
   const isMobile = useIsMobile();
   const sectionRef = useRef(null);
+  const titleRef = useRef(null);
   const galleries = project.galleries;
 
   if (!galleries) return null;
@@ -1174,38 +1276,66 @@ function Galleries({ project }) {
   const exterior = galleries.exterior || [];
   if (interior.length === 0 && exterior.length === 0) return null;
 
-  // GSAP scroll reveal
+  // GSAP — title animation
   useEffect(() => {
     if (typeof gsap === 'undefined' || !sectionRef.current) return;
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
-      const items = sectionRef.current.querySelectorAll('.gal-animate');
-      gsap.fromTo(items,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08,
-          scrollTrigger: { trigger: sectionRef.current, start: '0% 80%', toggleActions: 'play none none none' }
-        }
-      );
+      // Section title — split reveal
+      if (titleRef.current) {
+        gsap.fromTo(titleRef.current,
+          { opacity: 0, y: 50 },
+          { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+            scrollTrigger: { trigger: sectionRef.current, start: 'top 82%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+
+      // Decorative line between columns (desktop)
+      const line = sectionRef.current.querySelector('.gal-divider');
+      if (line) {
+        gsap.fromTo(line,
+          { scaleY: 0 },
+          { scaleY: 1, duration: 1.2, ease: 'power3.inOut',
+            scrollTrigger: { trigger: sectionRef.current, start: 'top 70%', toggleActions: 'play none none none' }
+          }
+        );
+      }
     }, sectionRef.current);
     return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={sectionRef} style={{ background: C.bege, padding: isMobile ? '60px 24px' : '100px 80px' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 48px' }}>
+    <section ref={sectionRef} style={{ background: C.bege, padding: isMobile ? '60px 24px 80px' : '100px 80px 120px' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <h2 ref={titleRef} style={{
+          fontWeight: 300, fontSize: isMobile ? 28 : 44, lineHeight: 1.2,
+          letterSpacing: '-0.02em', color: C.ink, margin: '0 0 56px', opacity: 0,
+        }}>
           Galeria <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>do projeto</em>
         </h2>
         <div style={{
           display: 'flex',
           flexDirection: isMobile ? 'column' : 'row',
-          gap: isMobile ? 48 : 40,
+          gap: isMobile ? 56 : 0,
+          position: 'relative',
         }}>
           {interior.length > 0 && (
-            <GalleryColumn title="Interior" categories={interior} side="interior" />
+            <div style={{ flex: 1, paddingRight: isMobile ? 0 : 32 }}>
+              <GalleryColumn title="Interior" categories={interior} side="interior" delay={0} />
+            </div>
+          )}
+          {/* Vertical divider line */}
+          {!isMobile && interior.length > 0 && exterior.length > 0 && (
+            <div className="gal-divider" style={{
+              width: 1, background: 'rgba(31,32,34,0.1)', alignSelf: 'stretch',
+              transformOrigin: 'top center', flexShrink: 0,
+            }} />
           )}
           {exterior.length > 0 && (
-            <GalleryColumn title="Exterior" categories={exterior} side="exterior" />
+            <div style={{ flex: 1, paddingLeft: isMobile ? 0 : 32 }}>
+              <GalleryColumn title="Exterior" categories={exterior} side="exterior" delay={isMobile ? 0 : 0.25} />
+            </div>
           )}
         </div>
       </div>
