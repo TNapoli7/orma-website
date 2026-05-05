@@ -986,7 +986,7 @@ function ConceptRender({ project }) {
   );
 }
 
-function GalleryColumn({ title, categories, side, triggerStart }) {
+function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
   const isMobile = useIsMobile();
   const [activeCat, setActiveCat] = useState(0);
   const [imgIdx, setImgIdx] = useState(0);
@@ -1065,7 +1065,7 @@ function GalleryColumn({ title, categories, side, triggerStart }) {
       if (catLabel) {
         tl.fromTo(catLabel,
           { opacity: 0, y: 10 },
-          { opacity: 0.6, y: 0, duration: 0.5, ease: 'power2.out' },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
           1.0
         );
       }
@@ -1260,8 +1260,20 @@ function GalleryColumn({ title, categories, side, triggerStart }) {
       </div>
 
       {/* Category name below image */}
-      <div className="gc-cat-label" style={{ marginTop: 16, fontSize: 13, fontWeight: 500, letterSpacing: '0.06em', color: C.ink, opacity: 0 }}>
-        {cat ? cat.name : ''}
+      {/* Typology summary below image */}
+      <div className="gc-cat-label" style={{ marginTop: 20, opacity: 0 }}>
+        {cat && <div style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.06em', color: C.ink, marginBottom: 10 }}>{cat.name}</div>}
+        {typologies && typologies.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 16px' }}>
+            {typologies.map((t, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: C.terracota, letterSpacing: '0.04em' }}>{t.type}</span>
+                <span style={{ fontSize: 12, color: 'rgba(31,32,34,0.5)', fontWeight: 400 }}>{t.area}</span>
+                {i < typologies.length - 1 && <span style={{ color: 'rgba(31,32,34,0.15)', marginLeft: 4 }}>|</span>}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1323,7 +1335,7 @@ function Galleries({ project }) {
         }}>
           {interior.length > 0 && (
             <div style={{ flex: 1, paddingRight: isMobile ? 0 : 36 }}>
-              <GalleryColumn title="Interior" categories={interior} side="interior" triggerStart="top 78%" />
+              <GalleryColumn title="Interior" categories={interior} side="interior" triggerStart="top 78%" typologies={project.typologies} />
             </div>
           )}
           {/* Vertical divider line */}
@@ -1335,7 +1347,7 @@ function Galleries({ project }) {
           )}
           {exterior.length > 0 && (
             <div style={{ flex: 1, paddingLeft: isMobile ? 0 : 36 }}>
-              <GalleryColumn title="Exterior" categories={exterior} side="exterior" triggerStart={isMobile ? 'top 78%' : 'top 55%'} />
+              <GalleryColumn title="Exterior" categories={exterior} side="exterior" triggerStart={isMobile ? 'top 78%' : 'top 55%'} typologies={project.typologies} />
             </div>
           )}
         </div>
