@@ -464,6 +464,7 @@ function MenuDrawer({ open, onClose }) {
               <MenuSubLink label="Villas Sto. Tirso" subtitle="Santo Tirso" onClose={onClose} />
             </MenuLink>
             <MenuLink label="About" href="#about" onClose={onClose} />
+            <MenuLink label="Consultancy" href="consultancy.html" onClose={onClose} />
             <MenuLink label="Contact" href="#contact" onClose={onClose} />
           </nav>
         </div>
