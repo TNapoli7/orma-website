@@ -1871,13 +1871,27 @@ function Sustainability() {
           <p style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(92,100,87,0.65)', margin: '0 0 40px', maxWidth: 480 }}>
             We design with longevity in mind. From energy-efficient envelopes to locally sourced materials, our projects reduce environmental impact without compromising on quality or comfort.
           </p>
-          <FillButton
-            href="#contact"
-            onClick={e => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
-            style={{ background: C.green, color: C.bege }}
+          <a href="#contact" onClick={e => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
+            style={{
+              position: 'relative', overflow: 'hidden',
+              display: 'inline-block',
+              padding: '16px 36px', background: C.green, color: C.bege,
+              borderRadius: 40, textDecoration: 'none', fontSize: 12,
+              letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600,
+              cursor: 'pointer',
+            }}
+            onMouseEnter={e => { const f = e.currentTarget.querySelector('.fill-span'); if (f) f.style.transform = 'translateX(0)'; }}
+            onMouseLeave={e => { const f = e.currentTarget.querySelector('.fill-span'); if (f) f.style.transform = 'translateX(-101%)'; }}
           >
-            Learn more
-          </FillButton>
+            <span className="fill-span" style={{
+              position: 'absolute', inset: 0,
+              background: 'rgba(255,255,255,0.15)',
+              transform: 'translateX(-101%)',
+              transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              borderRadius: 'inherit', pointerEvents: 'none',
+            }} />
+            <span style={{ position: 'relative', zIndex: 1 }}>Learn more</span>
+          </a>
         </div>
       </div>
     </section>
