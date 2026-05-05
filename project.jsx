@@ -23,6 +23,7 @@ const PROJECTS = {
     location: 'Porto, Portugal',
     tagline: '[Tagline]',
     hero: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
+    render: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80',
     description: '[Project description - to be provided]',
     descriptionExtra: '[Additional description - to be provided]',
     stats: [
@@ -88,6 +89,7 @@ const PROJECTS = {
     location: 'Santo Tirso, Portugal',
     tagline: '[Tagline]',
     hero: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
+    render: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80',
     description: '[Project description - to be provided]',
     descriptionExtra: '[Additional description - to be provided]',
     stats: [
@@ -768,65 +770,17 @@ function ProjectHero({ project }) {
 }
 
 // ============================================================
-// 3. Gallery — asymmetric images + project info card
+// 3. ConceptRender — concept text left + render image right
 // ============================================================
 
-function Gallery({ project }) {
+function ConceptRender({ project }) {
   const isMobile = useIsMobile();
   const sectionRef = useRef(null);
-  const infoRef = useRef(null);
-  const rooms = project.rooms || [];
+  const textRef = useRef(null);
+  const imageRef = useRef(null);
+  const statsRef = useRef(null);
 
-  const allImages = rooms.flatMap(r => r.images || []);
-  const galleryImages = [
-    allImages[1] || allImages[0] || '',
-    allImages[2] || '',
-    allImages[3] || '',
-    allImages[4] || '',
-    allImages[5] || allImages[0] || '',
-  ];
-
-  // Project info with icons
   const infoStats = project.stats || [];
-
-  // GSAP animations
-  useEffect(() => {
-    if (typeof gsap === 'undefined' || !gsap.registerPlugin || !sectionRef.current) return;
-    const section = sectionRef.current;
-
-    const ctx = gsap.context(() => {
-      // Info card children reveal progressively (staggered)
-      const infoChildren = section.querySelectorAll('.gal-info > *');
-      if (infoChildren.length) {
-        gsap.fromTo(infoChildren,
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', stagger: 0.15,
-            scrollTrigger: { trigger: section, start: '0% 90%', toggleActions: 'play none none none' }
-          }
-        );
-      }
-
-      if (!isMobile) {
-        // Top images reveal AFTER text — delayed start, scrub tied to section
-        const img1 = section.querySelector('.gal-img-1');
-        const img2 = section.querySelector('.gal-img-2');
-        if (img1) gsap.fromTo(img1, { yPercent: 20, opacity: 0 }, { yPercent: -5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '15% 85%', end: '55% 40%', scrub: 0.6 } });
-        if (img2) gsap.fromTo(img2, { yPercent: -8, opacity: 0 }, { yPercent: 5, opacity: 1, ease: 'none', scrollTrigger: { trigger: section, start: '20% 85%', end: '55% 40%', scrub: 0.6 } });
-
-        // Bottom row — even later, triggered by their own position
-        const img3 = section.querySelector('.gal-img-3');
-        const img4 = section.querySelector('.gal-img-4');
-        const img5 = section.querySelector('.gal-img-5');
-        if (img3) gsap.fromTo(img3, { yPercent: 25, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: img3, start: '-20% 90%', end: '30% 50%', scrub: 0.5 } });
-        if (img4) gsap.fromTo(img4, { yPercent: 30, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: img4, start: '-30% 90%', end: '20% 50%', scrub: 0.5 } });
-        if (img5) gsap.fromTo(img5, { yPercent: 20, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: img5, start: '-10% 90%', end: '40% 50%', scrub: 0.5 } });
-      }
-    }, section);
-
-    return () => ctx.revert();
-  }, [isMobile]);
-
-  if (!rooms.length) return null;
 
   // Stat icon SVGs
   const statIcon = (label) => {
@@ -846,142 +800,153 @@ function Gallery({ project }) {
     return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/></svg>;
   };
 
-  // Info card component
-  const InfoCard = () => (
-    <div className="gal-info" ref={infoRef} style={{
-      maxWidth: isMobile ? '100%' : 400,
-      padding: isMobile ? '32px 24px' : '40px',
-    }}>
-      <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
-        O Projeto
-      </div>
-      <p style={{ fontWeight: 300, fontSize: isMobile ? 17 : 19, lineHeight: 1.7, color: C.ink, margin: '0 0 8px', letterSpacing: '-0.01em' }}>
-        {project.description}
-      </p>
-      {project.descriptionExtra && (
-        <p style={{ fontSize: 14, lineHeight: 1.7, color: C.green, margin: '0 0 28px', opacity: 0.8 }}>
-          {project.descriptionExtra}
-        </p>
-      )}
-      {/* Icon stats grid */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: '1fr 1fr',
-        gap: 0, borderTop: '1px solid rgba(92,100,87,0.12)',
-      }}>
-        {infoStats.map((stat, i) => (
-          <div key={stat.label} style={{
-            padding: '16px 12px 16px 0',
-            borderBottom: '1px solid rgba(92,100,87,0.08)',
-            borderRight: i % 2 === 0 ? '1px solid rgba(92,100,87,0.08)' : 'none',
-            paddingLeft: i % 2 !== 0 ? 16 : 0,
-            display: 'flex', alignItems: 'center', gap: 10,
-            cursor: 'default',
-          }}
-          onMouseEnter={e => {
-            const icon = e.currentTarget.querySelector('.stat-icon');
-            if (icon) icon.style.transform = 'translateY(-3px)';
-          }}
-          onMouseLeave={e => {
-            const icon = e.currentTarget.querySelector('.stat-icon');
-            if (icon) icon.style.transform = 'translateY(0)';
-          }}>
-            <div className="stat-icon" style={{ color: C.clearGreen, flexShrink: 0, transition: 'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94)' }}>{statIcon(stat.label)}</div>
-            <div>
-              <div style={{ fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 2 }}>
-                {stat.label}
-              </div>
-              <div style={{ fontSize: 15, fontWeight: 500, color: C.ink }}>
-                {stat.value}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  // GSAP animations
+  useEffect(() => {
+    if (typeof gsap === 'undefined' || !gsap.registerPlugin) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const section = sectionRef.current;
+    if (!section) return;
 
-  // ========= MOBILE LAYOUT =========
-  if (isMobile) {
-    const mobileRatios = ['3/4', '4/5', '4/5', '3/4', '16/10'];
-    return (
-      <section ref={sectionRef} style={{ background: C.bege, padding: '48px 0 32px' }}>
-        {/* Info first on mobile */}
-        <div style={{ padding: '0 24px 24px' }}>
-          <InfoCard />
-        </div>
-        {/* Images */}
-        {galleryImages.filter(Boolean).map((img, i) => (
-          <div key={i} className="mob-card" style={{
-            padding: i % 2 === 0 ? '0 16px' : '0 40px',
-            marginBottom: 12,
-          }}>
-            <div style={{ width: '100%', aspectRatio: mobileRatios[i] || '3/4', overflow: 'hidden', background: C.grey }}>
-              <img src={img} alt={'Gallery ' + (i + 1)} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-            </div>
-          </div>
-        ))}
-      </section>
-    );
-  }
+    const triggers = [];
 
-  // ========= DESKTOP LAYOUT — 5 images + info card =========
+    // Text column — staggered fade up
+    if (textRef.current) {
+      const children = textRef.current.querySelectorAll('.cr-animate');
+      if (children.length) {
+        const t = gsap.fromTo(children,
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', stagger: 0.12,
+            scrollTrigger: { trigger: section, start: 'top 75%', toggleActions: 'play none none none' }
+          }
+        );
+        triggers.push(t.scrollTrigger);
+      }
+    }
+
+    // Render image — parallax + fade
+    if (imageRef.current && !isMobile) {
+      const t = gsap.fromTo(imageRef.current,
+        { yPercent: 8, opacity: 0, scale: 1.03 },
+        { yPercent: -4, opacity: 1, scale: 1, ease: 'none',
+          scrollTrigger: { trigger: section, start: 'top 85%', end: 'bottom 20%', scrub: 0.5 }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    } else if (imageRef.current) {
+      const t = gsap.fromTo(imageRef.current,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: imageRef.current, start: 'top 85%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    }
+
+    // Stats grid — staggered after text
+    if (statsRef.current) {
+      const statEls = statsRef.current.querySelectorAll('.cr-stat');
+      if (statEls.length) {
+        const t = gsap.fromTo(statEls,
+          { y: 24, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.08, delay: 0.3,
+            scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' }
+          }
+        );
+        triggers.push(t.scrollTrigger);
+      }
+    }
+
+    return () => triggers.forEach(t => t && t.kill());
+  }, [isMobile]);
+
   return (
     <section ref={sectionRef} style={{
-      position: 'relative', background: C.bege, zIndex: 2,
-      padding: '80px 0 100px',
+      background: C.bege,
+      padding: isMobile ? '64px 24px 72px' : '120px 80px 140px',
     }}>
-      {/* ---- TOP ROW: image left + info center + image right ---- */}
       <div style={{
-        position: 'relative',
-        display: 'grid', gridTemplateColumns: '1fr 1.2fr 1fr',
-        minHeight: '75vh', padding: '0 48px', alignItems: 'start',
-        gap: '0 40px',
-      }}>
-        {/* Image 1 — top-left, tall portrait, starts lower */}
-        <div className="gal-img-1" style={{
-          width: '100%', maxWidth: 380, aspectRatio: '3/4',
-          overflow: 'hidden', marginTop: 80,
-        }}>
-          <img src={galleryImages[0]} alt="Interior" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-        </div>
-
-        {/* Info card — center, starts higher so it appears first */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 20 }}>
-          <InfoCard />
-        </div>
-
-        {/* Image 2 — top-right, also delayed */}
-        <div className="gal-img-2" style={{
-          width: '100%', maxWidth: 340, aspectRatio: '4/5',
-          overflow: 'hidden', justifySelf: 'end', marginTop: 60,
-        }}>
-          <img src={galleryImages[1]} alt="Exterior" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-        </div>
-      </div>
-
-      {/* ---- BOTTOM ROW: 3 images cascade ---- */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: '1fr 1.4fr 1fr',
-        gap: '0 32px', padding: '0 48px', marginTop: -40,
+        maxWidth: 1280, margin: '0 auto',
+        display: isMobile ? 'flex' : 'grid',
+        flexDirection: 'column',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1.1fr',
+        gap: isMobile ? 48 : 80,
         alignItems: 'start',
       }}>
-        <div className="gal-img-3" style={{
-          width: '100%', maxWidth: 280, aspectRatio: '4/5',
-          overflow: 'hidden', marginTop: 40, marginLeft: 20,
-        }}>
-          <img src={galleryImages[2]} alt="Jardim" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        {/* LEFT — Concept text */}
+        <div ref={textRef}>
+          <div className="cr-animate" style={{
+            fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
+            textTransform: 'uppercase', fontWeight: 600, marginBottom: 20, opacity: 0,
+          }}>
+            O Conceito
+          </div>
+
+          <h2 className="cr-animate" style={{
+            fontWeight: 300, fontSize: isMobile ? 28 : 38, lineHeight: 1.4,
+            letterSpacing: '-0.02em', color: C.ink, margin: '0 0 20px', opacity: 0,
+          }}>
+            {project.description}
+          </h2>
+
+          {project.descriptionExtra && (
+            <p className="cr-animate" style={{
+              fontSize: isMobile ? 15 : 16, lineHeight: 1.75, color: C.green,
+              margin: '0 0 40px', opacity: 0,
+            }}>
+              {project.descriptionExtra}
+            </p>
+          )}
+
+          {/* Stats grid */}
+          <div ref={statsRef} style={{
+            display: 'grid', gridTemplateColumns: '1fr 1fr',
+            gap: 0, borderTop: '1px solid rgba(92,100,87,0.12)',
+          }}>
+            {infoStats.map((stat, i) => (
+              <div key={stat.label} className="cr-stat" style={{
+                padding: '16px 12px 16px 0',
+                borderBottom: '1px solid rgba(92,100,87,0.08)',
+                borderRight: i % 2 === 0 ? '1px solid rgba(92,100,87,0.08)' : 'none',
+                paddingLeft: i % 2 !== 0 ? 16 : 0,
+                display: 'flex', alignItems: 'center', gap: 10,
+                opacity: 0,
+              }}
+              onMouseEnter={e => {
+                const icon = e.currentTarget.querySelector('.stat-icon');
+                if (icon) icon.style.transform = 'translateY(-3px)';
+              }}
+              onMouseLeave={e => {
+                const icon = e.currentTarget.querySelector('.stat-icon');
+                if (icon) icon.style.transform = 'translateY(0)';
+              }}>
+                <div className="stat-icon" style={{ color: C.clearGreen, flexShrink: 0, transition: 'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94)' }}>{statIcon(stat.label)}</div>
+                <div>
+                  <div style={{ fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.clearGreen, fontWeight: 600, marginBottom: 2 }}>
+                    {stat.label}
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 500, color: C.ink }}>
+                    {stat.value}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="gal-img-4" style={{
-          width: '100%', maxWidth: 420, aspectRatio: '3/4',
-          overflow: 'hidden', justifySelf: 'center', marginTop: -60,
+
+        {/* RIGHT — Render image */}
+        <div ref={imageRef} style={{
+          width: '100%',
+          aspectRatio: isMobile ? '4/3' : '3/4',
+          overflow: 'hidden',
+          borderRadius: 4,
+          opacity: 0,
         }}>
-          <img src={galleryImages[3]} alt="Suite" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-        </div>
-        <div className="gal-img-5" style={{
-          width: '100%', maxWidth: 340, aspectRatio: '16/10',
-          overflow: 'hidden', justifySelf: 'end', marginTop: 100,
-        }}>
-          <img src={galleryImages[4]} alt="Detalhe" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <img
+            src={project.render || project.hero}
+            alt={project.name + ' render'}
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
         </div>
       </div>
     </section>
@@ -1857,7 +1822,7 @@ function ProjectPage() {
       <ProjectHero project={project} />
       {/* Content before map - scrolls over fixed hero */}
       <div style={{ position: 'relative', zIndex: 2, background: C.bege }}>
-        <Gallery project={project} />
+        <ConceptRender project={project} />
         <PhotoCarousel project={project} />
         <Typologies project={project} />
       </div>
