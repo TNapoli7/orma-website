@@ -23,6 +23,7 @@ const PROJECTS = {
     location: 'Porto, Portugal',
     tagline: '[Tagline]',
     hero: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
+    heroVideo: 'https://videos.pexels.com/video-files/7578552/7578552-uhd_2560_1440_25fps.mp4',
     render: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80',
     description: '[Project description - to be provided]',
     descriptionExtra: '[Additional description - to be provided]',
@@ -89,6 +90,7 @@ const PROJECTS = {
     location: 'Santo Tirso, Portugal',
     tagline: '[Tagline]',
     hero: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
+    heroVideo: 'https://videos.pexels.com/video-files/3773486/3773486-uhd_2560_1440_25fps.mp4',
     render: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80',
     description: '[Project description - to be provided]',
     descriptionExtra: '[Additional description - to be provided]',
@@ -688,13 +690,29 @@ function ProjectHero({ project }) {
       overflow: 'hidden',
       zIndex: 1,
     }}>
-      {/* Background image */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'url(' + project.hero + ')',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }} />
+      {/* Background video (or image fallback) */}
+      {project.heroVideo ? (
+        <video
+          autoPlay muted loop playsInline
+          poster={project.hero}
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover',
+            zIndex: 0,
+            filter: 'brightness(1.1)',
+          }}
+        >
+          <source src={project.heroVideo} type="video/mp4" />
+        </video>
+      ) : (
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'url(' + project.hero + ')',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }} />
+      )}
 
       {/* Gradient overlay */}
       <div style={{
