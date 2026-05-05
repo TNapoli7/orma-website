@@ -1045,10 +1045,10 @@ function GalleryColumn({ title, categories, side, triggerStart }) {
 
       // Image — clip-path curtain from the column's side + Ken Burns
       if (imgWrapRef.current) {
-        const clipFrom = fromLeft ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)';
+        const clipFrom = fromLeft ? 'inset(0% 100% 0% 0%)' : 'inset(0% 0% 0% 100%)';
         tl.fromTo(imgWrapRef.current,
           { clipPath: clipFrom },
-          { clipPath: 'inset(0 0% 0 0)', duration: 1.1, ease: 'power4.inOut' },
+          { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.1, ease: 'power4.inOut' },
           0.25
         );
         if (imgRef.current) {
@@ -1079,7 +1079,7 @@ function GalleryColumn({ title, categories, side, triggerStart }) {
     if (imgWrapRef.current && typeof gsap !== 'undefined') {
       const tl = gsap.timeline();
       tl.to(imgWrapRef.current, {
-        clipPath: fromLeft ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)',
+        clipPath: fromLeft ? 'inset(0% 0% 0% 100%)' : 'inset(0% 100% 0% 0%)',
         duration: 0.35, ease: 'power2.in',
         onComplete: () => { setActiveCat(i); setImgIdx(0); }
       });
@@ -1087,8 +1087,8 @@ function GalleryColumn({ title, categories, side, triggerStart }) {
         requestAnimationFrame(() => {
           if (imgRef.current) gsap.set(imgRef.current, { scale: 1.1 });
           gsap.fromTo(imgWrapRef.current,
-            { clipPath: fromLeft ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)' },
-            { clipPath: 'inset(0 0% 0 0)', duration: 0.5, ease: 'power3.out' }
+            { clipPath: fromLeft ? 'inset(0% 100% 0% 0%)' : 'inset(0% 0% 0% 100%)' },
+            { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.5, ease: 'power3.out' }
           );
           if (imgRef.current) gsap.to(imgRef.current, { scale: 1, duration: 0.8, ease: 'power2.out' });
         });
@@ -1221,7 +1221,7 @@ function GalleryColumn({ title, categories, side, triggerStart }) {
       <div ref={imgWrapRef} style={{
         position: 'relative', borderRadius: 12, overflow: 'hidden',
         height: isMobile ? 260 : 420, background: C.grey,
-        clipPath: fromLeft ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)',
+        clipPath: fromLeft ? 'inset(0% 100% 0% 0%)' : 'inset(0% 0% 0% 100%)',
       }}>
         <button style={arrowBtn('left')} onClick={() => navImg(-1)}
           onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)'; e.currentTarget.style.background = '#fff'; }}
