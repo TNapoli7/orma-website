@@ -1871,19 +1871,13 @@ function Sustainability() {
           <p style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(92,100,87,0.65)', margin: '0 0 40px', maxWidth: 480 }}>
             We design with longevity in mind. From energy-efficient envelopes to locally sourced materials, our projects reduce environmental impact without compromising on quality or comfort.
           </p>
-          <a href="#contact" onClick={e => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 10,
-              padding: '16px 36px', background: C.green, color: C.bege,
-              borderRadius: 40, textDecoration: 'none', fontSize: 12,
-              letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600,
-              transition: 'background 0.3s ease',
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = C.ink}
-            onMouseLeave={e => e.currentTarget.style.background = C.green}
+          <FillButton
+            href="#contact"
+            onClick={e => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
+            style={{ background: C.green, color: C.bege }}
           >
             Learn more
-          </a>
+          </FillButton>
         </div>
       </div>
     </section>
