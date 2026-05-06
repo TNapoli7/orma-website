@@ -1809,24 +1809,47 @@ function Acabamentos() {
           gap: isMobile ? 16 : 24,
         }}>
           {placeholders.map((p) => (
-            <div key={p.label} style={{
-              background: C.grey,
-              borderRadius: 12,
-              padding: isMobile ? '32px 20px' : '48px 28px',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              gap: 16,
-              border: '1px dashed rgba(31,32,34,0.1)',
-              minHeight: isMobile ? 140 : 180,
-            }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C.clearGreen} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d={p.icon} />
-              </svg>
-              <span style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(31,32,34,0.4)' }}>
-                {p.label}
-              </span>
-              <span style={{ fontSize: 11, letterSpacing: '0.06em', color: 'rgba(31,32,34,0.25)', fontStyle: 'italic' }}>
-                Em breve
-              </span>
+            <div key={p.label} style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {/* Card */}
+              <div style={{
+                background: C.grey,
+                borderRadius: '12px 12px 0 0',
+                padding: isMobile ? '28px 20px' : '40px 28px',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: 14,
+                border: '1px dashed rgba(31,32,34,0.1)',
+                borderBottom: 'none',
+              }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C.clearGreen} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={p.icon} />
+                </svg>
+                <span style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(31,32,34,0.4)' }}>
+                  {p.label}
+                </span>
+                <span style={{ fontSize: 11, letterSpacing: '0.06em', color: 'rgba(31,32,34,0.25)', fontStyle: 'italic' }}>
+                  Em breve
+                </span>
+              </div>
+              {/* Placeholder image */}
+              <div style={{
+                width: '100%',
+                height: isMobile ? 140 : 200,
+                borderRadius: '0 0 12px 12px',
+                background: 'linear-gradient(135deg, rgba(31,32,34,0.04) 0%, rgba(31,32,34,0.08) 100%)',
+                border: '1px dashed rgba(31,32,34,0.1)',
+                borderTop: 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                overflow: 'hidden',
+              }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, opacity: 0.3 }}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={C.clearGreen} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
+                  </svg>
+                  <span style={{ fontSize: 10, letterSpacing: '0.1em', color: 'rgba(31,32,34,0.25)', fontStyle: 'italic' }}>Imagem em breve</span>
+                </div>
+              </div>
             </div>
           ))}
         </div>
