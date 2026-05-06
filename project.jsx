@@ -1334,7 +1334,7 @@ function Galleries({ project }) {
   }, []);
 
   return (
-    <section ref={sectionRef} style={{ background: C.bege, padding: isMobile ? '40px 24px 80px' : '60px 80px 120px', overflow: 'hidden' }}>
+    <section ref={sectionRef} style={{ background: C.bege, padding: isMobile ? '40px 24px 48px' : '60px 80px 60px', overflow: 'hidden' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         <h2 ref={titleRef} style={{
           fontWeight: 300, fontSize: isMobile ? 28 : 44, lineHeight: 1.2,
@@ -1795,7 +1795,7 @@ function Acabamentos() {
   ];
 
   return (
-    <section style={{ background: C.bege, padding: isMobile ? '60px 24px 80px' : '100px 80px 120px' }}>
+    <section style={{ background: C.bege, padding: isMobile ? '40px 24px 80px' : '60px 80px 100px' }}>
       <div ref={revealRef} style={{ maxWidth: 1200, margin: '0 auto', willChange: 'opacity, transform' }}>
         <div style={{ fontSize: 12, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
           Acabamentos
