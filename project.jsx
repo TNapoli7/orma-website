@@ -2264,7 +2264,7 @@ function ProjectPage() {
         <ConceptRender project={project} />
         <Galleries project={project} />
         <PhotoCarousel project={project} />
-        <Typologies project={project} />
+        {/* <Typologies project={project} /> */}
         <Acabamentos />
       </div>
 
