@@ -618,6 +618,25 @@ function BrochureBox({ projectName }) {
   const [form, setForm] = useState({ nome: '', email: '', telefone: '' });
   const [agreed, setAgreed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [visible, setVisible] = useState(!isMobile);
+  const boxRef = useRef(null);
+
+  // Mobile: appear after 4s with slide-up animation
+  useEffect(() => {
+    if (!isMobile) { setVisible(true); return; }
+    const timer = setTimeout(() => {
+      setVisible(true);
+      requestAnimationFrame(() => {
+        if (boxRef.current && typeof gsap !== 'undefined') {
+          gsap.fromTo(boxRef.current,
+            { y: 40, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }
+          );
+        }
+      });
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [isMobile]);
 
   const handlePhone = (e) => {
     const val = e.target.value.replace(/[^0-9+\-\s()]/g, '');
@@ -646,9 +665,11 @@ function BrochureBox({ projectName }) {
     transition: 'border-color 0.2s',
   };
 
+  if (!visible) return null;
+
   if (submitted) {
     return (
-      <div style={{
+      <div ref={boxRef} style={{
         flex: '0 0 auto',
         width: isMobile ? '100%' : 280,
         background: 'rgba(31,32,34,0.65)',
@@ -671,7 +692,7 @@ function BrochureBox({ projectName }) {
   }
 
   return (
-    <div style={{
+    <div ref={boxRef} style={{
       flex: '0 0 auto',
       width: isMobile ? '100%' : 280,
       background: 'rgba(31,32,34,0.65)',
@@ -680,6 +701,7 @@ function BrochureBox({ projectName }) {
       borderRadius: 14,
       padding: isMobile ? '14px 14px' : '20px 18px',
       marginTop: isMobile ? 16 : 0,
+      opacity: isMobile ? 0 : 1,
     }}>
       <p style={{
         fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase',
