@@ -2278,7 +2278,7 @@ function ProjectPage() {
       <div style={{ position: 'relative', zIndex: 2, background: C.bege }}>
         <ConceptRender project={project} />
         <Galleries project={project} />
-        <PhotoCarousel project={project} />
+        {/* <PhotoCarousel project={project} /> */}
         {/* <Typologies project={project} /> */}
         <Acabamentos />
       </div>
