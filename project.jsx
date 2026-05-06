@@ -895,6 +895,65 @@ function ProjectHero({ project }) {
 }
 
 // ============================================================
+// 3a. ConceptWordReveal — scroll-driven word fill (same as homepage)
+// Each word starts faded (0.15 opacity), fills to 1 as user scrolls.
+// ============================================================
+function ConceptWordReveal({ text, style }) {
+  const containerRef = useRef(null);
+
+  const words = text ? text.split(/\s+/) : [];
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const wordEls = container.querySelectorAll('[data-word]');
+    if (!wordEls.length) return;
+
+    let raf = null;
+    const update = () => {
+      const rect = container.getBoundingClientRect();
+      const wh = window.innerHeight;
+      const enter = wh * 0.85;
+      const full = wh * 0.25;
+      const totalWords = wordEls.length;
+
+      wordEls.forEach((wordEl, i) => {
+        const wordStart = enter - (i / totalWords) * (enter - full);
+        const wordEnd = wordStart - (enter - full) * 0.12;
+        let p;
+        if (rect.top >= wordStart) p = 0;
+        else if (rect.top <= wordEnd) p = 1;
+        else p = (wordStart - rect.top) / (wordStart - wordEnd);
+        p = Math.max(0, Math.min(1, p));
+        wordEl.style.opacity = String(0.15 + p * 0.85);
+      });
+    };
+
+    const onScroll = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <p ref={containerRef} style={style}>
+      {words.map((w, i) => (
+        <span key={i}>
+          <span data-word style={{ display: 'inline', opacity: 0.15, transition: 'opacity 0.05s linear' }}>{w}</span>
+          {i < words.length - 1 ? ' ' : ''}
+        </span>
+      ))}
+    </p>
+  );
+}
+
+// ============================================================
 // 3. ConceptRender — concept text left + render image right
 // ============================================================
 
@@ -904,7 +963,7 @@ function ConceptRender({ project }) {
   const textRef = useRef(null);
   const imageRef = useRef(null);
 
-  // GSAP animations — word reveal on scroll
+  // GSAP animations — label, title, and image
   useEffect(() => {
     if (typeof gsap === 'undefined' || !gsap.registerPlugin) return;
     gsap.registerPlugin(ScrollTrigger);
@@ -939,19 +998,6 @@ function ConceptRender({ project }) {
       });
     }
 
-    // Description — word-by-word reveal with stagger
-    const descWords = textRef.current ? textRef.current.querySelectorAll('.cr-desc-word') : [];
-    if (descWords.length) {
-      const st = gsap.fromTo(descWords,
-        { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out',
-          stagger: 0.018,
-          scrollTrigger: { trigger: textRef.current, start: 'top 70%', toggleActions: 'play none none none' }
-        }
-      );
-      triggers.push(st.scrollTrigger);
-    }
-
     // Render image — parallax + fade
     if (imageRef.current && !isMobile) {
       const t = gsap.fromTo(imageRef.current,
@@ -984,10 +1030,10 @@ function ConceptRender({ project }) {
         display: isMobile ? 'flex' : 'grid',
         flexDirection: 'column',
         gridTemplateColumns: isMobile ? '1fr' : '1fr 1.1fr',
-        gap: isMobile ? 48 : 80,
+        gap: isMobile ? 36 : 80,
         alignItems: 'center',
       }}>
-        {/* LEFT — Concept text with word reveal */}
+        {/* LEFT — Concept text with scroll-driven word fill */}
         <div ref={textRef}>
           <div className="cr-label" style={{
             fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
@@ -1010,23 +1056,20 @@ function ConceptRender({ project }) {
           </h2>
 
           {project.description && (
-            <p style={{
-              fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
-              margin: 0, maxWidth: 520,
-            }}>
-              {project.description.split(' ').map((word, i) => (
-                <span key={i} className="cr-desc-word" style={{
-                  display: 'inline-block', opacity: 0, marginRight: '0.3em',
-                }}>{word}</span>
-              ))}
-            </p>
+            <ConceptWordReveal
+              text={project.description}
+              style={{
+                fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
+                margin: 0, maxWidth: 520, fontFamily: '"General Sans", system-ui, sans-serif',
+              }}
+            />
           )}
         </div>
 
         {/* RIGHT — Render image */}
         <div ref={imageRef} style={{
           width: '100%',
-          aspectRatio: isMobile ? '4/3' : '3/4',
+          aspectRatio: isMobile ? '3/4' : '3/4',
           overflow: 'hidden',
           borderRadius: 4,
           opacity: 0,
