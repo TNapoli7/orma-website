@@ -634,13 +634,13 @@ function BrochureBox({ projectName }) {
 
   const inputStyle = {
     width: '100%',
-    padding: '10px 12px',
+    padding: isMobile ? '8px 10px' : '10px 12px',
     background: 'rgba(255,255,255,0.12)',
     border: '1px solid rgba(255,255,255,0.2)',
     borderRadius: 6,
     color: C.white,
     fontFamily: 'inherit',
-    fontSize: 13,
+    fontSize: isMobile ? 12 : 13,
     fontWeight: 400,
     outline: 'none',
     transition: 'border-color 0.2s',
@@ -678,20 +678,20 @@ function BrochureBox({ projectName }) {
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
       borderRadius: 14,
-      padding: '20px 18px',
-      marginTop: isMobile ? 28 : 0,
+      padding: isMobile ? '14px 14px' : '20px 18px',
+      marginTop: isMobile ? 16 : 0,
     }}>
       <p style={{
         fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase',
         color: 'rgba(255,255,255,0.5)', fontWeight: 600, margin: '0 0 4px',
       }}>Brochura</p>
       <p style={{
-        fontSize: 15, fontWeight: 300, color: C.white, margin: '0 0 14px', lineHeight: 1.3,
+        fontSize: isMobile ? 13 : 15, fontWeight: 300, color: C.white, margin: isMobile ? '0 0 10px' : '0 0 14px', lineHeight: 1.3,
       }}>
         Receba os detalhes do {projectName || 'projecto'}
       </p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 6 : 8 }}>
         <input
           type="text" placeholder="Nome" required
           value={form.nome}
@@ -824,7 +824,7 @@ function ProjectHero({ project }) {
             {project.location}
           </div>
           <h1 style={{
-            fontWeight: 300, fontSize: isMobile ? 48 : 80, lineHeight: 1.0,
+            fontWeight: 300, fontSize: isMobile ? 38 : 80, lineHeight: 1.0,
             letterSpacing: '-0.02em', color: C.white, margin: 0,
           }}>
             {project.name}
@@ -891,17 +891,19 @@ function ConceptRender({ project }) {
 
     const triggers = [];
 
-    // Text column — staggered fade up
+    // Text column — staggered reveal with clip-path
     if (textRef.current) {
       const children = textRef.current.querySelectorAll('.cr-animate');
       if (children.length) {
-        const t = gsap.fromTo(children,
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', stagger: 0.12,
-            scrollTrigger: { trigger: section, start: 'top 75%', toggleActions: 'play none none none' }
-          }
-        );
-        triggers.push(t.scrollTrigger);
+        children.forEach((el, i) => {
+          const t = gsap.fromTo(el,
+            { y: 30, opacity: 0, clipPath: 'inset(0% 0% 100% 0%)' },
+            { y: 0, opacity: 1, clipPath: 'inset(0% 0% 0% 0%)', duration: 1.0, ease: 'power3.out', delay: i * 0.15,
+              scrollTrigger: { trigger: section, start: 'top 75%', toggleActions: 'play none none none' }
+            }
+          );
+          triggers.push(t.scrollTrigger);
+        });
       }
     }
 
@@ -1174,35 +1176,38 @@ function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
     pointerEvents: total > 1 ? 'auto' : 'none',
   });
 
+  // Portal-based lightbox — rendered outside the clipped columnRef so clip-path doesn't cut it
+  const lightboxPortal = lightbox !== null && ReactDOM.createPortal(
+    <div className={'gal-lb-' + side} onClick={closeLb}
+      style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 99999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
+      <button onClick={e => { e.stopPropagation(); closeLb(); }}
+        style={{ ...lbBtnStyle, position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      {total > 1 && (
+        <>
+          <button onClick={e => { e.stopPropagation(); navLb(-1); }}
+            style={{ ...lbBtnStyle, position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button onClick={e => { e.stopPropagation(); navLb(1); }}
+            style={{ ...lbBtnStyle, position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+        </>
+      )}
+      <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: 13, fontFamily: '"General Sans", system-ui, sans-serif', letterSpacing: '0.1em' }}>
+        {lightbox + 1} / {total}
+      </div>
+      <img className={'gal-lb-img-' + side} src={images[lightbox]} alt=""
+        style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 4 }} />
+    </div>,
+    document.body
+  );
+
   return (
     <div ref={columnRef} style={{ flex: 1, minWidth: 0, opacity: 0 }}>
-      {/* Lightbox */}
-      {lightbox !== null && (
-        <div className={'gal-lb-' + side} onClick={closeLb}
-          style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 99999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
-          <button onClick={e => { e.stopPropagation(); closeLb(); }}
-            style={{ ...lbBtnStyle, position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-          {total > 1 && (
-            <>
-              <button onClick={e => { e.stopPropagation(); navLb(-1); }}
-                style={{ ...lbBtnStyle, position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-              </button>
-              <button onClick={e => { e.stopPropagation(); navLb(1); }}
-                style={{ ...lbBtnStyle, position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
-              </button>
-            </>
-          )}
-          <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: 13, fontFamily: '"General Sans", system-ui, sans-serif', letterSpacing: '0.1em' }}>
-            {lightbox + 1} / {total}
-          </div>
-          <img className={'gal-lb-img-' + side} src={images[lightbox]} alt=""
-            style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 4 }} />
-        </div>
-      )}
+      {lightboxPortal}
 
       {/* Title label */}
       <div className="gc-label" style={{ fontSize: 12, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16, opacity: 0 }}>
@@ -1338,14 +1343,14 @@ function Galleries({ project }) {
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         <h2 ref={titleRef} style={{
           fontWeight: 300, fontSize: isMobile ? 28 : 44, lineHeight: 1.2,
-          letterSpacing: '-0.02em', color: C.ink, margin: '0 0 56px', opacity: 0,
+          letterSpacing: '-0.02em', color: C.ink, margin: isMobile ? '0 0 32px' : '0 0 56px', opacity: 0,
         }}>
           Galeria <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>do projeto</em>
         </h2>
         <div style={{
           display: 'flex',
           flexDirection: isMobile ? 'column' : 'row',
-          gap: isMobile ? 56 : 0,
+          gap: isMobile ? 40 : 0,
           position: 'relative',
         }}>
           {interior.length > 0 && (
