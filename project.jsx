@@ -818,7 +818,7 @@ function ProjectHero({ project }) {
       }}>
         <div style={{ maxWidth: 900, flex: '1 1 auto' }}>
           <div style={{
-            fontSize: 11, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.7)',
+            fontSize: 12, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.7)',
             textTransform: 'uppercase', fontWeight: 600, marginBottom: 16,
           }}>
             {project.location}
@@ -943,7 +943,7 @@ function ConceptRender({ project }) {
         {/* LEFT — Concept text only */}
         <div ref={textRef}>
           <div className="cr-animate" style={{
-            fontSize: 11, letterSpacing: '0.3em', color: C.terracota,
+            fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
             textTransform: 'uppercase', fontWeight: 600, marginBottom: 20, opacity: 0,
           }}>
             O Conceito
@@ -1183,7 +1183,7 @@ function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
               </button>
             </>
           )}
-          <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: 13, fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.1em' }}>
+          <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: 13, fontFamily: '"General Sans", system-ui, sans-serif', letterSpacing: '0.1em' }}>
             {lightbox + 1} / {total}
           </div>
           <img className={'gal-lb-img-' + side} src={images[lightbox]} alt=""
@@ -1192,7 +1192,7 @@ function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
       )}
 
       {/* Title label */}
-      <div className="gc-label" style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16, opacity: 0 }}>
+      <div className="gc-label" style={{ fontSize: 12, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16, opacity: 0 }}>
         {title}
       </div>
 
@@ -1207,7 +1207,7 @@ function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
               border: activeCat === i ? 'none' : '1px solid rgba(31,32,34,0.18)',
               borderRadius: 30, fontWeight: 500, fontSize: 12, letterSpacing: '0.08em',
               cursor: 'pointer', transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: '"General Sans", system-ui, sans-serif',
               opacity: 0,
             }}
             onMouseEnter={e => { if (activeCat !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.5)'; e.currentTarget.style.background = 'rgba(31,32,34,0.04)'; } }}
@@ -1238,7 +1238,7 @@ function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
             position: 'absolute', bottom: 14, right: 16, zIndex: 5,
             background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
             borderRadius: 20, padding: '5px 14px', color: '#fff', fontSize: 11,
-            letterSpacing: '0.1em', fontFamily: "'DM Sans', sans-serif", fontWeight: 500,
+            letterSpacing: '0.1em', fontFamily: '"General Sans", system-ui, sans-serif', fontWeight: 500,
           }}>
             {imgIdx + 1} / {total}
           </div>
@@ -1501,7 +1501,7 @@ function PhotoCarousel({ project }) {
           style={{ position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.12)', border: 'none', borderRadius: '50%', width: 48, height: 48, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
         </button>
-        <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: 13, fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.1em' }}>
+        <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: 13, fontFamily: '"General Sans", system-ui, sans-serif', letterSpacing: '0.1em' }}>
           {lightbox + 1} / {total}
         </div>
         <img className="pc-lb-img" src={images[lightbox]} alt=""
@@ -1658,7 +1658,7 @@ function Typologies({ project }) {
       )}
 
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <div className="typ-animate" style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
+        <div className="typ-animate" style={{ fontSize: 12, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
           Tipologias
         </div>
         <h2 className="typ-animate" style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.bege, margin: '0 0 48px' }}>
@@ -1736,7 +1736,7 @@ function Typologies({ project }) {
                   position: 'absolute', top: 14, left: 14, zIndex: 5,
                   background: 'rgba(0,0,0,0.5)', borderRadius: 20, padding: '5px 14px',
                   color: '#fff', fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase',
-                  fontFamily: "'DM Sans', sans-serif", fontWeight: 600,
+                  fontFamily: '"General Sans", system-ui, sans-serif', fontWeight: 600,
                 }}>
                   Planta
                 </div>
@@ -1782,7 +1782,7 @@ function Acabamentos() {
   return (
     <section style={{ background: C.bege, padding: isMobile ? '60px 24px 80px' : '100px 80px 120px' }}>
       <div ref={revealRef} style={{ maxWidth: 1200, margin: '0 auto', willChange: 'opacity, transform' }}>
-        <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
+        <div style={{ fontSize: 12, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
           Acabamentos
         </div>
         <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 48px' }}>
@@ -2150,7 +2150,7 @@ function ProjectFooter() {
         }}>
           {/* Left — Big CTA */}
           <div>
-            <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.clearGreen, textTransform: 'uppercase', fontWeight: 600, marginBottom: 28 }}>Contacto</div>
+            <div style={{ fontSize: 12, letterSpacing: '0.3em', color: C.clearGreen, textTransform: 'uppercase', fontWeight: 600, marginBottom: 28 }}>Contacto</div>
             <h2 style={{ fontWeight: 300, fontSize: isMobile ? 36 : 56, lineHeight: 1.1, letterSpacing: '-0.02em', color: C.bege, margin: 0 }}>
               Fale connosco sobre a sua próxima <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>casa.</em>
             </h2>
