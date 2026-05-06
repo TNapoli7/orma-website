@@ -21,7 +21,7 @@ const PROJECTS = {
   'lir-725': {
     name: 'Lir 725',
     location: 'Porto, Portugal',
-    tagline: '[Tagline]',
+    tagline: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     hero: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
     heroVideo: 'assets/hero-project.mp4',
     render: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80',
@@ -132,7 +132,7 @@ const PROJECTS = {
   'villas-sto-tirso': {
     name: 'Villas Sto. Tirso',
     location: 'Santo Tirso, Portugal',
-    tagline: '[Tagline]',
+    tagline: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     hero: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
     heroVideo: 'assets/hero-project.mp4',
     render: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80',
