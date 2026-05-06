@@ -930,7 +930,7 @@ function ConceptRender({ project }) {
   return (
     <section ref={sectionRef} style={{
       background: C.bege,
-      padding: isMobile ? '64px 24px 72px' : '120px 80px 140px',
+      padding: isMobile ? '64px 24px 56px' : '120px 80px 80px',
     }}>
       <div style={{
         maxWidth: 1280, margin: '0 auto',
@@ -984,6 +984,19 @@ function ConceptRender({ project }) {
       </div>
     </section>
   );
+}
+
+function GalleryCatIcon({ name, color }) {
+  const s = { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' };
+  const icons = {
+    'Casas de Banho': <svg {...s}><path d="M4 12h16M4 12v5a2 2 0 002 2h12a2 2 0 002-2v-5M6 12V5a2 2 0 012-2h1" /><circle cx="9" cy="5" r="2" /></svg>,
+    'Cozinhas': <svg {...s}><path d="M12 2v6M6 6h12l-1 14H7L6 6z" /><path d="M9 2v4M15 2v4" /></svg>,
+    'Quartos': <svg {...s}><path d="M3 21V7a2 2 0 012-2h14a2 2 0 012 2v14" /><path d="M3 14h18" /><path d="M7 10h4" /><path d="M3 10h0" /></svg>,
+    'Jardim': <svg {...s}><path d="M12 22V12" /><path d="M7 12c0-3 2-5 5-8 3 3 5 5 5 8" /><path d="M4 22c0-3 2.5-5 5-5" /><path d="M20 22c0-3-2.5-5-5-5" /></svg>,
+    'Estacionamento': <svg {...s}><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 17V7h4a3 3 0 010 6H9" /></svg>,
+    'Sala': <svg {...s}><path d="M5 12V7a2 2 0 012-2h10a2 2 0 012 2v5" /><path d="M3 14h18v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4z" /><path d="M3 14v-2a2 2 0 012-2h0M21 14v-2a2 2 0 00-2-2h0" /></svg>,
+  };
+  return icons[name] || <svg {...s}><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="12" cy="12" r="3" /></svg>;
 }
 
 function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
@@ -1196,22 +1209,24 @@ function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
         {title}
       </div>
 
-      {/* Sub-category tabs */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 28, flexWrap: 'wrap' }}>
+      {/* Sub-category tabs with icons */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 28, flexWrap: 'wrap' }}>
         {categories.map((c, i) => (
           <button key={c.name} className="gc-tab" onClick={() => switchCat(i)}
             style={{
-              padding: '10px 22px',
+              padding: '12px 24px',
+              display: 'flex', alignItems: 'center', gap: 8,
               background: activeCat === i ? C.ink : 'transparent',
               color: activeCat === i ? C.bege : C.ink,
               border: activeCat === i ? 'none' : '1px solid rgba(31,32,34,0.18)',
-              borderRadius: 30, fontWeight: 500, fontSize: 12, letterSpacing: '0.08em',
+              borderRadius: 30, fontWeight: 500, fontSize: 13, letterSpacing: '0.06em',
               cursor: 'pointer', transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
               fontFamily: '"General Sans", system-ui, sans-serif',
               opacity: 0,
             }}
             onMouseEnter={e => { if (activeCat !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.5)'; e.currentTarget.style.background = 'rgba(31,32,34,0.04)'; } }}
             onMouseLeave={e => { if (activeCat !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.18)'; e.currentTarget.style.background = 'transparent'; } }}>
+            <GalleryCatIcon name={c.name} color={activeCat === i ? C.bege : C.ink} />
             {c.name}
           </button>
         ))}
@@ -1319,7 +1334,7 @@ function Galleries({ project }) {
   }, []);
 
   return (
-    <section ref={sectionRef} style={{ background: C.bege, padding: isMobile ? '60px 24px 80px' : '100px 80px 120px', overflow: 'hidden' }}>
+    <section ref={sectionRef} style={{ background: C.bege, padding: isMobile ? '40px 24px 80px' : '60px 80px 120px', overflow: 'hidden' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         <h2 ref={titleRef} style={{
           fontWeight: 300, fontSize: isMobile ? 28 : 44, lineHeight: 1.2,
