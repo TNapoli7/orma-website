@@ -629,8 +629,8 @@ function BrochureBox({ projectName }) {
       requestAnimationFrame(() => {
         if (boxRef.current && typeof gsap !== 'undefined') {
           gsap.fromTo(boxRef.current,
-            { y: 40, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }
+            { y: 20, opacity: 0, scale: 0.97, filter: 'blur(6px)' },
+            { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.2, ease: 'power2.out' }
           );
         }
       });
