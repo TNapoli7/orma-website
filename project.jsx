@@ -882,7 +882,7 @@ function ConceptRender({ project }) {
   const textRef = useRef(null);
   const imageRef = useRef(null);
 
-  // GSAP animations
+  // GSAP animations — word reveal on scroll
   useEffect(() => {
     if (typeof gsap === 'undefined' || !gsap.registerPlugin) return;
     gsap.registerPlugin(ScrollTrigger);
@@ -891,20 +891,43 @@ function ConceptRender({ project }) {
 
     const triggers = [];
 
-    // Text column — staggered reveal with clip-path
-    if (textRef.current) {
-      const children = textRef.current.querySelectorAll('.cr-animate');
-      if (children.length) {
-        children.forEach((el, i) => {
-          const t = gsap.fromTo(el,
-            { y: 30, opacity: 0, clipPath: 'inset(0% 0% 100% 0%)' },
-            { y: 0, opacity: 1, clipPath: 'inset(0% 0% 0% 0%)', duration: 1.0, ease: 'power3.out', delay: i * 0.15,
-              scrollTrigger: { trigger: section, start: 'top 75%', toggleActions: 'play none none none' }
-            }
-          );
-          triggers.push(t.scrollTrigger);
-        });
-      }
+    // Section label — simple fade up
+    const label = textRef.current && textRef.current.querySelector('.cr-label');
+    if (label) {
+      const t = gsap.fromTo(label,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out',
+          scrollTrigger: { trigger: section, start: 'top 75%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    }
+
+    // Title — word-by-word reveal
+    const titleWords = textRef.current ? textRef.current.querySelectorAll('.cr-title-word') : [];
+    if (titleWords.length) {
+      titleWords.forEach((w, i) => {
+        const t = gsap.fromTo(w,
+          { y: 40, opacity: 0, rotateX: 40 },
+          { y: 0, opacity: 1, rotateX: 0, duration: 0.7, ease: 'power3.out', delay: i * 0.08,
+            scrollTrigger: { trigger: section, start: 'top 75%', toggleActions: 'play none none none' }
+          }
+        );
+        triggers.push(t.scrollTrigger);
+      });
+    }
+
+    // Description — word-by-word reveal with stagger
+    const descWords = textRef.current ? textRef.current.querySelectorAll('.cr-desc-word') : [];
+    if (descWords.length) {
+      const st = gsap.fromTo(descWords,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out',
+          stagger: 0.018,
+          scrollTrigger: { trigger: textRef.current, start: 'top 70%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(st.scrollTrigger);
     }
 
     // Render image — parallax + fade
@@ -942,28 +965,38 @@ function ConceptRender({ project }) {
         gap: isMobile ? 48 : 80,
         alignItems: 'center',
       }}>
-        {/* LEFT — Concept text only */}
+        {/* LEFT — Concept text with word reveal */}
         <div ref={textRef}>
-          <div className="cr-animate" style={{
+          <div className="cr-label" style={{
             fontSize: 12, letterSpacing: '0.3em', color: C.terracota,
             textTransform: 'uppercase', fontWeight: 600, marginBottom: 20, opacity: 0,
           }}>
             O Conceito
           </div>
 
-          <h2 className="cr-animate" style={{
+          <h2 style={{
             fontWeight: 300, fontSize: isMobile ? 32 : 48, lineHeight: 1.2,
-            letterSpacing: '-0.02em', color: C.ink, margin: '0 0 28px', opacity: 0,
+            letterSpacing: '-0.02em', color: C.ink, margin: '0 0 28px',
+            perspective: 600,
           }}>
-            {project.name}
+            {project.name.split(' ').map((word, i) => (
+              <span key={i} className="cr-title-word" style={{
+                display: 'inline-block', opacity: 0, marginRight: '0.25em',
+                transformOrigin: 'bottom left',
+              }}>{word}</span>
+            ))}
           </h2>
 
           {project.description && (
-            <p className="cr-animate" style={{
+            <p style={{
               fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
-              margin: 0, opacity: 0, maxWidth: 520,
+              margin: 0, maxWidth: 520,
             }}>
-              {project.description}
+              {project.description.split(' ').map((word, i) => (
+                <span key={i} className="cr-desc-word" style={{
+                  display: 'inline-block', opacity: 0, marginRight: '0.3em',
+                }}>{word}</span>
+              ))}
             </p>
           )}
         </div>
