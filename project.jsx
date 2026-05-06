@@ -950,18 +950,18 @@ function ConceptRender({ project }) {
           </div>
 
           <h2 className="cr-animate" style={{
-            fontWeight: 300, fontSize: isMobile ? 28 : 38, lineHeight: 1.4,
-            letterSpacing: '-0.02em', color: C.ink, margin: '0 0 24px', opacity: 0,
+            fontWeight: 300, fontSize: isMobile ? 32 : 48, lineHeight: 1.2,
+            letterSpacing: '-0.02em', color: C.ink, margin: '0 0 28px', opacity: 0,
           }}>
-            {project.description}
+            {project.name}
           </h2>
 
-          {project.descriptionExtra && (
+          {project.description && (
             <p className="cr-animate" style={{
               fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
               margin: 0, opacity: 0, maxWidth: 520,
             }}>
-              {project.descriptionExtra}
+              {project.description}
             </p>
           )}
         </div>
