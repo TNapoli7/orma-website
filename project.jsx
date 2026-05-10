@@ -1784,15 +1784,40 @@ function AcabamentosPanel({ spot, onClose }) {
   if (!spot) return null;
   return (
     <div style={{
-      position: 'absolute', top: 0, right: 0, bottom: 0, width: '42%',
+      position: 'absolute', left: 0, right: 0, bottom: 0,
       background: 'rgba(31,32,34,0.95)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-      borderLeft: '1px solid rgba(255,255,255,0.08)',
-      display: 'flex', flexDirection: 'column', justifyContent: 'center',
-      padding: '32px 40px 36px',
-      zIndex: 20, overflow: 'auto',
+      borderTop: '1px solid rgba(255,255,255,0.08)',
+      display: 'flex', alignItems: 'center', gap: 40,
+      padding: '28px 40px',
+      zIndex: 20,
     }}>
+      {/* Material badge */}
+      <div style={{
+        fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase',
+        background: C.terracota, color: '#fff', display: 'inline-block',
+        padding: '5px 14px', borderRadius: 4, whiteSpace: 'nowrap', flexShrink: 0,
+      }}>{spot.material}</div>
+
+      {/* Title */}
+      <h3 style={{
+        fontFamily: '"General Sans", system-ui, sans-serif', fontWeight: 400,
+        fontSize: 22, color: '#fff', letterSpacing: '-0.02em', margin: 0,
+        flexShrink: 0,
+      }}>{spot.label}</h3>
+
+      {/* Divider */}
+      <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.15)', flexShrink: 0 }} />
+
+      {/* Description */}
+      <p style={{
+        fontSize: 13, lineHeight: 1.75, color: 'rgba(255,255,255,0.7)',
+        fontFamily: '"General Sans", system-ui, sans-serif', margin: 0,
+        flex: 1, textWrap: 'pretty',
+      }}>{spot.detail}</p>
+
+      {/* Close button */}
       <button onClick={onClose} style={{
-        position: 'absolute', top: 16, right: 16, width: 44, height: 44,
+        width: 40, height: 40, flexShrink: 0,
         borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)',
         background: 'rgba(255,255,255,0.06)', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1801,31 +1826,10 @@ function AcabamentosPanel({ spot, onClose }) {
         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.14)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'; }}
         onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; }}
       >
-        <svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round">
+        <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round">
           <path d="M1 1l10 10M11 1L1 11"/>
         </svg>
       </button>
-
-      <div>
-        <div style={{
-          fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase',
-          background: C.terracota, color: '#fff', display: 'inline-block',
-          padding: '5px 14px', marginBottom: 18, borderRadius: 4,
-        }}>{spot.material}</div>
-
-        <h3 style={{
-          fontFamily: '"General Sans", system-ui, sans-serif', fontWeight: 400,
-          fontSize: 26, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 14px',
-        }}>{spot.label}</h3>
-
-        <div style={{ width: 40, height: 1, background: 'rgba(255,255,255,0.15)', margin: '0 0 18px' }} />
-
-        <p style={{
-          fontSize: 14, lineHeight: 1.85, color: 'rgba(255,255,255,0.75)',
-          fontFamily: '"General Sans", system-ui, sans-serif', margin: 0,
-          textWrap: 'pretty',
-        }}>{spot.detail}</p>
-      </div>
     </div>
   );
 }
@@ -2102,13 +2106,13 @@ function Acabamentos() {
               );
             })}
 
-            {/* Desktop detail panel (inside image) */}
+            {/* Desktop detail panel — slides up from bottom */}
             {!isMobile && (
               <div style={{
-                position: 'absolute', top: 0, right: 0, bottom: 0, width: '42%',
-                transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
+                position: 'absolute', left: 0, right: 0, bottom: 0,
+                transform: isOpen ? 'translateY(0)' : 'translateY(100%)',
                 opacity: isOpen ? 1 : 0,
-                transition: 'transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease',
+                transition: 'transform 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease',
                 pointerEvents: isOpen ? 'auto' : 'none',
               }}>
                 <AcabamentosPanel spot={currentSpot} onClose={() => setActiveSpot(null)} />
@@ -2117,10 +2121,11 @@ function Acabamentos() {
           </div>
         </div>
 
-        {/* Spot labels below image */}
+        {/* Spot labels below image — mobile only */}
+        {isMobile && (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+          gridTemplateColumns: '1fr',
           gap: 0, marginTop: 2,
         }}>
           {spots.map(spot => {
@@ -2129,25 +2134,25 @@ function Acabamentos() {
             <button key={spot.id}
               onClick={() => setActiveSpot(isActive ? null : spot.id)}
               style={{
-                textAlign: 'left', padding: isMobile ? '16px 16px' : '18px 24px',
+                textAlign: 'left', padding: '16px 16px',
                 background: isActive ? 'rgba(151,67,21,0.08)' : 'rgba(31,32,34,0.02)',
                 border: 'none',
                 borderBottom: '2px solid',
                 borderBottomColor: isActive ? C.terracota : 'rgba(31,32,34,0.06)',
                 cursor: 'pointer', transition: 'all 0.3s',
                 fontFamily: '"General Sans", system-ui, sans-serif',
-                display: 'flex', alignItems: isMobile ? 'baseline' : 'flex-start',
-                gap: isMobile ? 10 : 0,
-                flexDirection: isMobile ? 'row' : 'column',
+                display: 'flex', alignItems: 'baseline',
+                gap: 10,
+                flexDirection: 'row',
               }}>
               <span style={{
-                fontSize: isMobile ? 9 : 10, letterSpacing: '0.2em', textTransform: 'uppercase',
-                marginBottom: isMobile ? 0 : 4, transition: 'color 0.3s',
+                fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase',
+                transition: 'color 0.3s',
                 color: isActive ? C.terracota : 'rgba(31,32,34,0.4)',
                 whiteSpace: 'nowrap', flexShrink: 0,
               }}>{spot.material}</span>
               <span style={{
-                fontSize: isMobile ? 14 : 15, fontWeight: 500,
+                fontSize: 14, fontWeight: 500,
                 transition: 'color 0.3s',
                 color: isActive ? C.ink : 'rgba(31,32,34,0.65)',
               }}>{spot.label}</span>
@@ -2155,6 +2160,7 @@ function Acabamentos() {
             );
           })}
         </div>
+        )}
       </div>
 
       <style>{`
