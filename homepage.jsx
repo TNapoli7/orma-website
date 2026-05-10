@@ -1059,8 +1059,8 @@ function Pillars() {
     // Background tree — parallax scroll
     const bgTree = bgTreeRef.current;
     if (bgTree) {
-      const yStart = isMobile ? -10 : -20;
-      const yEnd = isMobile ? 10 : 20;
+      const yStart = isMobile ? -5 : -10;
+      const yEnd = isMobile ? 5 : 10;
       const treeTween = gsap.fromTo(bgTree,
         { yPercent: yStart },
         {
@@ -1101,8 +1101,8 @@ function Pillars() {
           height: isMobile ? 600 : 1100,
           flexShrink: 0,
         }}>
-          <TreeMark opacity={0.32} style={{
-            filter: 'sepia(1) saturate(0.25) hue-rotate(60deg) brightness(0.95)',
+          <TreeMark opacity={0.55} style={{
+            filter: 'sepia(1) saturate(0.2) hue-rotate(60deg) brightness(0.55)',
           }} />
         </div>
       </div>
