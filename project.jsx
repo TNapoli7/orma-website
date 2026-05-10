@@ -671,12 +671,12 @@ function BrochureBox({ projectName }) {
     return (
       <div ref={boxRef} style={{
         flex: '0 0 auto',
-        width: isMobile ? '100%' : 400,
+        width: isMobile ? '100%' : 440,
         background: 'rgba(31,32,34,0.65)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderRadius: 14,
-        padding: '32px 30px',
+        padding: '35px 33px',
         marginTop: isMobile ? 28 : 0,
         textAlign: 'center',
       }}>
@@ -694,12 +694,12 @@ function BrochureBox({ projectName }) {
   return (
     <div ref={boxRef} style={{
       flex: '0 0 auto',
-      width: isMobile ? '100%' : 400,
+      width: isMobile ? '100%' : 440,
       background: 'rgba(31,32,34,0.65)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
       borderRadius: 14,
-      padding: isMobile ? '18px 18px' : '32px 30px',
+      padding: isMobile ? '20px 20px' : '35px 33px',
       marginTop: isMobile ? 16 : 0,
       opacity: isMobile ? 0 : 1,
     }}>
