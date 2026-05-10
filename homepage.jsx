@@ -1097,12 +1097,12 @@ function Pillars() {
         overflow: 'hidden',
       }}>
         <div ref={bgTreeRef} style={{
-          width: isMobile ? 600 : 1100,
-          height: isMobile ? 600 : 1100,
+          width: isMobile ? 800 : 1600,
+          height: isMobile ? 800 : 1600,
           flexShrink: 0,
         }}>
-          <TreeMark opacity={0.55} style={{
-            filter: 'sepia(1) saturate(0.2) hue-rotate(60deg) brightness(0.55)',
+          <TreeMark opacity={0.8} style={{
+            filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.35)',
           }} />
         </div>
       </div>
