@@ -373,12 +373,19 @@ function MenuLink({ label, href, onClose, hasChildren, children }) {
   );
 }
 
-function MenuSubLink({ label, subtitle, onClose }) {
+function MenuSubLink({ label, subtitle, href, onClose }) {
   const [hovered, setHovered] = useState(false);
   return (
     <a
-      href="#"
-      onClick={(e) => { e.preventDefault(); onClose(); }}
+      href={href || '#'}
+      onClick={(e) => {
+        if (href && !href.startsWith('http')) {
+          // Let browser navigate naturally
+        } else {
+          e.preventDefault();
+        }
+        onClose();
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -460,8 +467,8 @@ function MenuDrawer({ open, onClose }) {
           {/* Nav links */}
           <nav style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             <MenuLink label="Projects" href="#projects" onClose={onClose} hasChildren>
-              <MenuSubLink label="Lir 725" subtitle="Porto" onClose={onClose} />
-              <MenuSubLink label="Villas Sto. Tirso" subtitle="Santo Tirso" onClose={onClose} />
+              <MenuSubLink label="Lir 725" subtitle="Porto" href="project.html?id=lir-725" onClose={onClose} />
+              <MenuSubLink label="Villas Sto. Tirso" subtitle="Santo Tirso" href="project.html?id=villas-sto-tirso" onClose={onClose} />
             </MenuLink>
             <MenuLink label="About" href="#about" onClose={onClose} />
             <MenuLink label="Consultancy" href="consultancy.html" onClose={onClose} />

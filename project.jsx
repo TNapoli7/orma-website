@@ -653,13 +653,13 @@ function BrochureBox({ projectName }) {
 
   const inputStyle = {
     width: '100%',
-    padding: isMobile ? '8px 10px' : '10px 12px',
+    padding: isMobile ? '10px 12px' : '12px 14px',
     background: 'rgba(255,255,255,0.12)',
     border: '1px solid rgba(255,255,255,0.2)',
     borderRadius: 6,
     color: C.white,
     fontFamily: 'inherit',
-    fontSize: isMobile ? 12 : 13,
+    fontSize: isMobile ? 13 : 14,
     fontWeight: 400,
     outline: 'none',
     transition: 'border-color 0.2s',
@@ -671,12 +671,12 @@ function BrochureBox({ projectName }) {
     return (
       <div ref={boxRef} style={{
         flex: '0 0 auto',
-        width: isMobile ? '100%' : 280,
+        width: isMobile ? '100%' : 360,
         background: 'rgba(31,32,34,0.65)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderRadius: 14,
-        padding: '24px 20px',
+        padding: '28px 26px',
         marginTop: isMobile ? 28 : 0,
         textAlign: 'center',
       }}>
@@ -694,26 +694,26 @@ function BrochureBox({ projectName }) {
   return (
     <div ref={boxRef} style={{
       flex: '0 0 auto',
-      width: isMobile ? '100%' : 280,
+      width: isMobile ? '100%' : 360,
       background: 'rgba(31,32,34,0.65)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
       borderRadius: 14,
-      padding: isMobile ? '14px 14px' : '20px 18px',
+      padding: isMobile ? '16px 16px' : '28px 26px',
       marginTop: isMobile ? 16 : 0,
       opacity: isMobile ? 0 : 1,
     }}>
       <p style={{
         fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase',
-        color: 'rgba(255,255,255,0.5)', fontWeight: 600, margin: '0 0 4px',
+        color: 'rgba(255,255,255,0.5)', fontWeight: 600, margin: '0 0 6px',
       }}>Brochura</p>
       <p style={{
-        fontSize: isMobile ? 13 : 15, fontWeight: 300, color: C.white, margin: isMobile ? '0 0 10px' : '0 0 14px', lineHeight: 1.3,
+        fontSize: isMobile ? 14 : 17, fontWeight: 300, color: C.white, margin: isMobile ? '0 0 12px' : '0 0 18px', lineHeight: 1.3,
       }}>
         Receba os detalhes do {projectName || 'projecto'}
       </p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 6 : 8 }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 8 : 10 }}>
         <input
           type="text" placeholder="Nome" required
           value={form.nome}
@@ -835,8 +835,8 @@ function ProjectHero({ project }) {
         padding: isMobile ? '0 24px 48px' : '0 80px 80px',
         display: isMobile ? 'block' : 'flex',
         alignItems: 'flex-end',
-        justifyContent: 'space-between',
-        gap: 40,
+        justifyContent: 'flex-start',
+        gap: 60,
       }}>
         <div style={{ maxWidth: 900, flex: '1 1 auto' }}>
           <div style={{
@@ -889,7 +889,7 @@ function ProjectHero({ project }) {
       `}</style>
     </section>
     {/* Spacer so content starts after hero */}
-    <div style={{ height: '100vh' }} />
+    <div style={{ height: '85vh' }} />
     </>
   );
 }
@@ -1086,128 +1086,88 @@ function ConceptRender({ project }) {
   );
 }
 
-function GalleryCatIcon({ name, color }) {
-  const s = { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' };
-  const icons = {
-    'Casas de Banho': <svg {...s}><path d="M4 12h16M4 12v5a2 2 0 002 2h12a2 2 0 002-2v-5M6 12V5a2 2 0 012-2h1" /><circle cx="9" cy="5" r="2" /></svg>,
-    'Cozinhas': <svg {...s}><path d="M12 2v6M6 6h12l-1 14H7L6 6z" /><path d="M9 2v4M15 2v4" /></svg>,
-    'Quartos': <svg {...s}><path d="M3 21V7a2 2 0 012-2h14a2 2 0 012 2v14" /><path d="M3 14h18" /><path d="M7 10h4" /><path d="M3 10h0" /></svg>,
-    'Jardim': <svg {...s}><path d="M12 22V12" /><path d="M7 12c0-3 2-5 5-8 3 3 5 5 5 8" /><path d="M4 22c0-3 2.5-5 5-5" /><path d="M20 22c0-3-2.5-5-5-5" /></svg>,
-    'Estacionamento': <svg {...s}><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 17V7h4a3 3 0 010 6H9" /></svg>,
-    'Sala': <svg {...s}><path d="M5 12V7a2 2 0 012-2h10a2 2 0 012 2v5" /><path d="M3 14h18v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4z" /><path d="M3 14v-2a2 2 0 012-2h0M21 14v-2a2 2 0 00-2-2h0" /></svg>,
-  };
-  return icons[name] || <svg {...s}><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="12" cy="12" r="3" /></svg>;
-}
+// GalleryCatIcon removed — no longer needed with Interior/Exterior tabs
 
-function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
+function Galleries({ project }) {
   const isMobile = useIsMobile();
-  const [activeCat, setActiveCat] = useState(0);
-  const [imgIdx, setImgIdx] = useState(0);
-  const [lightbox, setLightbox] = useState(null);
-  const columnRef = useRef(null);
+  const sectionRef = useRef(null);
+  const titleRef = useRef(null);
   const imgRef = useRef(null);
   const imgWrapRef = useRef(null);
+  const galleries = project.galleries;
 
-  const cat = categories[activeCat];
-  const images = cat ? cat.images : [];
+  if (!galleries) return null;
+  const interior = galleries.interior || [];
+  const exterior = galleries.exterior || [];
+  if (interior.length === 0 && exterior.length === 0) return null;
+
+  // Pool all images per group
+  const groups = [];
+  if (interior.length > 0) groups.push({ name: 'Interior', images: interior.flatMap(c => c.images) });
+  if (exterior.length > 0) groups.push({ name: 'Exterior', images: exterior.flatMap(c => c.images) });
+
+  const [activeGroup, setActiveGroup] = useState(0);
+  const [imgIdx, setImgIdx] = useState(0);
+  const [lightbox, setLightbox] = useState(null);
+
+  const images = groups[activeGroup] ? groups[activeGroup].images : [];
   const total = images.length;
 
-  // Slide direction: interior enters from left, exterior from right
-  const fromLeft = side === 'interior';
-  const slideX = fromLeft ? -80 : 80;
-
-  // GSAP entrance — own ScrollTrigger per column
+  // GSAP entrance
   useEffect(() => {
-    if (typeof gsap === 'undefined' || !columnRef.current) return;
+    if (typeof gsap === 'undefined' || !sectionRef.current) return;
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: columnRef.current,
-          start: triggerStart || 'top 80%',
-          toggleActions: 'play none none none',
-        },
-      });
-
-      // Whole column slides in from its side + fades
-      tl.fromTo(columnRef.current,
-        { opacity: 0, x: slideX },
-        { opacity: 1, x: 0, duration: 1.0, ease: 'power3.out' },
-        0
-      );
-
-      // Title label — slides in slightly ahead
-      const label = columnRef.current.querySelector('.gc-label');
-      if (label) {
-        tl.fromTo(label,
-          { opacity: 0, x: fromLeft ? -20 : 20 },
-          { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out' },
-          0.1
+      if (titleRef.current) {
+        gsap.fromTo(titleRef.current,
+          { opacity: 0, y: 50 },
+          { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+            scrollTrigger: { trigger: sectionRef.current, start: 'top 88%', toggleActions: 'play none none none' }
+          }
         );
       }
-
-      // Tabs stagger in
-      const tabs = columnRef.current.querySelectorAll('.gc-tab');
-      if (tabs.length) {
-        tl.fromTo(tabs,
-          { opacity: 0, y: 14, scale: 0.92 },
-          { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.4)', stagger: 0.06 },
-          0.2
-        );
-      }
-
-      // Image — clip-path curtain from the column's side + Ken Burns
       if (imgWrapRef.current) {
-        const clipFrom = fromLeft ? 'inset(0% 100% 0% 0%)' : 'inset(0% 0% 0% 100%)';
-        tl.fromTo(imgWrapRef.current,
-          { clipPath: clipFrom },
-          { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.1, ease: 'power4.inOut' },
-          0.25
+        gsap.fromTo(imgWrapRef.current,
+          { clipPath: 'inset(0% 100% 0% 0%)' },
+          { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, ease: 'power4.inOut',
+            scrollTrigger: { trigger: imgWrapRef.current, start: 'top 80%', toggleActions: 'play none none none' }
+          }
         );
         if (imgRef.current) {
-          tl.fromTo(imgRef.current,
-            { scale: 1.2 },
-            { scale: 1, duration: 1.6, ease: 'power2.out' },
-            0.25
+          gsap.fromTo(imgRef.current,
+            { scale: 1.15 },
+            { scale: 1, duration: 1.6, ease: 'power2.out',
+              scrollTrigger: { trigger: imgWrapRef.current, start: 'top 80%', toggleActions: 'play none none none' }
+            }
           );
         }
       }
-
-      // Category label below
-      const catLabel = columnRef.current.querySelector('.gc-cat-label');
-      if (catLabel) {
-        tl.fromTo(catLabel,
-          { opacity: 0, y: 10 },
-          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
-          1.0
-        );
-      }
-    }, columnRef.current);
+    }, sectionRef.current);
     return () => ctx.revert();
   }, []);
 
-  // Category switch — cinematic crossfade with curtain
-  const switchCat = (i) => {
-    if (i === activeCat) return;
+  // Switch group — curtain transition
+  const switchGroup = (i) => {
+    if (i === activeGroup) return;
     if (imgWrapRef.current && typeof gsap !== 'undefined') {
       const tl = gsap.timeline();
       tl.to(imgWrapRef.current, {
-        clipPath: fromLeft ? 'inset(0% 0% 0% 100%)' : 'inset(0% 100% 0% 0%)',
-        duration: 0.35, ease: 'power2.in',
-        onComplete: () => { setActiveCat(i); setImgIdx(0); }
+        clipPath: 'inset(0% 0% 0% 100%)',
+        duration: 0.4, ease: 'power2.in',
+        onComplete: () => { setActiveGroup(i); setImgIdx(0); }
       });
       tl.call(() => {
         requestAnimationFrame(() => {
-          if (imgRef.current) gsap.set(imgRef.current, { scale: 1.1 });
+          if (imgRef.current) gsap.set(imgRef.current, { scale: 1.08 });
           gsap.fromTo(imgWrapRef.current,
-            { clipPath: fromLeft ? 'inset(0% 100% 0% 0%)' : 'inset(0% 0% 0% 100%)' },
-            { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.5, ease: 'power3.out' }
+            { clipPath: 'inset(0% 100% 0% 0%)' },
+            { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.55, ease: 'power3.out' }
           );
-          if (imgRef.current) gsap.to(imgRef.current, { scale: 1, duration: 0.8, ease: 'power2.out' });
+          if (imgRef.current) gsap.to(imgRef.current, { scale: 1, duration: 0.9, ease: 'power2.out' });
         });
       }, null, '+=0.05');
     } else {
-      setActiveCat(i); setImgIdx(0);
+      setActiveGroup(i); setImgIdx(0);
     }
   };
 
@@ -1216,12 +1176,12 @@ function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
     if (total <= 1 || !imgRef.current || typeof gsap === 'undefined') return;
     const next = ((imgIdx + dir) % total + total) % total;
     gsap.to(imgRef.current, {
-      x: -dir * 60, opacity: 0, scale: 0.95, duration: 0.25, ease: 'power2.in',
+      x: -dir * 60, opacity: 0, scale: 0.97, duration: 0.25, ease: 'power2.in',
       onComplete: () => {
         setImgIdx(next);
         requestAnimationFrame(() => {
           if (imgRef.current) gsap.fromTo(imgRef.current,
-            { x: dir * 60, opacity: 0, scale: 1.05 },
+            { x: dir * 60, opacity: 0, scale: 1.03 },
             { x: 0, opacity: 1, scale: 1, duration: 0.4, ease: 'power3.out' }
           );
         });
@@ -1233,8 +1193,8 @@ function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
   const openLb = () => {
     setLightbox(imgIdx);
     requestAnimationFrame(() => {
-      const ov = document.querySelector('.gal-lb-' + side);
-      const img = document.querySelector('.gal-lb-img-' + side);
+      const ov = document.querySelector('.gal-lb-main');
+      const img = document.querySelector('.gal-lb-img-main');
       if (ov && typeof gsap !== 'undefined') {
         gsap.fromTo(ov, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' });
         if (img) gsap.fromTo(img, { scale: 0.88, y: 30 }, { scale: 1, y: 0, duration: 0.5, ease: 'power3.out', delay: 0.08 });
@@ -1242,18 +1202,18 @@ function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
     });
   };
   const closeLb = () => {
-    const ov = document.querySelector('.gal-lb-' + side);
+    const ov = document.querySelector('.gal-lb-main');
     if (ov && typeof gsap !== 'undefined') {
       gsap.to(ov, { opacity: 0, duration: 0.25, ease: 'power2.in', onComplete: () => setLightbox(null) });
     } else setLightbox(null);
   };
   const navLb = (dir) => {
-    const img = document.querySelector('.gal-lb-img-' + side);
+    const img = document.querySelector('.gal-lb-img-main');
     if (img && typeof gsap !== 'undefined') {
       gsap.to(img, { x: -dir * 50, opacity: 0, scale: 0.95, duration: 0.22, ease: 'power2.in', onComplete: () => {
         setLightbox(p => ((p + dir) % total + total) % total);
         requestAnimationFrame(() => {
-          const ni = document.querySelector('.gal-lb-img-' + side);
+          const ni = document.querySelector('.gal-lb-img-main');
           if (ni) gsap.fromTo(ni, { x: dir * 50, opacity: 0, scale: 1.05 }, { x: 0, opacity: 1, scale: 1, duration: 0.35, ease: 'power3.out' });
         });
       }});
@@ -1264,19 +1224,19 @@ function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
 
   const arrowBtn = (s) => ({
     position: 'absolute', top: '50%', transform: 'translateY(-50%)',
-    [s]: isMobile ? 10 : 16, zIndex: 5,
-    width: isMobile ? 34 : 40, height: isMobile ? 34 : 40, borderRadius: '50%',
+    [s]: isMobile ? 12 : 24, zIndex: 5,
+    width: isMobile ? 38 : 48, height: isMobile ? 38 : 48, borderRadius: '50%',
     background: 'rgba(255,255,255,0.85)', border: 'none',
     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
     transition: 'all 0.3s ease',
-    boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
+    boxShadow: '0 2px 16px rgba(0,0,0,0.12)',
     opacity: total > 1 ? 1 : 0,
     pointerEvents: total > 1 ? 'auto' : 'none',
   });
 
-  // Portal-based lightbox — rendered outside the clipped columnRef so clip-path doesn't cut it
+  // Portal lightbox
   const lightboxPortal = lightbox !== null && ReactDOM.createPortal(
-    <div className={'gal-lb-' + side} onClick={closeLb}
+    <div className="gal-lb-main" onClick={closeLb}
       style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 99999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
       <button onClick={e => { e.stopPropagation(); closeLb(); }}
         style={{ ...lbBtnStyle, position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
@@ -1297,177 +1257,86 @@ function GalleryColumn({ title, categories, side, triggerStart, typologies }) {
       <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.45)', fontSize: 13, fontFamily: '"General Sans", system-ui, sans-serif', letterSpacing: '0.1em' }}>
         {lightbox + 1} / {total}
       </div>
-      <img className={'gal-lb-img-' + side} src={images[lightbox]} alt=""
+      <img className="gal-lb-img-main" src={images[lightbox]} alt=""
         style={{ maxWidth: '90vw', maxHeight: '85vh', objectFit: 'contain', borderRadius: 4 }} />
     </div>,
     document.body
   );
 
   return (
-    <div ref={columnRef} style={{ flex: 1, minWidth: 0, opacity: 0 }}>
+    <section ref={sectionRef} style={{ background: C.bege, padding: isMobile ? '40px 24px 48px' : '60px 80px 60px', overflow: 'hidden' }}>
       {lightboxPortal}
-
-      {/* Title label */}
-      <div className="gc-label" style={{ fontSize: 12, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16, opacity: 0 }}>
-        {title}
-      </div>
-
-      {/* Sub-category tabs with icons */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 28, flexWrap: 'wrap' }}>
-        {categories.map((c, i) => (
-          <button key={c.name} className="gc-tab" onClick={() => switchCat(i)}
-            style={{
-              padding: '12px 24px',
-              display: 'flex', alignItems: 'center', gap: 8,
-              background: activeCat === i ? C.ink : 'transparent',
-              color: activeCat === i ? C.bege : C.ink,
-              border: activeCat === i ? 'none' : '1px solid rgba(31,32,34,0.18)',
-              borderRadius: 30, fontWeight: 500, fontSize: 13, letterSpacing: '0.06em',
-              cursor: 'pointer', transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
-              fontFamily: '"General Sans", system-ui, sans-serif',
-              opacity: 0,
-            }}
-            onMouseEnter={e => { if (activeCat !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.5)'; e.currentTarget.style.background = 'rgba(31,32,34,0.04)'; } }}
-            onMouseLeave={e => { if (activeCat !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.18)'; e.currentTarget.style.background = 'transparent'; } }}>
-            <GalleryCatIcon name={c.name} color={activeCat === i ? C.bege : C.ink} />
-            {c.name}
-          </button>
-        ))}
-      </div>
-
-      {/* Image area with clip-path reveal */}
-      <div ref={imgWrapRef} style={{
-        position: 'relative', borderRadius: 12, overflow: 'hidden',
-        height: isMobile ? 260 : 420, background: C.grey,
-        clipPath: fromLeft ? 'inset(0% 100% 0% 0%)' : 'inset(0% 0% 0% 100%)',
-      }}>
-        <button style={arrowBtn('left')} onClick={() => navImg(-1)}
-          onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)'; e.currentTarget.style.background = '#fff'; }}
-          onMouseOut={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}>
-          <svg width={isMobile ? 14 : 16} height={isMobile ? 14 : 16} viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <button style={arrowBtn('right')} onClick={() => navImg(1)}
-          onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)'; e.currentTarget.style.background = '#fff'; }}
-          onMouseOut={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}>
-          <svg width={isMobile ? 14 : 16} height={isMobile ? 14 : 16} viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
-        </button>
-        {total > 1 && (
-          <div style={{
-            position: 'absolute', bottom: 14, right: 16, zIndex: 5,
-            background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
-            borderRadius: 20, padding: '5px 14px', color: '#fff', fontSize: 11,
-            letterSpacing: '0.1em', fontFamily: '"General Sans", system-ui, sans-serif', fontWeight: 500,
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        {/* Title + tabs row */}
+        <div ref={titleRef} style={{ opacity: 0, marginBottom: isMobile ? 28 : 48 }}>
+          <h2 style={{
+            fontWeight: 300, fontSize: isMobile ? 28 : 44, lineHeight: 1.2,
+            letterSpacing: '-0.02em', color: C.ink, margin: '0 0 24px',
           }}>
-            {imgIdx + 1} / {total}
-          </div>
-        )}
-        <img
-          ref={imgRef}
-          src={images[imgIdx] || ''}
-          alt={cat ? cat.name : ''}
-          onClick={openLb}
-          loading="lazy"
-          style={{
-            width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-            cursor: 'zoom-in', transition: 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)',
-            willChange: 'transform',
-          }}
-          onMouseOver={e => e.currentTarget.style.transform = 'scale(1.04)'}
-          onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
-        />
-      </div>
+            Galeria <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>do projeto</em>
+          </h2>
 
-      {/* Category name below image */}
-      {/* Typology summary below image */}
-      <div className="gc-cat-label" style={{ marginTop: 20, opacity: 0 }}>
-        {cat && <div style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.06em', color: C.ink, marginBottom: 10 }}>{cat.name}</div>}
-        {typologies && typologies.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 16px' }}>
-            {typologies.map((t, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: C.terracota, letterSpacing: '0.04em' }}>{t.type}</span>
-                <span style={{ fontSize: 12, color: 'rgba(31,32,34,0.5)', fontWeight: 400 }}>{t.area}</span>
-                {i < typologies.length - 1 && <span style={{ color: 'rgba(31,32,34,0.15)', marginLeft: 4 }}>|</span>}
-              </div>
+          {/* Interior / Exterior tabs */}
+          <div style={{ display: 'flex', gap: 12 }}>
+            {groups.map((g, i) => (
+              <button key={g.name} onClick={() => switchGroup(i)}
+                style={{
+                  padding: isMobile ? '12px 32px' : '14px 40px',
+                  background: activeGroup === i ? C.ink : 'transparent',
+                  color: activeGroup === i ? C.bege : C.ink,
+                  border: activeGroup === i ? 'none' : '1px solid rgba(31,32,34,0.18)',
+                  borderRadius: 30, fontWeight: 500, fontSize: isMobile ? 14 : 15, letterSpacing: '0.06em',
+                  cursor: 'pointer', transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+                  fontFamily: '"General Sans", system-ui, sans-serif',
+                }}
+                onMouseEnter={e => { if (activeGroup !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.5)'; e.currentTarget.style.background = 'rgba(31,32,34,0.04)'; } }}
+                onMouseLeave={e => { if (activeGroup !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.18)'; e.currentTarget.style.background = 'transparent'; } }}>
+                {g.name}
+              </button>
             ))}
           </div>
-        )}
-      </div>
-    </div>
-  );
-}
+        </div>
 
-function Galleries({ project }) {
-  const isMobile = useIsMobile();
-  const sectionRef = useRef(null);
-  const titleRef = useRef(null);
-  const dividerRef = useRef(null);
-  const galleries = project.galleries;
-
-  if (!galleries) return null;
-  const interior = galleries.interior || [];
-  const exterior = galleries.exterior || [];
-  if (interior.length === 0 && exterior.length === 0) return null;
-
-  // GSAP — title enters first, divider grows between the two columns
-  useEffect(() => {
-    if (typeof gsap === 'undefined' || !sectionRef.current) return;
-    gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context(() => {
-      // Title — enters early, before columns
-      if (titleRef.current) {
-        gsap.fromTo(titleRef.current,
-          { opacity: 0, y: 50 },
-          { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
-            scrollTrigger: { trigger: sectionRef.current, start: 'top 88%', toggleActions: 'play none none none' }
-          }
-        );
-      }
-      // Divider line grows after Interior is visible
-      if (dividerRef.current) {
-        gsap.fromTo(dividerRef.current,
-          { scaleY: 0 },
-          { scaleY: 1, duration: 1.4, ease: 'power3.inOut',
-            scrollTrigger: { trigger: dividerRef.current, start: 'top 75%', toggleActions: 'play none none none' }
-          }
-        );
-      }
-    }, sectionRef.current);
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <section ref={sectionRef} style={{ background: C.bege, padding: isMobile ? '40px 24px 48px' : '60px 80px 60px', overflow: 'hidden' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-        <h2 ref={titleRef} style={{
-          fontWeight: 300, fontSize: isMobile ? 28 : 44, lineHeight: 1.2,
-          letterSpacing: '-0.02em', color: C.ink, margin: isMobile ? '0 0 32px' : '0 0 56px', opacity: 0,
+        {/* Full-width image */}
+        <div ref={imgWrapRef} style={{
+          position: 'relative', borderRadius: 12, overflow: 'hidden',
+          height: isMobile ? 320 : 600, background: C.grey,
+          clipPath: 'inset(0% 100% 0% 0%)',
         }}>
-          Galeria <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>do projeto</em>
-        </h2>
-        <div style={{
-          display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          gap: isMobile ? 40 : 0,
-          position: 'relative',
-        }}>
-          {interior.length > 0 && (
-            <div style={{ flex: 1, paddingRight: isMobile ? 0 : 36 }}>
-              <GalleryColumn title="Interior" categories={interior} side="interior" triggerStart="top 78%" typologies={project.typologies} />
+          <button style={arrowBtn('left')} onClick={() => navImg(-1)}
+            onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)'; e.currentTarget.style.background = '#fff'; }}
+            onMouseOut={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}>
+            <svg width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button style={arrowBtn('right')} onClick={() => navImg(1)}
+            onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)'; e.currentTarget.style.background = '#fff'; }}
+            onMouseOut={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}>
+            <svg width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+          {total > 1 && (
+            <div style={{
+              position: 'absolute', bottom: 20, right: 24, zIndex: 5,
+              background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+              borderRadius: 20, padding: '6px 16px', color: '#fff', fontSize: 12,
+              letterSpacing: '0.1em', fontFamily: '"General Sans", system-ui, sans-serif', fontWeight: 500,
+            }}>
+              {imgIdx + 1} / {total}
             </div>
           )}
-          {/* Vertical divider line */}
-          {!isMobile && interior.length > 0 && exterior.length > 0 && (
-            <div ref={dividerRef} style={{
-              width: 1, background: 'rgba(31,32,34,0.1)', alignSelf: 'stretch',
-              transformOrigin: 'top center', flexShrink: 0,
-            }} />
-          )}
-          {exterior.length > 0 && (
-            <div style={{ flex: 1, paddingLeft: isMobile ? 0 : 36 }}>
-              <GalleryColumn title="Exterior" categories={exterior} side="exterior" triggerStart={isMobile ? 'top 78%' : 'top 55%'} typologies={project.typologies} />
-            </div>
-          )}
+          <img
+            ref={imgRef}
+            src={images[imgIdx] || ''}
+            alt={groups[activeGroup] ? groups[activeGroup].name : ''}
+            onClick={openLb}
+            loading="lazy"
+            style={{
+              width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+              cursor: 'zoom-in', transition: 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)',
+              willChange: 'transform',
+            }}
+            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.03)'}
+            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+          />
         </div>
       </div>
     </section>
