@@ -671,12 +671,12 @@ function BrochureBox({ projectName }) {
     return (
       <div ref={boxRef} style={{
         flex: '0 0 auto',
-        width: isMobile ? '100%' : 360,
+        width: isMobile ? '100%' : 400,
         background: 'rgba(31,32,34,0.65)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderRadius: 14,
-        padding: '28px 26px',
+        padding: '32px 30px',
         marginTop: isMobile ? 28 : 0,
         textAlign: 'center',
       }}>
@@ -694,26 +694,26 @@ function BrochureBox({ projectName }) {
   return (
     <div ref={boxRef} style={{
       flex: '0 0 auto',
-      width: isMobile ? '100%' : 360,
+      width: isMobile ? '100%' : 400,
       background: 'rgba(31,32,34,0.65)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
       borderRadius: 14,
-      padding: isMobile ? '16px 16px' : '28px 26px',
+      padding: isMobile ? '18px 18px' : '32px 30px',
       marginTop: isMobile ? 16 : 0,
       opacity: isMobile ? 0 : 1,
     }}>
       <p style={{
-        fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase',
+        fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase',
         color: 'rgba(255,255,255,0.5)', fontWeight: 600, margin: '0 0 6px',
       }}>Brochura</p>
       <p style={{
-        fontSize: isMobile ? 14 : 17, fontWeight: 300, color: C.white, margin: isMobile ? '0 0 12px' : '0 0 18px', lineHeight: 1.3,
+        fontSize: isMobile ? 15 : 18, fontWeight: 300, color: C.white, margin: isMobile ? '0 0 14px' : '0 0 20px', lineHeight: 1.3,
       }}>
         Receba os detalhes do {projectName || 'projecto'}
       </p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 8 : 10 }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 8 : 12 }}>
         <input
           type="text" placeholder="Nome" required
           value={form.nome}
@@ -889,7 +889,7 @@ function ProjectHero({ project }) {
       `}</style>
     </section>
     {/* Spacer so content starts after hero */}
-    <div style={{ height: '85vh' }} />
+    <div style={{ height: '100vh' }} />
     </>
   );
 }
@@ -1023,7 +1023,7 @@ function ConceptRender({ project }) {
   return (
     <section ref={sectionRef} style={{
       background: C.bege,
-      padding: isMobile ? '64px 24px 56px' : '120px 80px 80px',
+      padding: isMobile ? '48px 24px 56px' : '80px 80px 80px',
     }}>
       <div style={{
         maxWidth: 1280, margin: '0 auto',
@@ -1175,14 +1175,15 @@ function Galleries({ project }) {
   const navImg = (dir) => {
     if (total <= 1 || !imgRef.current || typeof gsap === 'undefined') return;
     const next = ((imgIdx + dir) % total + total) % total;
+    // Smooth crossfade with subtle scale + blur
     gsap.to(imgRef.current, {
-      x: -dir * 60, opacity: 0, scale: 0.97, duration: 0.25, ease: 'power2.in',
+      opacity: 0, scale: 1.04, filter: 'blur(4px)', duration: 0.35, ease: 'power2.inOut',
       onComplete: () => {
         setImgIdx(next);
         requestAnimationFrame(() => {
           if (imgRef.current) gsap.fromTo(imgRef.current,
-            { x: dir * 60, opacity: 0, scale: 1.03 },
-            { x: 0, opacity: 1, scale: 1, duration: 0.4, ease: 'power3.out' }
+            { opacity: 0, scale: 0.98, filter: 'blur(4px)' },
+            { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' }
           );
         });
       },
