@@ -1113,8 +1113,8 @@ function Pillars() {
         opacity: 0,
       }}>
         <TreeMark opacity={1} style={{
-          filter: 'sepia(1) saturate(0.3) hue-rotate(60deg) brightness(0.92)',
-          opacity: 0.06,
+          filter: 'sepia(1) saturate(0.25) hue-rotate(60deg) brightness(0.95)',
+          opacity: 0.18,
         }} />
       </div>
 
