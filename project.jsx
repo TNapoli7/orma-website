@@ -1756,77 +1756,307 @@ function Typologies({ project }) {
 // ============================================================
 // 4b. Acabamentos — placeholder section
 // ============================================================
+// Acabamentos hotspot data — 2 rooms, 3 spots each
+const ACABAMENTOS_ROOMS = [
+  {
+    id: 'banho',
+    label: 'Casa de Banho',
+    image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1920&q=80',
+    spots: [
+      { id: 'torneira', x: 62, y: 35, label: 'Torneira', material: 'Aço Inoxidável Escovado', detail: 'Acabamento premium em aço inox escovado anti-manchas. Design minimalista com controlo de temperatura integrado.' },
+      { id: 'revestimento', x: 25, y: 55, label: 'Revestimento', material: 'Mármore Natural', detail: 'Revestimento em mármore Estremoz polido. Peça única com veios naturais que conferem exclusividade a cada unidade.' },
+      { id: 'louca', x: 78, y: 68, label: 'Louça Sanitária', material: 'Cerâmica Premium', detail: 'Louça sanitária suspensa com tecnologia rimless para fácil limpeza. Autoclismo embutido de dupla descarga.' },
+    ],
+  },
+  {
+    id: 'cozinha',
+    label: 'Cozinha',
+    image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80',
+    spots: [
+      { id: 'bancada', x: 50, y: 60, label: 'Bancada', material: 'Silestone / Dekton', detail: 'Bancada em Silestone ou Dekton com acabamento ultra-mate. Resistente a riscos, manchas e altas temperaturas.' },
+      { id: 'eletro', x: 22, y: 40, label: 'Electrodomésticos', material: 'Linha Premium', detail: 'Electrodomésticos de marca premium encastrados. Placa de indução, forno pirolítico e exaustor integrado.' },
+      { id: 'armarios', x: 80, y: 30, label: 'Armários', material: 'Lacado Mate', detail: 'Armários em MDF lacado mate com dobradiças de fecho suave. Interior em melamina com sistema de organização modular.' },
+    ],
+  },
+];
+
+function AcabamentosPanel({ spot, onClose }) {
+  if (!spot) return null;
+  return (
+    <div style={{
+      position: 'absolute', top: 0, right: 0, bottom: 0, width: '42%',
+      background: 'rgba(31,32,34,0.95)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+      borderLeft: '1px solid rgba(255,255,255,0.08)',
+      display: 'flex', flexDirection: 'column', padding: '48px 36px 36px',
+      zIndex: 20, overflow: 'auto',
+    }}>
+      <button onClick={onClose} style={{
+        position: 'absolute', top: 20, left: 20, width: 40, height: 40,
+        borderRadius: 4, border: '1px solid rgba(255,255,255,0.15)',
+        background: 'rgba(255,255,255,0.06)', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round">
+          <path d="M1 1l10 10M11 1L1 11"/>
+        </svg>
+      </button>
+
+      <div style={{
+        fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase',
+        background: C.terracota, color: '#fff', display: 'inline-block',
+        padding: '4px 10px', marginBottom: 16, alignSelf: 'flex-start',
+      }}>{spot.material}</div>
+
+      <h3 style={{
+        fontFamily: '"General Sans", system-ui, sans-serif', fontWeight: 400,
+        fontSize: 26, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 12px',
+      }}>{spot.label}</h3>
+
+      <div style={{ width: 40, height: 1, background: 'rgba(255,255,255,0.15)', margin: '0 0 16px' }} />
+
+      <p style={{
+        fontSize: 14, lineHeight: 1.7, color: 'rgba(255,255,255,0.7)',
+        fontFamily: '"General Sans", system-ui, sans-serif', margin: 0,
+      }}>{spot.detail}</p>
+    </div>
+  );
+}
+
 function Acabamentos() {
   const isMobile = useIsMobile();
-  const revealRef = useScrollReveal();
+  const sectionRef = useRef(null);
+  const titleRef = useRef(null);
+  const imgWrapRef = useRef(null);
+  const [activeRoom, setActiveRoom] = useState(0);
+  const [activeSpot, setActiveSpot] = useState(null);
 
-  const placeholders = [
-    { label: 'Pavimentos', icon: 'M3 21h18M3 3h18M3 12h18M9 3v18M15 3v18' },
-    { label: 'Cozinha', icon: 'M3 6h18v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6zM3 6V4a1 1 0 011-1h16a1 1 0 011 1v2M10 10h4' },
-    { label: 'Casas de Banho', icon: 'M4 12h16M4 12a2 2 0 00-2 2v2a2 2 0 002 2h16a2 2 0 002-2v-2a2 2 0 00-2-2M6 12V6a2 2 0 012-2h1a2 2 0 012 2v6' },
-    { label: 'Carpintarias', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
-  ];
+  const room = ACABAMENTOS_ROOMS[activeRoom];
+  const spots = room.spots;
+  const currentSpot = spots.find(s => s.id === activeSpot) || null;
+
+  // GSAP entrance
+  useEffect(() => {
+    if (typeof gsap === 'undefined' || !sectionRef.current) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      if (titleRef.current) {
+        gsap.fromTo(titleRef.current,
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+            scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+      if (imgWrapRef.current) {
+        gsap.fromTo(imgWrapRef.current,
+          { opacity: 0, y: 30, scale: 0.98 },
+          { opacity: 1, y: 0, scale: 1, duration: 1.0, ease: 'power3.out',
+            scrollTrigger: { trigger: imgWrapRef.current, start: 'top 80%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+    }, sectionRef.current);
+    return () => ctx.revert();
+  }, []);
+
+  // Switch room
+  const switchRoom = (i) => {
+    if (i === activeRoom) return;
+    setActiveSpot(null);
+    if (imgWrapRef.current && typeof gsap !== 'undefined') {
+      gsap.to(imgWrapRef.current, {
+        opacity: 0, scale: 0.98, filter: 'blur(4px)', duration: 0.3, ease: 'power2.in',
+        onComplete: () => {
+          setActiveRoom(i);
+          requestAnimationFrame(() => {
+            if (imgWrapRef.current) gsap.fromTo(imgWrapRef.current,
+              { opacity: 0, scale: 0.98, filter: 'blur(4px)' },
+              { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' }
+            );
+          });
+        },
+      });
+    } else {
+      setActiveRoom(i);
+    }
+  };
+
+  // Mobile panel via portal
+  const mobilePanel = isMobile && currentSpot && ReactDOM.createPortal(
+    <div style={{
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99999,
+      background: 'rgba(31,32,34,0.96)', backdropFilter: 'blur(20px)',
+      display: 'flex', flexDirection: 'column', padding: '60px 24px 40px',
+      overflow: 'auto',
+    }}>
+      <button onClick={() => setActiveSpot(null)} style={{
+        position: 'absolute', top: 16, right: 16, width: 40, height: 40,
+        borderRadius: 4, border: '1px solid rgba(255,255,255,0.15)',
+        background: 'rgba(255,255,255,0.06)', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round">
+          <path d="M1 1l10 10M11 1L1 11"/>
+        </svg>
+      </button>
+      <div style={{
+        fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase',
+        background: C.terracota, color: '#fff', display: 'inline-block',
+        padding: '4px 10px', marginBottom: 16, alignSelf: 'flex-start',
+      }}>{currentSpot.material}</div>
+      <h3 style={{ fontFamily: '"General Sans", system-ui, sans-serif', fontWeight: 400, fontSize: 24, color: '#fff', margin: '0 0 12px' }}>{currentSpot.label}</h3>
+      <div style={{ width: 40, height: 1, background: 'rgba(255,255,255,0.15)', margin: '0 0 16px' }} />
+      <p style={{ fontSize: 14, lineHeight: 1.7, color: 'rgba(255,255,255,0.7)', fontFamily: '"General Sans", system-ui, sans-serif', margin: 0 }}>{currentSpot.detail}</p>
+    </div>,
+    document.body
+  );
 
   return (
-    <section style={{ background: C.bege, padding: isMobile ? '40px 24px 80px' : '60px 80px 100px' }}>
-      <div ref={revealRef} style={{ maxWidth: 1200, margin: '0 auto', willChange: 'opacity, transform' }}>
-        <div style={{ fontSize: 12, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
-          Acabamentos
+    <section ref={sectionRef} style={{ background: C.bege, padding: isMobile ? '40px 24px 80px' : '60px 80px 100px' }}>
+      {mobilePanel}
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        {/* Header + tabs */}
+        <div ref={titleRef} style={{ opacity: 0, marginBottom: isMobile ? 24 : 40 }}>
+          <div style={{ fontSize: 12, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
+            Acabamentos
+          </div>
+          <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 24px' }}>
+            Detalhes que fazem <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>a diferença.</em>
+          </h2>
+          <div style={{ display: 'flex', gap: 12 }}>
+            {ACABAMENTOS_ROOMS.map((r, i) => (
+              <button key={r.id} onClick={() => switchRoom(i)}
+                style={{
+                  padding: isMobile ? '12px 28px' : '14px 36px',
+                  background: activeRoom === i ? C.ink : 'transparent',
+                  color: activeRoom === i ? C.bege : C.ink,
+                  border: activeRoom === i ? 'none' : '1px solid rgba(31,32,34,0.18)',
+                  borderRadius: 30, fontWeight: 500, fontSize: isMobile ? 13 : 14, letterSpacing: '0.06em',
+                  cursor: 'pointer', transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+                  fontFamily: '"General Sans", system-ui, sans-serif',
+                }}
+                onMouseEnter={e => { if (activeRoom !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.5)'; e.currentTarget.style.background = 'rgba(31,32,34,0.04)'; } }}
+                onMouseLeave={e => { if (activeRoom !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.18)'; e.currentTarget.style.background = 'transparent'; } }}>
+                {r.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 48px' }}>
-          Detalhes que fazem <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>a diferença.</em>
-        </h2>
+
+        {/* Interactive image with hotspots */}
+        <div ref={imgWrapRef} style={{
+          position: 'relative', width: '100%', borderRadius: 12, overflow: 'hidden',
+          aspectRatio: isMobile ? '4/3' : '16/9', background: C.grey, opacity: 0,
+        }}>
+          <img
+            src={room.image} alt={room.label} loading="lazy"
+            style={{
+              position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+              filter: currentSpot && !isMobile ? 'brightness(0.6)' : 'brightness(1)',
+              transform: currentSpot && !isMobile ? 'scale(1.02)' : 'scale(1)',
+              transition: 'filter 0.5s ease, transform 0.7s ease',
+            }}
+          />
+          {/* Vignette */}
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: 'radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%)',
+          }} />
+
+          {/* Hotspot dots */}
+          {spots.map(spot => (
+            <button key={spot.id}
+              onClick={() => setActiveSpot(activeSpot === spot.id ? null : spot.id)}
+              style={{
+                position: 'absolute',
+                left: spot.x + '%', top: spot.y + '%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 10, minWidth: 44, minHeight: 44,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+              }}
+              aria-label={spot.label}
+            >
+              <span style={{ position: 'relative', display: 'block' }}>
+                {/* Pulse ring */}
+                <span style={{
+                  position: 'absolute',
+                  width: activeSpot === spot.id ? 36 : 22,
+                  height: activeSpot === spot.id ? 36 : 22,
+                  top: '50%', left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  borderRadius: '50%',
+                  background: 'rgba(151,67,21,0.25)',
+                  border: '1px solid rgba(151,67,21,0.5)',
+                  animation: activeSpot === spot.id ? 'none' : 'acabPulse 2s infinite',
+                  transition: 'all 0.3s ease',
+                }} />
+                {/* Center dot */}
+                <span style={{
+                  display: 'block', borderRadius: '50%',
+                  background: C.terracota,
+                  width: activeSpot === spot.id ? 16 : 10,
+                  height: activeSpot === spot.id ? 16 : 10,
+                  boxShadow: '0 0 12px rgba(151,67,21,0.6), 0 0 0 2px rgba(255,255,255,0.3)',
+                  transition: 'all 0.3s ease',
+                }} />
+              </span>
+            </button>
+          ))}
+
+          {/* Desktop detail panel (inside image) */}
+          {!isMobile && (
+            <div style={{
+              position: 'absolute', top: 0, right: 0, bottom: 0, width: '42%',
+              transform: currentSpot ? 'translateX(0)' : 'translateX(100%)',
+              opacity: currentSpot ? 1 : 0,
+              transition: 'transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease',
+              pointerEvents: currentSpot ? 'auto' : 'none',
+            }}>
+              <AcabamentosPanel spot={currentSpot} onClose={() => setActiveSpot(null)} />
+            </div>
+          )}
+        </div>
+
+        {/* Spot labels below image */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
-          gap: isMobile ? 16 : 24,
+          gridTemplateColumns: isMobile ? '1fr 1fr 1fr' : 'repeat(3, 1fr)',
+          gap: 1, marginTop: 2,
         }}>
-          {placeholders.map((p) => (
-            <div key={p.label} style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-              {/* Card */}
-              <div style={{
-                background: C.grey,
-                borderRadius: '12px 12px 0 0',
-                padding: isMobile ? '28px 20px' : '40px 28px',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                gap: 14,
-                border: '1px dashed rgba(31,32,34,0.1)',
-                borderBottom: 'none',
+          {spots.map(spot => (
+            <button key={spot.id}
+              onClick={() => setActiveSpot(activeSpot === spot.id ? null : spot.id)}
+              style={{
+                textAlign: 'left', padding: isMobile ? '12px 10px' : '16px 20px',
+                background: activeSpot === spot.id ? 'rgba(151,67,21,0.08)' : 'rgba(31,32,34,0.02)',
+                borderBottom: activeSpot === spot.id ? '2px solid ' + C.terracota : '2px solid rgba(31,32,34,0.06)',
+                border: 'none', borderBottomWidth: 2, borderBottomStyle: 'solid',
+                borderBottomColor: activeSpot === spot.id ? C.terracota : 'rgba(31,32,34,0.06)',
+                cursor: 'pointer', transition: 'all 0.3s',
+                fontFamily: '"General Sans", system-ui, sans-serif',
               }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C.clearGreen} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d={p.icon} />
-                </svg>
-                <span style={{ fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(31,32,34,0.4)' }}>
-                  {p.label}
-                </span>
-                <span style={{ fontSize: 11, letterSpacing: '0.06em', color: 'rgba(31,32,34,0.25)', fontStyle: 'italic' }}>
-                  Em breve
-                </span>
-              </div>
-              {/* Placeholder image */}
-              <div style={{
-                width: '100%',
-                height: isMobile ? 140 : 200,
-                borderRadius: '0 0 12px 12px',
-                background: 'linear-gradient(135deg, rgba(31,32,34,0.04) 0%, rgba(31,32,34,0.08) 100%)',
-                border: '1px dashed rgba(31,32,34,0.1)',
-                borderTop: 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                overflow: 'hidden',
-              }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, opacity: 0.3 }}>
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={C.clearGreen} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <polyline points="21 15 16 10 5 21" />
-                  </svg>
-                  <span style={{ fontSize: 10, letterSpacing: '0.1em', color: 'rgba(31,32,34,0.25)', fontStyle: 'italic' }}>Imagem em breve</span>
-                </div>
-              </div>
-            </div>
+              <span style={{
+                display: 'block', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase',
+                marginBottom: 2, transition: 'color 0.3s',
+                color: activeSpot === spot.id ? C.terracota : 'rgba(31,32,34,0.4)',
+              }}>{spot.material}</span>
+              <span style={{
+                display: 'block', fontSize: isMobile ? 12 : 14, fontWeight: 500,
+                transition: 'color 0.3s',
+                color: activeSpot === spot.id ? C.ink : 'rgba(31,32,34,0.65)',
+              }}>{spot.label}</span>
+            </button>
           ))}
         </div>
       </div>
+
+      <style>{`
+        @keyframes acabPulse {
+          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+          50% { transform: translate(-50%, -50%) scale(1.6); opacity: 0.3; }
+        }
+      `}</style>
     </section>
   );
 }
