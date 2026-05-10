@@ -1058,37 +1058,23 @@ function Pillars() {
 
     // Background tree — parallax scroll
     const bgTree = bgTreeRef.current;
-    if (bgTree && !isMobile) {
+    if (bgTree) {
+      const yStart = isMobile ? -10 : -20;
+      const yEnd = isMobile ? 10 : 20;
       const treeTween = gsap.fromTo(bgTree,
-        { yPercent: -15, opacity: 0 },
+        { yPercent: yStart },
         {
-          yPercent: 15, opacity: 1,
+          yPercent: yEnd,
           ease: 'none',
           scrollTrigger: {
             trigger: section,
-            start: 'top 80%',
-            end: 'bottom 20%',
+            start: 'top bottom',
+            end: 'bottom top',
             scrub: 0.8,
           },
         }
       );
       triggers.push(treeTween.scrollTrigger);
-    }
-    if (bgTree && isMobile) {
-      const treeTweenMob = gsap.fromTo(bgTree,
-        { yPercent: -10, opacity: 0 },
-        {
-          yPercent: 10, opacity: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 90%',
-            end: 'bottom 10%',
-            scrub: 0.8,
-          },
-        }
-      );
-      triggers.push(treeTweenMob.scrollTrigger);
     }
 
     return () => triggers.forEach(t => t && t.kill());
@@ -1102,20 +1088,23 @@ function Pillars() {
       overflow: 'hidden',
     }}>
       {/* Background tree — large, centered, parallax */}
-      <div ref={bgTreeRef} style={{
+      <div style={{
         position: 'absolute',
-        top: '50%', left: '50%',
-        width: isMobile ? 400 : 700,
-        height: isMobile ? 400 : 700,
-        transform: 'translate(-50%, -50%)',
+        top: 0, left: 0, right: 0, bottom: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
         pointerEvents: 'none',
         zIndex: 0,
-        opacity: 0,
+        overflow: 'hidden',
       }}>
-        <TreeMark opacity={1} style={{
-          filter: 'sepia(1) saturate(0.25) hue-rotate(60deg) brightness(0.95)',
-          opacity: 0.18,
-        }} />
+        <div ref={bgTreeRef} style={{
+          width: isMobile ? 400 : 700,
+          height: isMobile ? 400 : 700,
+          flexShrink: 0,
+        }}>
+          <TreeMark opacity={0.18} style={{
+            filter: 'sepia(1) saturate(0.25) hue-rotate(60deg) brightness(0.95)',
+          }} />
+        </div>
       </div>
 
       {/* Section heading — WordReveal */}
