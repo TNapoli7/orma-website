@@ -1101,8 +1101,8 @@ function Pillars() {
           height: isMobile ? 760 : 1520,
           flexShrink: 0,
         }}>
-          <TreeMark opacity={0.91} style={{
-            filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.30) blur(1.5px)',
+          <TreeMark opacity={0.82} style={{
+            filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.33) blur(1.5px)',
             imageRendering: 'auto',
           }} />
         </div>
