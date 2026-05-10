@@ -1787,7 +1787,8 @@ function AcabamentosPanel({ spot, onClose }) {
       position: 'absolute', top: 0, right: 0, bottom: 0, width: '42%',
       background: 'rgba(31,32,34,0.95)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
       borderLeft: '1px solid rgba(255,255,255,0.08)',
-      display: 'flex', flexDirection: 'column', padding: '32px 36px 36px',
+      display: 'flex', flexDirection: 'column', justifyContent: 'center',
+      padding: '32px 40px 36px',
       zIndex: 20, overflow: 'auto',
     }}>
       <button onClick={onClose} style={{
@@ -1795,29 +1796,34 @@ function AcabamentosPanel({ spot, onClose }) {
         borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)',
         background: 'rgba(255,255,255,0.06)', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
+        transition: 'background 0.25s ease, border-color 0.25s ease',
+      }}
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.14)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; }}
+      >
         <svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round">
           <path d="M1 1l10 10M11 1L1 11"/>
         </svg>
       </button>
 
-      <div style={{ marginTop: 40 }}>
+      <div>
         <div style={{
           fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase',
           background: C.terracota, color: '#fff', display: 'inline-block',
-          padding: '5px 12px', marginBottom: 16,
+          padding: '5px 14px', marginBottom: 18, borderRadius: 4,
         }}>{spot.material}</div>
 
         <h3 style={{
           fontFamily: '"General Sans", system-ui, sans-serif', fontWeight: 400,
-          fontSize: 26, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 12px',
+          fontSize: 26, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 14px',
         }}>{spot.label}</h3>
 
-        <div style={{ width: 40, height: 1, background: 'rgba(255,255,255,0.15)', margin: '0 0 16px' }} />
+        <div style={{ width: 40, height: 1, background: 'rgba(255,255,255,0.15)', margin: '0 0 18px' }} />
 
         <p style={{
-          fontSize: 14, lineHeight: 1.8, color: 'rgba(255,255,255,0.75)',
+          fontSize: 14, lineHeight: 1.85, color: 'rgba(255,255,255,0.75)',
           fontFamily: '"General Sans", system-ui, sans-serif', margin: 0,
+          textWrap: 'pretty',
         }}>{spot.detail}</p>
       </div>
     </div>
@@ -1829,12 +1835,46 @@ function Acabamentos() {
   const sectionRef = useRef(null);
   const titleRef = useRef(null);
   const imgWrapRef = useRef(null);
+  const containerRef = useRef(null);
+  const cursorRef = useRef(null);
   const [activeRoom, setActiveRoom] = useState(0);
   const [activeSpot, setActiveSpot] = useState(null);
+  const [hoveredSpot, setHoveredSpot] = useState(null);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [cursorVisible, setCursorVisible] = useState(false);
+  const rafCursorRef = useRef(null);
+  const targetCursorRef = useRef({ x: 0, y: 0 });
+  const currentCursorRef = useRef({ x: 0, y: 0 });
 
   const room = ACABAMENTOS_ROOMS[activeRoom];
   const spots = room.spots;
   const currentSpot = spots.find(s => s.id === activeSpot) || null;
+  const isOpen = !!currentSpot;
+
+  // Smooth cursor follow with lerp (desktop only)
+  useEffect(() => {
+    if (isMobile) return;
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const animate = () => {
+      currentCursorRef.current.x = lerp(currentCursorRef.current.x, targetCursorRef.current.x, 0.15);
+      currentCursorRef.current.y = lerp(currentCursorRef.current.y, targetCursorRef.current.y, 0.15);
+      setCursorPos({ x: currentCursorRef.current.x, y: currentCursorRef.current.y });
+      rafCursorRef.current = requestAnimationFrame(animate);
+    };
+    rafCursorRef.current = requestAnimationFrame(animate);
+    return () => { if (rafCursorRef.current) cancelAnimationFrame(rafCursorRef.current); };
+  }, [isMobile]);
+
+  const handleMouseMove = (e) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    targetCursorRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  };
+  const handleMouseEnter = () => { if (!isMobile) setCursorVisible(true); };
+  const handleMouseLeave = () => { setCursorVisible(false); setHoveredSpot(null); };
+
+  const cursorText = hoveredSpot ? hoveredSpot : 'Explore';
+  const cursorSize = hoveredSpot ? 90 : 70;
 
   // GSAP entrance
   useEffect(() => {
@@ -1860,6 +1900,14 @@ function Acabamentos() {
     }, sectionRef.current);
     return () => ctx.revert();
   }, []);
+
+  // Lock body scroll on mobile when panel is open
+  useEffect(() => {
+    if (isMobile && isOpen) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+  }, [isMobile, isOpen]);
 
   // Switch room
   const switchRoom = (i) => {
@@ -1897,6 +1945,7 @@ function Acabamentos() {
         borderRadius: 8, border: '1px solid rgba(255,255,255,0.18)',
         background: 'rgba(255,255,255,0.08)', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'background 0.25s ease',
       }}>
         <svg width="18" height="18" viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round">
           <path d="M1 1l10 10M11 1L1 11"/>
@@ -1906,10 +1955,11 @@ function Acabamentos() {
         fontSize: 11, letterSpacing: '0.25em', textTransform: 'uppercase',
         background: C.terracota, color: '#fff', display: 'inline-block',
         padding: '6px 14px', marginBottom: 20, alignSelf: 'flex-start',
+        borderRadius: 4,
       }}>{currentSpot.material}</div>
       <h3 style={{ fontFamily: '"General Sans", system-ui, sans-serif', fontWeight: 400, fontSize: 28, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 16px' }}>{currentSpot.label}</h3>
       <div style={{ width: 40, height: 1, background: 'rgba(255,255,255,0.18)', margin: '0 0 20px' }} />
-      <p style={{ fontSize: 15, lineHeight: 1.8, color: 'rgba(255,255,255,0.75)', fontFamily: '"General Sans", system-ui, sans-serif', margin: 0 }}>{currentSpot.detail}</p>
+      <p style={{ fontSize: 15, lineHeight: 1.85, color: 'rgba(255,255,255,0.75)', fontFamily: '"General Sans", system-ui, sans-serif', margin: 0, textWrap: 'pretty' }}>{currentSpot.detail}</p>
     </div>,
     document.body
   );
@@ -1951,77 +2001,120 @@ function Acabamentos() {
           position: 'relative', width: '100%', borderRadius: 12, overflow: 'hidden',
           aspectRatio: isMobile ? '4/3' : '16/9', background: C.grey, opacity: 0,
         }}>
-          <img
-            src={room.image} alt={room.label} loading="lazy"
-            style={{
-              position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
-              filter: currentSpot && !isMobile ? 'brightness(0.6)' : 'brightness(1)',
-              transform: currentSpot && !isMobile ? 'scale(1.02)' : 'scale(1)',
-              transition: 'filter 0.5s ease, transform 0.7s ease',
-            }}
-          />
-          {/* Vignette */}
-          <div style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%)',
-          }} />
-
-          {/* Hotspot dots */}
-          {spots.map(spot => {
-            const isActive = activeSpot === spot.id;
-            const dotSize = isActive ? 18 : (isMobile ? 14 : 12);
-            const ringSize = isActive ? 40 : (isMobile ? 30 : 26);
-            return (
-            <button key={spot.id}
-              onClick={() => setActiveSpot(isActive ? null : spot.id)}
-              style={{
-                position: 'absolute',
-                left: spot.x + '%', top: spot.y + '%',
-                transform: 'translate(-50%, -50%)',
-                zIndex: 10, minWidth: 48, minHeight: 48,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-              }}
-              aria-label={spot.label}
-            >
-              <span style={{ position: 'relative', display: 'block' }}>
-                {/* Pulse ring */}
-                <span style={{
-                  position: 'absolute',
-                  width: ringSize, height: ringSize,
-                  top: '50%', left: '50%',
-                  transform: 'translate(-50%, -50%)',
+          <div
+            ref={containerRef}
+            style={{ position: 'absolute', inset: 0, cursor: (cursorVisible && !isOpen && !isMobile) ? 'none' : 'auto' }}
+            onMouseMove={!isMobile ? handleMouseMove : undefined}
+            onMouseEnter={!isMobile ? handleMouseEnter : undefined}
+            onMouseLeave={!isMobile ? handleMouseLeave : undefined}
+          >
+            {/* Custom "Explore" cursor — desktop only */}
+            {!isMobile && (
+              <div
+                ref={cursorRef}
+                style={{
+                  position: 'absolute', pointerEvents: 'none', zIndex: 30,
+                  left: cursorPos.x, top: cursorPos.y,
+                  width: cursorSize, height: cursorSize,
+                  marginLeft: -(cursorSize / 2), marginTop: -(cursorSize / 2),
                   borderRadius: '50%',
-                  background: 'rgba(151,67,21,0.25)',
-                  border: '1.5px solid rgba(151,67,21,0.5)',
-                  animation: isActive ? 'none' : 'acabPulse 2s infinite',
-                  transition: 'all 0.3s ease',
-                }} />
-                {/* Center dot */}
+                  border: '1px solid rgba(151,67,21,0.6)',
+                  background: 'rgba(151,67,21,0.08)',
+                  backdropFilter: 'blur(2px)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  opacity: cursorVisible && !isOpen ? 1 : 0,
+                  transform: cursorVisible && !isOpen ? 'scale(1)' : 'scale(0.5)',
+                  transition: 'opacity 0.3s ease, transform 0.35s cubic-bezier(0.4,0,0.2,1), width 0.3s ease, height 0.3s ease, margin 0.3s ease',
+                }}
+              >
                 <span style={{
-                  display: 'block', borderRadius: '50%',
-                  background: C.terracota,
-                  width: dotSize, height: dotSize,
-                  boxShadow: '0 0 14px rgba(151,67,21,0.6), 0 0 0 3px rgba(255,255,255,0.4)',
-                  transition: 'all 0.3s ease',
-                }} />
-              </span>
-            </button>
-            );
-          })}
+                  fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.9)', fontFamily: '"General Sans", system-ui, sans-serif',
+                  fontWeight: 600, userSelect: 'none', textAlign: 'center', lineHeight: 1.3,
+                  maxWidth: 60,
+                }}>{cursorText}</span>
+              </div>
+            )}
 
-          {/* Desktop detail panel (inside image) */}
-          {!isMobile && (
+            <img
+              src={room.image} alt={room.label} loading="lazy"
+              style={{
+                position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+                filter: isOpen && !isMobile ? 'brightness(0.6)' : 'brightness(1)',
+                transform: isOpen && !isMobile ? 'scale(1.02)' : 'scale(1)',
+                transition: 'filter 0.5s ease, transform 0.7s ease',
+              }}
+            />
+            {/* Vignette */}
             <div style={{
-              position: 'absolute', top: 0, right: 0, bottom: 0, width: '42%',
-              transform: currentSpot ? 'translateX(0)' : 'translateX(100%)',
-              opacity: currentSpot ? 1 : 0,
-              transition: 'transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease',
-              pointerEvents: currentSpot ? 'auto' : 'none',
-            }}>
-              <AcabamentosPanel spot={currentSpot} onClose={() => setActiveSpot(null)} />
-            </div>
-          )}
+              position: 'absolute', inset: 0, pointerEvents: 'none',
+              background: 'radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%)',
+            }} />
+
+            {/* Hotspot dots — 30% bigger */}
+            {spots.map(spot => {
+              const isActive = activeSpot === spot.id;
+              const isHovered = hoveredSpot === spot.label;
+              const dotSize = isActive ? 22 : (isHovered ? 20 : (isMobile ? 18 : 16));
+              const ringSize = isActive ? 48 : (isHovered ? 42 : (isMobile ? 38 : 34));
+              return (
+              <button key={spot.id}
+                onClick={() => setActiveSpot(isActive ? null : spot.id)}
+                onMouseEnter={() => !isMobile && setHoveredSpot(spot.label)}
+                onMouseLeave={() => !isMobile && setHoveredSpot(null)}
+                style={{
+                  position: 'absolute',
+                  left: spot.x + '%', top: spot.y + '%',
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 10, minWidth: 52, minHeight: 52,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'none', border: 'none',
+                  cursor: (cursorVisible && !isMobile) ? 'none' : 'pointer',
+                  padding: 0,
+                }}
+                aria-label={spot.label}
+              >
+                <span style={{ position: 'relative', display: 'block' }}>
+                  {/* Pulse ring */}
+                  <span style={{
+                    position: 'absolute',
+                    width: ringSize, height: ringSize,
+                    top: '50%', left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    borderRadius: '50%',
+                    background: isHovered ? 'rgba(151,67,21,0.35)' : 'rgba(151,67,21,0.25)',
+                    border: '1.5px solid rgba(151,67,21,0.5)',
+                    animation: (isActive || isHovered) ? 'none' : 'acabPulse 2s infinite',
+                    transition: 'all 0.3s ease',
+                  }} />
+                  {/* Center dot */}
+                  <span style={{
+                    display: 'block', borderRadius: '50%',
+                    background: C.terracota,
+                    width: dotSize, height: dotSize,
+                    boxShadow: isHovered
+                      ? '0 0 20px rgba(151,67,21,0.8), 0 0 0 3px rgba(255,255,255,0.4)'
+                      : '0 0 14px rgba(151,67,21,0.6), 0 0 0 3px rgba(255,255,255,0.35)',
+                    transition: 'all 0.3s ease',
+                  }} />
+                </span>
+              </button>
+              );
+            })}
+
+            {/* Desktop detail panel (inside image) */}
+            {!isMobile && (
+              <div style={{
+                position: 'absolute', top: 0, right: 0, bottom: 0, width: '42%',
+                transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
+                opacity: isOpen ? 1 : 0,
+                transition: 'transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease',
+                pointerEvents: isOpen ? 'auto' : 'none',
+              }}>
+                <AcabamentosPanel spot={currentSpot} onClose={() => setActiveSpot(null)} />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Spot labels below image */}
@@ -2043,17 +2136,18 @@ function Acabamentos() {
                 borderBottomColor: isActive ? C.terracota : 'rgba(31,32,34,0.06)',
                 cursor: 'pointer', transition: 'all 0.3s',
                 fontFamily: '"General Sans", system-ui, sans-serif',
-                display: 'flex', alignItems: 'center', gap: isMobile ? 12 : 0,
+                display: 'flex', alignItems: isMobile ? 'baseline' : 'flex-start',
+                gap: isMobile ? 10 : 0,
                 flexDirection: isMobile ? 'row' : 'column',
               }}>
               <span style={{
-                display: 'block', fontSize: isMobile ? 9 : 10, letterSpacing: '0.2em', textTransform: 'uppercase',
+                fontSize: isMobile ? 9 : 10, letterSpacing: '0.2em', textTransform: 'uppercase',
                 marginBottom: isMobile ? 0 : 4, transition: 'color 0.3s',
                 color: isActive ? C.terracota : 'rgba(31,32,34,0.4)',
-                whiteSpace: 'nowrap',
+                whiteSpace: 'nowrap', flexShrink: 0,
               }}>{spot.material}</span>
               <span style={{
-                display: 'block', fontSize: isMobile ? 14 : 15, fontWeight: 500,
+                fontSize: isMobile ? 14 : 15, fontWeight: 500,
                 transition: 'color 0.3s',
                 color: isActive ? C.ink : 'rgba(31,32,34,0.65)',
               }}>{spot.label}</span>
