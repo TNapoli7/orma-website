@@ -1970,12 +1970,9 @@ function Acabamentos() {
 
   return (
     <section ref={sectionRef} style={{
-      background: '#3A3632',
-      padding: isMobile ? '48px 24px 80px' : '80px 80px 100px',
+      background: 'linear-gradient(to bottom, ' + C.bege + ' 0%, #D5CCBE 35%, #C4BAA9 70%, #B0A594 100%)',
+      padding: isMobile ? '40px 24px 80px' : '60px 80px 100px',
       position: 'relative',
-      borderRadius: isMobile ? '20px 20px 0 0' : '24px 24px 0 0',
-      marginTop: isMobile ? -20 : -24,
-      boxShadow: '0 -8px 40px rgba(0,0,0,0.12)',
     }}>
       {mobilePanel}
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -1984,7 +1981,7 @@ function Acabamentos() {
           <div style={{ fontSize: 12, letterSpacing: '0.3em', color: C.terracota, textTransform: 'uppercase', fontWeight: 600, marginBottom: 16 }}>
             Acabamentos
           </div>
-          <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.bege, margin: '0 0 24px' }}>
+          <h2 style={{ fontWeight: 300, fontSize: isMobile ? 28 : 40, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 24px' }}>
             Detalhes que fazem <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>a diferença.</em>
           </h2>
           <div style={{ display: 'flex', gap: 12 }}>
@@ -1992,15 +1989,15 @@ function Acabamentos() {
               <button key={r.id} onClick={() => switchRoom(i)}
                 style={{
                   padding: isMobile ? '12px 28px' : '14px 36px',
-                  background: activeRoom === i ? C.bege : 'transparent',
-                  color: activeRoom === i ? C.ink : C.bege,
-                  border: activeRoom === i ? 'none' : '1px solid rgba(238,232,218,0.2)',
+                  background: activeRoom === i ? C.ink : 'transparent',
+                  color: activeRoom === i ? C.bege : C.ink,
+                  border: activeRoom === i ? 'none' : '1px solid rgba(31,32,34,0.18)',
                   borderRadius: 30, fontWeight: 500, fontSize: isMobile ? 13 : 14, letterSpacing: '0.06em',
                   cursor: 'pointer', transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
                   fontFamily: '"General Sans", system-ui, sans-serif',
                 }}
-                onMouseEnter={e => { if (activeRoom !== i) { e.currentTarget.style.borderColor = 'rgba(238,232,218,0.45)'; e.currentTarget.style.background = 'rgba(238,232,218,0.06)'; } }}
-                onMouseLeave={e => { if (activeRoom !== i) { e.currentTarget.style.borderColor = 'rgba(238,232,218,0.2)'; e.currentTarget.style.background = 'transparent'; } }}>
+                onMouseEnter={e => { if (activeRoom !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.5)'; e.currentTarget.style.background = 'rgba(31,32,34,0.04)'; } }}
+                onMouseLeave={e => { if (activeRoom !== i) { e.currentTarget.style.borderColor = 'rgba(31,32,34,0.18)'; e.currentTarget.style.background = 'transparent'; } }}>
                 {r.label}
               </button>
             ))}
@@ -2010,7 +2007,7 @@ function Acabamentos() {
         {/* Interactive image with hotspots */}
         <div ref={imgWrapRef} style={{
           position: 'relative', width: '100%', borderRadius: 12, overflow: 'hidden',
-          aspectRatio: isMobile ? '4/3' : '16/9', background: 'rgba(0,0,0,0.3)', opacity: 0,
+          aspectRatio: isMobile ? '4/3' : '16/9', background: C.grey, opacity: 0,
         }}>
           <div
             ref={containerRef}
@@ -2142,10 +2139,10 @@ function Acabamentos() {
               onClick={() => setActiveSpot(isActive ? null : spot.id)}
               style={{
                 textAlign: 'left', padding: '16px 16px',
-                background: isActive ? 'rgba(151,67,21,0.12)' : 'rgba(238,232,218,0.03)',
+                background: isActive ? 'rgba(151,67,21,0.08)' : 'rgba(31,32,34,0.02)',
                 border: 'none',
                 borderBottom: '2px solid',
-                borderBottomColor: isActive ? C.terracota : 'rgba(238,232,218,0.1)',
+                borderBottomColor: isActive ? C.terracota : 'rgba(31,32,34,0.06)',
                 cursor: 'pointer', transition: 'all 0.3s',
                 fontFamily: '"General Sans", system-ui, sans-serif',
                 display: 'flex', alignItems: 'baseline',
@@ -2155,13 +2152,13 @@ function Acabamentos() {
               <span style={{
                 fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase',
                 transition: 'color 0.3s',
-                color: isActive ? C.terracota : 'rgba(238,232,218,0.45)',
+                color: isActive ? C.terracota : 'rgba(31,32,34,0.4)',
                 whiteSpace: 'nowrap', flexShrink: 0,
               }}>{spot.material}</span>
               <span style={{
                 fontSize: 14, fontWeight: 500,
                 transition: 'color 0.3s',
-                color: isActive ? C.bege : 'rgba(238,232,218,0.7)',
+                color: isActive ? C.ink : 'rgba(31,32,34,0.65)',
               }}>{spot.label}</span>
             </button>
             );
