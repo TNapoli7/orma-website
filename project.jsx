@@ -1969,7 +1969,14 @@ function Acabamentos() {
   );
 
   return (
-    <section ref={sectionRef} style={{ background: C.ink, padding: isMobile ? '40px 24px 80px' : '60px 80px 100px' }}>
+    <section ref={sectionRef} style={{ background: '#3A3632', padding: isMobile ? '40px 24px 80px' : '60px 80px 100px', position: 'relative' }}>
+      {/* Gradient transition from bege to dark */}
+      <div style={{
+        position: 'absolute', top: isMobile ? -80 : -120, left: 0, right: 0,
+        height: isMobile ? 80 : 120,
+        background: 'linear-gradient(to bottom, ' + C.bege + ', #3A3632)',
+        pointerEvents: 'none',
+      }} />
       {mobilePanel}
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         {/* Header + tabs */}
@@ -2162,6 +2169,14 @@ function Acabamentos() {
         </div>
         )}
       </div>
+
+      {/* Gradient transition out to next section */}
+      <div style={{
+        position: 'absolute', bottom: isMobile ? -80 : -120, left: 0, right: 0,
+        height: isMobile ? 80 : 120,
+        background: 'linear-gradient(to bottom, #3A3632, ' + C.bege + ')',
+        pointerEvents: 'none',
+      }} />
 
       <style>{`
         @keyframes acabPulse {
@@ -2613,7 +2628,7 @@ function ProjectPage() {
       <ProjectNav projectName={project.name} />
       <ProjectHero project={project} />
       {/* Content before map - scrolls over fixed hero */}
-      <div style={{ position: 'relative', zIndex: 2, background: C.bege }}>
+      <div style={{ position: 'relative', zIndex: 2, background: C.bege, overflow: 'visible' }}>
         <ConceptRender project={project} />
         <Galleries project={project} />
         {/* <PhotoCarousel project={project} /> */}
