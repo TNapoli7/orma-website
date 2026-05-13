@@ -1265,7 +1265,7 @@ function Galleries({ project }) {
   );
 
   return (
-    <section ref={sectionRef} style={{ background: 'linear-gradient(to bottom, ' + C.bege + ' 75%, #D5CCBE 100%)', padding: isMobile ? '40px 24px 48px' : '60px 80px 60px', overflow: 'hidden' }}>
+    <section ref={sectionRef} style={{ background: 'linear-gradient(to bottom, ' + C.bege + ' 65%, #D5CCBE 100%)', padding: isMobile ? '40px 24px 48px' : '60px 80px 60px', overflow: 'hidden' }}>
       {lightboxPortal}
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         {/* Title + tabs row — aligned right */}
