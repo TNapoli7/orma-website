@@ -1171,10 +1171,51 @@ function Galleries({ project }) {
     }
   };
 
-  // Image navigation
+  // Image navigation — auto-switch group at boundaries
   const navImg = (dir) => {
-    if (total <= 1 || !imgRef.current || typeof gsap === 'undefined') return;
-    const next = ((imgIdx + dir) % total + total) % total;
+    if (!imgRef.current || typeof gsap === 'undefined') return;
+    const nextIdx = imgIdx + dir;
+
+    // If going forward past last image, switch to next group
+    if (nextIdx >= total && groups.length > 1) {
+      const nextGroup = (activeGroup + 1) % groups.length;
+      switchGroup(nextGroup);
+      return;
+    }
+    // If going backward before first image, switch to previous group
+    if (nextIdx < 0 && groups.length > 1) {
+      const prevGroup = (activeGroup - 1 + groups.length) % groups.length;
+      if (imgWrapRef.current) {
+        const tl = gsap.timeline();
+        tl.to(imgWrapRef.current, {
+          clipPath: 'inset(0% 0% 0% 100%)',
+          duration: 0.4, ease: 'power2.in',
+          onComplete: () => {
+            const prevImages = groups[prevGroup].images;
+            setActiveGroup(prevGroup);
+            setImgIdx(prevImages.length - 1);
+          }
+        });
+        tl.call(() => {
+          requestAnimationFrame(() => {
+            if (imgRef.current) gsap.set(imgRef.current, { scale: 1.08 });
+            gsap.fromTo(imgWrapRef.current,
+              { clipPath: 'inset(0% 100% 0% 0%)' },
+              { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.55, ease: 'power3.out' }
+            );
+            if (imgRef.current) gsap.to(imgRef.current, { scale: 1, duration: 0.9, ease: 'power2.out' });
+          });
+        }, null, '+=0.05');
+      } else {
+        const prevImages = groups[prevGroup].images;
+        setActiveGroup(prevGroup);
+        setImgIdx(prevImages.length - 1);
+      }
+      return;
+    }
+
+    if (total <= 1) return;
+    const next = ((nextIdx) % total + total) % total;
     // Smooth crossfade with subtle scale + blur
     gsap.to(imgRef.current, {
       opacity: 0, scale: 1.04, filter: 'blur(4px)', duration: 0.35, ease: 'power2.inOut',
@@ -2011,37 +2052,38 @@ function Acabamentos() {
         }}>
           <div
             ref={containerRef}
-            style={{ position: 'absolute', inset: 0, cursor: (cursorVisible && !isOpen && !isMobile) ? 'none' : 'auto' }}
-            onMouseMove={!isMobile ? handleMouseMove : undefined}
-            onMouseEnter={!isMobile ? handleMouseEnter : undefined}
-            onMouseLeave={!isMobile ? handleMouseLeave : undefined}
+            style={{ position: 'absolute', inset: 0 }}
           >
-            {/* Custom "Explore" cursor — desktop only */}
-            {!isMobile && (
-              <div
-                ref={cursorRef}
-                style={{
-                  position: 'absolute', pointerEvents: 'none', zIndex: 30,
-                  left: cursorPos.x, top: cursorPos.y,
-                  width: cursorSize, height: cursorSize,
-                  marginLeft: -(cursorSize / 2), marginTop: -(cursorSize / 2),
-                  borderRadius: '50%',
-                  border: '1px solid rgba(151,67,21,0.6)',
-                  background: 'rgba(151,67,21,0.08)',
-                  backdropFilter: 'blur(2px)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  opacity: cursorVisible && !isOpen ? 1 : 0,
-                  transform: cursorVisible && !isOpen ? 'scale(1)' : 'scale(0.5)',
-                  transition: 'opacity 0.3s ease, transform 0.35s cubic-bezier(0.4,0,0.2,1), width 0.3s ease, height 0.3s ease, margin 0.3s ease',
-                }}
-              >
-                <span style={{
-                  fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.9)', fontFamily: '"General Sans", system-ui, sans-serif',
-                  fontWeight: 600, userSelect: 'none', textAlign: 'center', lineHeight: 1.3,
-                  maxWidth: 60,
-                }}>{cursorText}</span>
-              </div>
+            {/* Arrow buttons to switch rooms */}
+            {ACABAMENTOS_ROOMS.length > 1 && !isMobile && (
+              <>
+                <button onClick={() => { const prev = (activeRoom - 1 + ACABAMENTOS_ROOMS.length) % ACABAMENTOS_ROOMS.length; switchRoom(prev); }}
+                  style={{
+                    position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)',
+                    zIndex: 25, width: 44, height: 44, borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.85)', border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
+                    transition: 'transform 0.25s ease, background 0.25s ease',
+                  }}
+                  onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)'; e.currentTarget.style.background = '#fff'; }}
+                  onMouseOut={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button onClick={() => { const next = (activeRoom + 1) % ACABAMENTOS_ROOMS.length; switchRoom(next); }}
+                  style={{
+                    position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)',
+                    zIndex: 25, width: 44, height: 44, borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.85)', border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
+                    transition: 'transform 0.25s ease, background 0.25s ease',
+                  }}
+                  onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)'; e.currentTarget.style.background = '#fff'; }}
+                  onMouseOut={e => { e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+                </button>
+              </>
             )}
 
             <img
