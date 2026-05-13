@@ -1268,8 +1268,8 @@ function Galleries({ project }) {
     <section ref={sectionRef} style={{ background: 'linear-gradient(to bottom, ' + C.bege + ' 65%, #D5CCBE 100%)', padding: isMobile ? '40px 24px 48px' : '60px 80px 60px', overflow: 'hidden' }}>
       {lightboxPortal}
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-        {/* Title + tabs row — aligned right */}
-        <div ref={titleRef} style={{ opacity: 0, marginBottom: isMobile ? 28 : 48, textAlign: isMobile ? 'left' : 'right' }}>
+        {/* Title + tabs row */}
+        <div ref={titleRef} style={{ opacity: 0, marginBottom: isMobile ? 28 : 48 }}>
           <h2 style={{
             fontWeight: 300, fontSize: isMobile ? 28 : 44, lineHeight: 1.2,
             letterSpacing: '-0.02em', color: C.ink, margin: '0 0 24px',
@@ -1278,7 +1278,7 @@ function Galleries({ project }) {
           </h2>
 
           {/* Interior / Exterior tabs */}
-          <div style={{ display: 'flex', gap: 12, justifyContent: isMobile ? 'flex-start' : 'flex-end' }}>
+          <div style={{ display: 'flex', gap: 12 }}>
             {groups.map((g, i) => (
               <button key={g.name} onClick={() => switchGroup(i)}
                 style={{
