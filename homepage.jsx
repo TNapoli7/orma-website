@@ -1101,10 +1101,17 @@ function Pillars() {
           height: isMobile ? 760 : 1520,
           flexShrink: 0,
         }}>
-          <TreeMark opacity={0.82} style={{
-            filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.33) blur(1.5px)',
-            imageRendering: 'auto',
-          }} />
+          <div style={{
+            display: 'block',
+            width: '100%',
+            height: '100%',
+            backgroundImage: 'url(./orma-arvore-hires.jpeg)',
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            opacity: 0.82,
+            filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.33)',
+          }} aria-hidden="true" />
         </div>
       </div>
 
