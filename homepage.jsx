@@ -1109,7 +1109,7 @@ function Pillars() {
             backgroundSize: 'contain',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
-            opacity: 0.35,
+            opacity: 0.25,
             filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.33)',
           }} aria-hidden="true" />
         </div>
