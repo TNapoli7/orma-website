@@ -1105,13 +1105,12 @@ function Pillars() {
             display: 'block',
             width: '100%',
             height: '100%',
-            backgroundImage: 'url(./orma-arvore-hires.jpeg)',
+            backgroundImage: 'url(./orma-arvore-hires.png)',
             backgroundSize: 'contain',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
             opacity: 0.82,
             filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.33)',
-            mixBlendMode: 'multiply',
           }} aria-hidden="true" />
         </div>
       </div>
