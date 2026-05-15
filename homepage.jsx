@@ -1111,7 +1111,7 @@ function Pillars() {
             backgroundPosition: 'center',
             opacity: 0.82,
             filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.33)',
-            mixBlendMode: 'screen',
+            mixBlendMode: 'multiply',
           }} aria-hidden="true" />
         </div>
       </div>
