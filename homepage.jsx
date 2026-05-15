@@ -173,7 +173,7 @@ function SiteImage({ src, style = {} }) {
 }
 
 // ============================================================
-// Tree watermark — SVG for crisp rendering at any size
+// Tree watermark — actual tree PNG
 // ============================================================
 function TreeMark({ opacity = 0.08, style = {} }) {
   return (
@@ -181,7 +181,7 @@ function TreeMark({ opacity = 0.08, style = {} }) {
       display: 'block',
       width: '100%',
       height: '100%',
-      backgroundImage: 'url(arvore-tree.svg)',
+      backgroundImage: 'url(https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-arvore-black-1.png)',
       backgroundSize: 'contain',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
@@ -1102,7 +1102,8 @@ function Pillars() {
           flexShrink: 0,
         }}>
           <TreeMark opacity={0.82} style={{
-            filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.33)',
+            filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.33) blur(1.5px)',
+            imageRendering: 'auto',
           }} />
         </div>
       </div>

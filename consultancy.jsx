@@ -169,7 +169,7 @@ function Wordmark({ color = C.bege, size = 26, withSubline = false }) {
 }
 
 // ============================================================
-// TreeMark - SVG tree watermark (crisp at any size)
+// TreeMark - background tree watermark
 // ============================================================
 function TreeMark({ opacity = 0.08, style = {} }) {
   return (
@@ -177,7 +177,7 @@ function TreeMark({ opacity = 0.08, style = {} }) {
       display: 'block',
       width: '100%',
       height: '100%',
-      backgroundImage: 'url(arvore-tree.svg)',
+      backgroundImage: 'url(https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-arvore-black-1.png)',
       backgroundSize: 'contain',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
