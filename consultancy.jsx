@@ -666,9 +666,6 @@ function Approach() {
       overflow: 'hidden',
       textAlign: 'center',
     }}>
-      <div style={{ position: 'absolute', left: '50%', top: '50%', width: isMobile ? 400 : 760, height: isMobile ? 400 : 760, transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
-        <TreeMark opacity={0.03} />
-      </div>
       <div style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2 }}>
         <WordReveal
           text="There is no universal model for growth. Orma builds custom frameworks that align with each client's industry, culture, and ambition."
