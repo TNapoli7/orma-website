@@ -181,7 +181,7 @@ function TreeMark({ opacity = 0.08, style = {} }) {
       display: 'block',
       width: '100%',
       height: '100%',
-      backgroundImage: 'url(https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-arvore-black-1.png)',
+      backgroundImage: 'url(./orma-arvore.svg)',
       backgroundSize: 'contain',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
@@ -1097,19 +1097,19 @@ function Pillars() {
         overflow: 'hidden',
       }}>
         <div ref={bgTreeRef} style={{
-          width: isMobile ? 760 : 1520,
-          height: isMobile ? 760 : 1520,
+          width: isMobile ? 684 : 1368,
+          height: isMobile ? 684 : 1368,
           flexShrink: 0,
         }}>
           <div style={{
             display: 'block',
             width: '100%',
             height: '100%',
-            backgroundImage: 'url(./orma-arvore-hires.png)',
+            backgroundImage: 'url(./orma-arvore.svg)',
             backgroundSize: 'contain',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
-            opacity: 0.25,
+            opacity: 0.275,
             filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.33)',
           }} aria-hidden="true" />
         </div>

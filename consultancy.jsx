@@ -177,7 +177,7 @@ function TreeMark({ opacity = 0.08, style = {} }) {
       display: 'block',
       width: '100%',
       height: '100%',
-      backgroundImage: 'url(https://tiagoc108.sg-host.com/wp-content/uploads/2025/12/orma-arvore-black-1.png)',
+      backgroundImage: 'url(./orma-arvore.svg)',
       backgroundSize: 'contain',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
