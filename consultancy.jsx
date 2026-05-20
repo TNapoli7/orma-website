@@ -667,7 +667,7 @@ function Approach() {
       textAlign: 'center',
     }}>
       <div style={{ position: 'absolute', left: '50%', top: '50%', width: isMobile ? 400 : 760, height: isMobile ? 400 : 760, transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}>
-        <TreeMark opacity={0.07} />
+        <TreeMark opacity={0.03} />
       </div>
       <div style={{ maxWidth: 720, margin: '0 auto', position: 'relative', zIndex: 2 }}>
         <WordReveal
@@ -689,7 +689,7 @@ function Approach() {
 function ServiceCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRef, titleRef, treeRef, isMobile }) {
   const [hovered, setHovered] = useState(false);
   const IconComponent = SERVICE_SVG[item.kind];
-  const treeRotations = [-8, 6, 12];
+  const treeRotations = [-8, 6, -12];
   const treeSizes = [220, 200, 190];
 
   if (isMobile) {
@@ -775,7 +775,7 @@ function ServiceCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconR
             width: treeSizes[index], height: treeSizes[index],
             transform: 'rotate(' + treeRotations[index] + 'deg)',
           }}>
-            <TreeMark opacity={1} style={{ filter: 'sepia(1) saturate(0.3) hue-rotate(60deg) brightness(0.92)' }} />
+            <TreeMark opacity={0.12} style={{ filter: 'sepia(1) saturate(0.3) hue-rotate(60deg) brightness(0.92)' }} />
           </div>
         </div>
       )}
@@ -862,7 +862,7 @@ function ServiceCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconR
             width: treeSizes[index], height: treeSizes[index],
             transform: 'rotate(' + treeRotations[index] + 'deg)',
           }}>
-            <TreeMark opacity={1} style={{ filter: 'sepia(1) saturate(0.3) hue-rotate(60deg) brightness(0.92)' }} />
+            <TreeMark opacity={0.12} style={{ filter: 'sepia(1) saturate(0.3) hue-rotate(60deg) brightness(0.92)' }} />
           </div>
         </div>
       )}
