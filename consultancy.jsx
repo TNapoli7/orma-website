@@ -686,7 +686,7 @@ function Approach() {
 function ServiceCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRef, titleRef, treeRef, isMobile }) {
   const [hovered, setHovered] = useState(false);
   const IconComponent = SERVICE_SVG[item.kind];
-  const treeRotations = [-8, 6, -12];
+  const treeRotations = [0, 0, 0];
   const treeSizes = [220, 200, 190];
 
   if (isMobile) {
