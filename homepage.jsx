@@ -2004,7 +2004,7 @@ function ContactForm() {
             />
           </div>
           <div style={{ gridColumn: isMobile ? 'auto' : '1 / -1' }}>
-            <label style={labelStyle}>Questions / Comments</label>
+            <label style={labelStyle}>Drop us a message</label>
             <textarea
               value={form.message}
               onChange={handleChange('message')}
@@ -2078,7 +2078,7 @@ function ContactForm() {
                 borderRadius: 'inherit',
                 pointerEvents: 'none',
               }} />
-              <span style={{ position: 'relative', zIndex: 1 }}>{sent ? 'Message Sent ✓' : 'Send Message'}</span>
+              <span style={{ position: 'relative', zIndex: 1 }}>{sent ? 'Message Sent ✓' : 'Say Hi!'}</span>
             </button>
           </div>
         </form>
