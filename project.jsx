@@ -2464,17 +2464,16 @@ function ProjectFooter() {
       background: '#3D4239', color: C.bege,
       position: 'relative', overflow: 'hidden',
     }}>
-      {/* Watermark — Orma logomarca */}
+      {/* Watermark — orma. wordmark */}
       <div style={{
-        position: 'absolute', bottom: isMobile ? -20 : -30, left: '50%',
+        position: 'absolute', bottom: isMobile ? 40 : 60, left: '50%',
         transform: 'translateX(-50%)',
-        pointerEvents: 'none',
-        opacity: 0.04,
-        width: isMobile ? 500 : 900,
-        height: isMobile ? 200 : 350,
-      }}>
-        <img src="./orma-black-logomarca.svg" alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'brightness(10)' }} />
-      </div>
+        fontWeight: 700, fontSize: isMobile ? 140 : 240,
+        letterSpacing: '-0.04em',
+        color: 'rgba(255,255,255,0.03)',
+        whiteSpace: 'nowrap', pointerEvents: 'none',
+        lineHeight: 0.85,
+      }}>orma.</div>
 
       <div ref={footerRef} style={{
         maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2,
