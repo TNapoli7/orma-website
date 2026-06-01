@@ -2037,7 +2037,7 @@ function ContactForm() {
               color: C.green,
               cursor: 'pointer',
             }}>
-              I agree to the processing of my personal data in accordance with Orma's <a href="#" style={{ color: C.green, textDecoration: 'underline' }}>privacy policy</a>.
+              I agree to the processing of my personal data in accordance with Orma's <a href="https://docs.google.com/document/d/107iYVCpO5_59dvI3KhUq_LoafRZwY1-89oZtNZJutyA/edit" target="_blank" rel="noopener noreferrer" style={{ color: C.green, textDecoration: 'underline' }}>privacy policy</a>.
             </label>
           </div>
 
@@ -2266,8 +2266,8 @@ function Footer() {
             <span>© {new Date().getFullYear()} Orma. All rights reserved.</span>
           </div>
           <div style={{ display: 'flex', gap: 24 }}>
-            <a href="#" style={{ color: 'rgba(177,180,169,0.6)', textDecoration: 'none' }}>Privacy Policy</a>
-            <a href="#" style={{ color: 'rgba(177,180,169,0.6)', textDecoration: 'none' }}>Terms & Conditions</a>
+            <a href="https://docs.google.com/document/d/107iYVCpO5_59dvI3KhUq_LoafRZwY1-89oZtNZJutyA/edit" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(177,180,169,0.6)', textDecoration: 'none' }}>Privacy Policy</a>
+            <a href="https://docs.google.com/document/d/1O4AEvDYWC2lBJgqIiTjNrDMOZFl1THq7r-Ay4dkOkRs/edit" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(177,180,169,0.6)', textDecoration: 'none' }}>Terms & Conditions</a>
           </div>
         </div>
       </div>
