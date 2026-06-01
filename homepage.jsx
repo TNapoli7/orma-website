@@ -2099,17 +2099,17 @@ function Footer() {
       background: '#3D4239', color: C.bege,
       position: 'relative', overflow: 'hidden',
     }}>
-      {/* Giant watermark "orma." text */}
+      {/* Watermark — Orma logomarca */}
       <div style={{
-        position: 'absolute', bottom: isMobile ? -30 : -40, left: '50%',
+        position: 'absolute', bottom: isMobile ? -20 : -30, left: '50%',
         transform: 'translateX(-50%)',
-
-        fontWeight: 700, fontSize: isMobile ? 160 : 280,
-        letterSpacing: '-0.04em', textTransform: 'uppercase',
-        color: 'rgba(255,255,255,0.04)',
-        whiteSpace: 'nowrap', pointerEvents: 'none',
-        lineHeight: 0.85,
-      }}>orma.</div>
+        pointerEvents: 'none',
+        opacity: 0.04,
+        width: isMobile ? 500 : 900,
+        height: isMobile ? 200 : 350,
+      }}>
+        <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      </div>
 
       {/* Main content */}
       <div ref={footerRef} style={{
