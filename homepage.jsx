@@ -1823,16 +1823,16 @@ function Sustainability() {
         </div>
         <div style={{ padding: '48px 24px 80px' }}>
           <div style={{ fontSize: 11, letterSpacing: '0.3em', color: C.green, textTransform: 'uppercase', fontWeight: 600, marginBottom: 24 }}>
-            Sustainability
+            Why it matters
           </div>
           <h2 style={{ fontWeight: 300, fontSize: 28, lineHeight: 1.2, letterSpacing: '-0.01em', color: C.ink, margin: '0 0 24px' }}>
-            Building with respect for what <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>lasts.</em>
+            Built with the communities that build <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>Portugal.</em>
           </h2>
           <p style={{ fontSize: 14, lineHeight: 1.8, color: C.green, margin: '0 0 16px' }}>
-            Every material, every decision, every detail - guided by the principle that responsible construction is better construction.
+            More than 80% of the materials used across our projects come from Portuguese suppliers. Local sourcing reduces logistical complexity, supports regional industry, and keeps more economic value within the communities where we operate.
           </p>
           <p style={{ fontSize: 13, lineHeight: 1.8, color: 'rgba(92,100,87,0.7)', margin: 0 }}>
-            We design with longevity in mind. From energy-efficient envelopes to locally sourced materials, our projects reduce environmental impact without compromising on quality or comfort.
+            We also allocate 5% of EBITDA to local initiatives connected to the areas where we build, reinforcing long-term investment beyond construction itself.
           </p>
         </div>
       </section>
@@ -1858,39 +1858,18 @@ function Sustainability() {
 
       <div style={{ position: 'absolute', top: 0, left: 0, width: '50%', height: '100%', zIndex: 3, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 64px' }}>
         <div ref={labelRef} style={{ opacity: 0, fontSize: 12, letterSpacing: '0.3em', color: C.green, textTransform: 'uppercase', fontWeight: 600, marginBottom: 40 }}>
-          Sustainability
+          Why it matters
         </div>
         <div ref={textRef} style={{ opacity: 0 }}>
           <h2 style={{ fontWeight: 300, fontSize: 48, lineHeight: 1.15, letterSpacing: '-0.02em', color: C.ink, margin: '0 0 32px' }}>
-            Building with respect for what <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>lasts.</em>
+            Built with the communities that build <em style={{ fontStyle: 'italic', fontWeight: 300, color: C.terracota }}>Portugal.</em>
           </h2>
           <p style={{ fontSize: 15, lineHeight: 1.8, color: C.green, margin: '0 0 20px', maxWidth: 480 }}>
-            Every material, every decision, every detail - guided by the principle that responsible construction is better construction.
+            More than 80% of the materials used across our projects come from Portuguese suppliers. Local sourcing reduces logistical complexity, supports regional industry, and keeps more economic value within the communities where we operate.
           </p>
-          <p style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(92,100,87,0.65)', margin: '0 0 40px', maxWidth: 480 }}>
-            We design with longevity in mind. From energy-efficient envelopes to locally sourced materials, our projects reduce environmental impact without compromising on quality or comfort.
+          <p style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(92,100,87,0.65)', margin: 0, maxWidth: 480 }}>
+            We also allocate 5% of EBITDA to local initiatives connected to the areas where we build, reinforcing long-term investment beyond construction itself.
           </p>
-          <a href="#contact" onClick={e => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
-            style={{
-              position: 'relative', overflow: 'hidden',
-              display: 'inline-block',
-              padding: '16px 36px', background: C.green, color: C.bege,
-              borderRadius: 40, textDecoration: 'none', fontSize: 12,
-              letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600,
-              cursor: 'pointer',
-            }}
-            onMouseEnter={e => { const f = e.currentTarget.querySelector('.fill-span'); if (f) f.style.transform = 'translateX(0)'; }}
-            onMouseLeave={e => { const f = e.currentTarget.querySelector('.fill-span'); if (f) f.style.transform = 'translateX(-101%)'; }}
-          >
-            <span className="fill-span" style={{
-              position: 'absolute', inset: 0,
-              background: 'rgba(255,255,255,0.15)',
-              transform: 'translateX(-101%)',
-              transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-              borderRadius: 'inherit', pointerEvents: 'none',
-            }} />
-            <span style={{ position: 'relative', zIndex: 1 }}>Learn more</span>
-          </a>
         </div>
       </div>
     </section>
