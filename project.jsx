@@ -2470,9 +2470,9 @@ function ProjectFooter() {
         transform: 'translateX(-50%)',
         pointerEvents: 'none',
         opacity: 0.06,
-        width: isMobile ? 400 : 700,
+        width: isMobile ? 440 : 770,
       }}>
-        <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="" style={{ width: '100%', height: 'auto' }} />
+        <img src="./orma-bege-2.svg" alt="" style={{ width: '100%', height: 'auto' }} />
       </div>
 
       <div ref={footerRef} style={{
