@@ -2262,7 +2262,7 @@ function Footer() {
           fontSize: 12, color: 'rgba(177,180,169,0.6)', letterSpacing: '0.04em',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="Orma" loading="lazy" style={{ height: 18, opacity: 0.5 }} />
+            <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="Orma" loading="lazy" style={{ height: 28, width: 'auto', display: 'block' }} />
             <span>© {new Date().getFullYear()} Orma. All rights reserved.</span>
           </div>
           <div style={{ display: 'flex', gap: 24 }}>
