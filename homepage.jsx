@@ -315,13 +315,22 @@ function MenuLink({ label, href, onClose, hasChildren, children }) {
     if (hasChildren) {
       e.preventDefault();
       setExpanded(!expanded);
-    } else {
+    } else if (href && href.startsWith('#')) {
       e.preventDefault();
       onClose();
-      if (href) {
+      setTimeout(() => {
         const el = document.querySelector(href);
-        if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 350);
-      }
+        if (el) {
+          if (typeof gsap !== 'undefined' && typeof ScrollToPlugin !== 'undefined') {
+            gsap.to(window, { scrollTo: { y: el, offsetY: 40 }, duration: 0.8, ease: 'power2.inOut' });
+          } else {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      }, 400);
+    } else {
+      // External page link — let browser navigate naturally
+      onClose();
     }
   };
 
@@ -1195,15 +1204,16 @@ function Projects() {
       code: 'ORMA / 02', name: 'Villas Sto. Tirso', location: 'Santo Tirso',
       slug: 'villas-sto-tirso',
       blurb: 'A residential project in Santo Tirso set within a low-density and naturally defined environment. The design responds to the surrounding landscape, prioritising orientation, privacy and the relationship with outdoor space.',
-      image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/Comp-1-scaled-1.jpg',
+      image: './St Tirso.jpeg',
       meta: '6 villas - 2026 - 2028',
       bg: '#4A5463',
+      isComingSoon: true,
     },
     {
-      code: 'ORMA / 03', name: 'Coming Soon', location: '',
+      code: 'ORMA / 03', name: 'Reveal Pending', location: '',
       blurb: 'A new project is on the horizon. Stay tuned for more details about our next development.',
       image: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/02/1-scaled.jpg',
-      meta: 'Brevemente',
+      meta: '//2026',
       isPlaceholder: true,
       bg: C.green,
     },
@@ -1346,7 +1356,8 @@ function Projects() {
                           height: '100%',
                           objectFit: 'cover',
                           clipPath: activeIndex === i ? 'inset(0 0 0 0)' : 'inset(0 0 100% 0)',
-                          transition: 'clip-path 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                          transition: 'clip-path 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                          willChange: 'clip-path',
                           ...(p.isPlaceholder ? { filter: 'blur(6px) brightness(0.6) grayscale(0.3)', transform: 'scale(1.05)' } : {}),
                         }}
                       />
@@ -1424,38 +1435,53 @@ function Projects() {
 
                 {/* CTA button with left-to-right fill hover */}
                 {!p.isPlaceholder && p.slug && (
-                  <a href={'project.html?id=' + p.slug} style={{
-                    display: 'inline-block',
-                    fontSize: isMobile ? 11 : 12, letterSpacing: '0.2em',
-                    textTransform: 'uppercase', fontWeight: 600,
-                    color: 'rgba(255,255,255,0.85)', textDecoration: 'none',
-                    padding: isMobile ? '14px 32px' : '16px 40px',
-                    border: '1px solid rgba(255,255,255,0.35)',
-                    marginTop: isMobile ? 24 : 40,
-                    alignSelf: 'flex-end',
-                    position: 'relative', overflow: 'hidden',
-                    transition: 'border-color 0.4s ease',
-                  }}
-                    onMouseEnter={e => {
-                      const fill = e.currentTarget.querySelector('.btn-fill');
-                      if (fill) { fill.style.transform = 'translateX(0)'; }
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)';
+                  p.isComingSoon ? (
+                    <div style={{
+                      display: 'inline-block',
+                      fontSize: isMobile ? 11 : 12, letterSpacing: '0.2em',
+                      textTransform: 'uppercase', fontWeight: 600,
+                      color: 'rgba(255,255,255,0.55)',
+                      padding: isMobile ? '14px 32px' : '16px 40px',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      marginTop: isMobile ? 24 : 40,
+                      alignSelf: 'flex-end',
+                    }}>
+                      Coming Soon
+                    </div>
+                  ) : (
+                    <a href={'project.html?id=' + p.slug} style={{
+                      display: 'inline-block',
+                      fontSize: isMobile ? 11 : 12, letterSpacing: '0.2em',
+                      textTransform: 'uppercase', fontWeight: 600,
+                      color: 'rgba(255,255,255,0.85)', textDecoration: 'none',
+                      padding: isMobile ? '14px 32px' : '16px 40px',
+                      border: '1px solid rgba(255,255,255,0.35)',
+                      marginTop: isMobile ? 24 : 40,
+                      alignSelf: 'flex-end',
+                      position: 'relative', overflow: 'hidden',
+                      transition: 'border-color 0.4s ease',
                     }}
-                    onMouseLeave={e => {
-                      const fill = e.currentTarget.querySelector('.btn-fill');
-                      if (fill) { fill.style.transform = 'translateX(-101%)'; }
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.35)';
-                    }}
-                  >
-                    <span className="btn-fill" style={{
-                      position: 'absolute', inset: 0,
-                      background: 'rgba(255,255,255,0.12)',
-                      transform: 'translateX(-101%)',
-                      transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                      pointerEvents: 'none',
-                    }} />
-                    <span style={{ position: 'relative', zIndex: 1 }}>Explore this project</span>
-                  </a>
+                      onMouseEnter={e => {
+                        const fill = e.currentTarget.querySelector('.btn-fill');
+                        if (fill) { fill.style.transform = 'translateX(0)'; }
+                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)';
+                      }}
+                      onMouseLeave={e => {
+                        const fill = e.currentTarget.querySelector('.btn-fill');
+                        if (fill) { fill.style.transform = 'translateX(-101%)'; }
+                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.35)';
+                      }}
+                    >
+                      <span className="btn-fill" style={{
+                        position: 'absolute', inset: 0,
+                        background: 'rgba(255,255,255,0.12)',
+                        transform: 'translateX(-101%)',
+                        transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        pointerEvents: 'none',
+                      }} />
+                      <span style={{ position: 'relative', zIndex: 1 }}>Explore this project</span>
+                    </a>
+                  )
                 )}
               </div>
 
@@ -1485,7 +1511,8 @@ function Projects() {
                           maxHeight: '80vh',
                           objectFit: 'contain',
                           clipPath: activeIndex === i ? 'inset(0 0 0 0)' : 'inset(0 0 100% 0)',
-                          transition: 'clip-path 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                          transition: 'clip-path 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                          willChange: 'clip-path',
                           ...(p.isPlaceholder ? { filter: 'blur(6px) brightness(0.6) grayscale(0.3)', transform: 'scale(1.05)' } : {}),
                         }}
                       />
@@ -1581,18 +1608,8 @@ function WhyOrma() {
   const sectionRef = useRef(null);
   const labelRef = useRef(null);
   const textColRef = useRef(null);
-  const communityRef = useRef(null);
-  const cardRefs = useRef([]);
-  const borderRefs = useRef([]);
 
   const whyRevealText = 'Our team brings thoughtful guidance and dependable execution to every project, standing by your vision with the confidence this moment calls for.';
-  const communityText = 'Every year, we reinvest part of our net income into the communities where our projects take shape — supporting local well-being and ensuring the places families choose to live continue to grow with them.';
-
-  const stats = [
-    { num: '40', suffix: '+', label: 'Years of experience', icon: 'years' },
-    { num: '2', suffix: '', label: 'Projects in dev', icon: 'projects' },
-    { num: '100', suffix: '%', label: 'Net income reinvested locally', icon: 'reinvest' },
-  ];
 
   useEffect(() => {
     if (typeof gsap === 'undefined') return;
@@ -1624,43 +1641,6 @@ function WhyOrma() {
       triggers.push(t.scrollTrigger);
     }
 
-    // Community paragraph fade in (delayed)
-    if (communityRef.current) {
-      const t = gsap.fromTo(communityRef.current,
-        { opacity: 0, y: 24 },
-        { opacity: 0.65, y: 0, duration: 0.9, ease: 'power2.out', delay: 0.6,
-          scrollTrigger: { trigger: section, start: 'top 70%', toggleActions: 'play none none none' }
-        }
-      );
-      triggers.push(t.scrollTrigger);
-    }
-
-    // Stat cards — staggered fade up with border draw
-    cardRefs.current.forEach((card, i) => {
-      if (!card) return;
-      const t = gsap.fromTo(card,
-        { opacity: 0, y: 40, scale: 0.97 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out',
-          delay: 0.2 + i * 0.15,
-          scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' }
-        }
-      );
-      triggers.push(t.scrollTrigger);
-    });
-
-    // Border draw — terracota border height animates from 0 to 100%
-    borderRefs.current.forEach((border, i) => {
-      if (!border) return;
-      const t = gsap.fromTo(border,
-        { scaleY: 0 },
-        { scaleY: 1, duration: 0.7, ease: 'power2.out',
-          delay: 0.4 + i * 0.15,
-          scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' }
-        }
-      );
-      triggers.push(t.scrollTrigger);
-    });
-
     return () => triggers.forEach(t => t && t.kill());
   }, []);
 
@@ -1683,79 +1663,17 @@ function WhyOrma() {
           opacity: 0,
         }}>Why Orma</div>
 
-        <div style={isMobile
-          ? { display: 'flex', flexDirection: 'column', gap: 40 }
-          : { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'start' }
-        }>
+        <div>
+          <div ref={textColRef} style={{ opacity: 0, maxWidth: 720 }}>
+            <WordReveal
+              text={whyRevealText}
+              style={{
 
-          {/* LEFT — Narrative text */}
-          <div>
-            <div ref={textColRef} style={{ opacity: 0 }}>
-              <WordReveal
-                text={whyRevealText}
-                style={{
-          
-                  fontSize: isMobile ? 20 : 28, lineHeight: 1.55, color: C.white, margin: 0, fontWeight: 300,
-                  letterSpacing: '-0.01em',
-                }}
-              />
-            </div>
-            <p ref={communityRef} style={{
-      
-              fontSize: isMobile ? 14 : 15, lineHeight: 1.8, color: C.bege, margin: '36px 0 0', fontWeight: 400, opacity: 0,
-              maxWidth: 480,
-            }}>
-              {communityText}
-            </p>
+                fontSize: isMobile ? 20 : 28, lineHeight: 1.55, color: C.white, margin: 0, fontWeight: 300,
+                letterSpacing: '-0.01em',
+              }}
+            />
           </div>
-
-          {/* RIGHT — Stats grid */}
-          <div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-              gap: 16,
-            }}>
-              {stats.map((stat, i) => {
-                const IconComp = STAT_ICONS[stat.icon];
-                const isFullWidth = i === 2;
-                return (
-                  <div key={i} ref={el => cardRefs.current[i] = el} style={{
-                    padding: isMobile ? '24px 20px' : '28px 24px',
-                    background: 'rgba(238,232,218,0.08)',
-                    borderRadius: 8,
-                    position: 'relative',
-                    overflow: 'hidden',
-                    opacity: 0,
-                    ...(isFullWidth && !isMobile ? { gridColumn: '1 / -1' } : {}),
-                  }}>
-                    {/* Animated terracota border */}
-                    <div ref={el => borderRefs.current[i] = el} style={{
-                      position: 'absolute', left: 0, top: 0, bottom: 0,
-                      width: 3, background: C.terracota, borderRadius: '3px 0 0 3px',
-                      transformOrigin: 'top center', transform: 'scaleY(0)',
-                    }} />
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                      {IconComp && React.createElement(IconComp)}
-                      <div style={{
-                
-                        fontSize: 10, letterSpacing: '0.2em', color: 'rgba(238,232,218,0.7)',
-                        textTransform: 'uppercase', fontWeight: 600,
-                      }}>{stat.label}</div>
-                    </div>
-                    <div style={{
-              
-                      fontWeight: 500, fontSize: isMobile ? 48 : 56, lineHeight: 1, letterSpacing: '-0.03em',
-                      color: C.bege,
-                    }}>
-                      <RollingNumber value={stat.num} suffix={stat.suffix} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
         </div>
       </div>
     </section>
