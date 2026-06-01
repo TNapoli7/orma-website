@@ -1608,8 +1608,15 @@ function WhyOrma() {
   const sectionRef = useRef(null);
   const labelRef = useRef(null);
   const textColRef = useRef(null);
+  const cardRefs = useRef([]);
+  const borderRefs = useRef([]);
 
   const whyRevealText = 'Our team brings thoughtful guidance and dependable execution to every project, standing by your vision with the confidence this moment calls for.';
+
+  const stats = [
+    { num: '40', suffix: '+', label: 'Years of experience', icon: 'years' },
+    { num: '2', suffix: '', label: 'Projects in dev', icon: 'projects' },
+  ];
 
   useEffect(() => {
     if (typeof gsap === 'undefined') return;
@@ -1641,6 +1648,32 @@ function WhyOrma() {
       triggers.push(t.scrollTrigger);
     }
 
+    // Stat cards — staggered fade up with border draw
+    cardRefs.current.forEach((card, i) => {
+      if (!card) return;
+      const t = gsap.fromTo(card,
+        { opacity: 0, y: 40, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out',
+          delay: 0.2 + i * 0.15,
+          scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    });
+
+    // Border draw
+    borderRefs.current.forEach((border, i) => {
+      if (!border) return;
+      const t = gsap.fromTo(border,
+        { scaleY: 0 },
+        { scaleY: 1, duration: 0.7, ease: 'power2.out',
+          delay: 0.4 + i * 0.15,
+          scrollTrigger: { trigger: section, start: 'top 65%', toggleActions: 'play none none none' }
+        }
+      );
+      triggers.push(t.scrollTrigger);
+    });
+
     return () => triggers.forEach(t => t && t.kill());
   }, []);
 
@@ -1657,23 +1690,75 @@ function WhyOrma() {
 
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 2 }}>
         <div ref={labelRef} style={{
-  
+
           fontSize: 12, letterSpacing: '0.3em', color: C.bege,
           textTransform: 'uppercase', fontWeight: 600, marginBottom: isMobile ? 32 : 56,
           opacity: 0,
         }}>Why Orma</div>
 
-        <div>
-          <div ref={textColRef} style={{ opacity: 0, maxWidth: 720 }}>
-            <WordReveal
-              text={whyRevealText}
-              style={{
+        <div style={isMobile
+          ? { display: 'flex', flexDirection: 'column', gap: 40 }
+          : { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'start' }
+        }>
 
-                fontSize: isMobile ? 20 : 28, lineHeight: 1.55, color: C.white, margin: 0, fontWeight: 300,
-                letterSpacing: '-0.01em',
-              }}
-            />
+          {/* LEFT — Narrative text */}
+          <div>
+            <div ref={textColRef} style={{ opacity: 0 }}>
+              <WordReveal
+                text={whyRevealText}
+                style={{
+
+                  fontSize: isMobile ? 20 : 28, lineHeight: 1.55, color: C.white, margin: 0, fontWeight: 300,
+                  letterSpacing: '-0.01em',
+                }}
+              />
+            </div>
           </div>
+
+          {/* RIGHT — Stats grid (2 cards only) */}
+          <div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+              gap: 16,
+            }}>
+              {stats.map((stat, i) => {
+                const IconComp = STAT_ICONS[stat.icon];
+                return (
+                  <div key={i} ref={el => cardRefs.current[i] = el} style={{
+                    padding: isMobile ? '24px 20px' : '28px 24px',
+                    background: 'rgba(238,232,218,0.08)',
+                    borderRadius: 8,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    opacity: 0,
+                  }}>
+                    <div ref={el => borderRefs.current[i] = el} style={{
+                      position: 'absolute', left: 0, top: 0, bottom: 0,
+                      width: 3, background: C.terracota, borderRadius: '3px 0 0 3px',
+                      transformOrigin: 'top center', transform: 'scaleY(0)',
+                    }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                      {IconComp && React.createElement(IconComp)}
+                      <div style={{
+
+                        fontSize: 10, letterSpacing: '0.2em', color: 'rgba(238,232,218,0.7)',
+                        textTransform: 'uppercase', fontWeight: 600,
+                      }}>{stat.label}</div>
+                    </div>
+                    <div style={{
+
+                      fontWeight: 500, fontSize: isMobile ? 48 : 56, lineHeight: 1, letterSpacing: '-0.03em',
+                      color: C.bege,
+                    }}>
+                      <RollingNumber value={stat.num} suffix={stat.suffix} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
