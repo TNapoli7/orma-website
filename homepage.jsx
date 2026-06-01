@@ -493,7 +493,7 @@ function MenuDrawer({ open, onClose }) {
             color: 'rgba(238,232,218,0.6)', margin: 0,
           }}>
             Porto - Santo Tirso<br />
-            geral@orma.pt
+            contact@orma.pt
           </p>
         </div>
       </div>
@@ -2202,9 +2202,9 @@ function Footer() {
           {/* Right — Contact details */}
           <div style={{ paddingTop: isMobile ? 0 : 16 }}>
             {[
-              { label: 'Email', value: 'info@orma.pt', href: 'mailto:info@orma.pt' },
-              { label: 'Phone', value: '+351 220 000 000', href: 'tel:+351220000000' },
-              { label: 'Address', value: 'Rua de Cedofeita 123\nPorto, Portugal' },
+              { label: 'Email', value: 'contact@orma.pt', href: 'mailto:contact@orma.pt' },
+              { label: 'Phone', value: '+351 916 503 974', href: 'tel:+351916503974' },
+              { label: 'Address', value: 'Praça do Bom Sucesso, n.º 159\nPiso 1, Loja 200\n4150-146 Porto, Portugal' },
             ].map((item, i) => (
               <div key={item.label} style={{
                 borderTop: i === 0 ? '1px solid rgba(238,232,218,0.12)' : 'none',
@@ -2237,7 +2237,6 @@ function Footer() {
               {[
                 { name: 'Instagram', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" /></svg> },
                 { name: 'LinkedIn', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg> },
-                { name: 'Facebook', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg> },
               ].map(s => (
                 <a key={s.name} href="#" aria-label={s.name} style={{
                   color: C.clearGreen, transition: 'color 0.3s, opacity 0.3s',
