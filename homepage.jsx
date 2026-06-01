@@ -2108,7 +2108,7 @@ function Footer() {
         width: isMobile ? 500 : 900,
         height: isMobile ? 200 : 350,
       }}>
-        <img src="https://tiagoc108.sg-host.com/wp-content/uploads/2025/11/orma-bege-2.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        <img src="./orma-black-logomarca.svg" alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'brightness(10)' }} />
       </div>
 
       {/* Main content */}
