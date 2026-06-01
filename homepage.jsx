@@ -1831,7 +1831,7 @@ function Sustainability() {
           <p style={{ fontSize: 14, lineHeight: 1.8, color: C.green, margin: '0 0 16px' }}>
             More than 80% of the materials used across our projects come from Portuguese suppliers. Local sourcing reduces logistical complexity, supports regional industry, and keeps more economic value within the communities where we operate.
           </p>
-          <p style={{ fontSize: 13, lineHeight: 1.8, color: 'rgba(92,100,87,0.7)', margin: 0 }}>
+          <p style={{ fontSize: 14, lineHeight: 1.8, color: C.green, margin: 0 }}>
             We also allocate 5% of EBITDA to local initiatives connected to the areas where we build, reinforcing long-term investment beyond construction itself.
           </p>
         </div>
@@ -1867,7 +1867,7 @@ function Sustainability() {
           <p style={{ fontSize: 15, lineHeight: 1.8, color: C.green, margin: '0 0 20px', maxWidth: 480 }}>
             More than 80% of the materials used across our projects come from Portuguese suppliers. Local sourcing reduces logistical complexity, supports regional industry, and keeps more economic value within the communities where we operate.
           </p>
-          <p style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(92,100,87,0.65)', margin: 0, maxWidth: 480 }}>
+          <p style={{ fontSize: 15, lineHeight: 1.8, color: C.green, margin: 0, maxWidth: 480 }}>
             We also allocate 5% of EBITDA to local initiatives connected to the areas where we build, reinforcing long-term investment beyond construction itself.
           </p>
         </div>
