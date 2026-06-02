@@ -878,7 +878,7 @@ function ProjectHero({ project }) {
 // 3a. ConceptWordReveal — scroll-driven word fill (same as homepage)
 // Each word starts faded (0.15 opacity), fills to 1 as user scrolls.
 // ============================================================
-function ConceptWordReveal({ text, style }) {
+function ConceptWordReveal({ text, style, scrollDelay = 0 }) {
   const containerRef = useRef(null);
 
   const words = text ? text.split(/\s+/) : [];
@@ -893,8 +893,8 @@ function ConceptWordReveal({ text, style }) {
     const update = () => {
       const rect = container.getBoundingClientRect();
       const wh = window.innerHeight;
-      const enter = wh * 0.85;
-      const full = wh * 0.25;
+      const enter = wh * 0.85 - scrollDelay;
+      const full = wh * 0.25 - scrollDelay;
       const totalWords = wordEls.length;
 
       wordEls.forEach((wordEl, i) => {
@@ -1047,6 +1047,7 @@ function ConceptRender({ project }) {
           {project.descriptionExtra && (
             <ConceptWordReveal
               text={project.descriptionExtra}
+              scrollDelay={200}
               style={{
                 fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
                 margin: 0, maxWidth: 520, fontFamily: '"General Sans", system-ui, sans-serif',
@@ -1206,18 +1207,32 @@ function Galleries({ project }) {
     if (total <= 1) return;
     const next = ((nextIdx) % total + total) % total;
     // Smooth crossfade with subtle scale + blur
-    gsap.to(imgRef.current, {
-      opacity: 0, duration: 0.3, ease: 'power2.inOut',
-      onComplete: () => {
-        setImgIdx(next);
-        requestAnimationFrame(() => {
-          if (imgRef.current) gsap.fromTo(imgRef.current,
-            { opacity: 0 },
-            { opacity: 1, duration: 0.45, ease: 'power2.out' }
-          );
-        });
-      },
-    });
+    // Preload next image before transitioning
+    const nextSrc = images[next];
+    const preload = new Image();
+    preload.src = nextSrc;
+    const doTransition = () => {
+      gsap.to(imgRef.current, {
+        opacity: 0, duration: 0.25, ease: 'power2.in',
+        onComplete: () => {
+          setImgIdx(next);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              if (imgRef.current) gsap.fromTo(imgRef.current,
+                { opacity: 0 },
+                { opacity: 1, duration: 0.4, ease: 'power2.out' }
+              );
+            });
+          });
+        },
+      });
+    };
+    if (preload.complete) {
+      doTransition();
+    } else {
+      preload.onload = doTransition;
+      preload.onerror = doTransition;
+    }
   };
 
   // Lightbox
