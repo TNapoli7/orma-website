@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Orma — Lir 725 · Materials (demo)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  /* -----------------------------------------------------------
+     Acabamentos section — standalone demo
+     Matches the Orma site palette and behaviour exactly.
+     For dev: the only data your developer needs to update is the
+     ACABAMENTOS_ROOMS array at the bottom of this file (or the
+     equivalent constant inside project.jsx).
+  ------------------------------------------------------------ */
+  :root {
+    --ink: #1F2022;
+    --green: #5C6457;
+    --clear-green: #B1B4A9;
+    --bege: #EEE8DA;
+    --grey: #EAECEB;
+    --terracota: #974315;
+    --white: #FFFFFF;
+    --transition: 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: "General Sans", -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(to bottom, #D5CCBE 0%, #C4BAA9 50%, #B0A594 100%);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .acabamentos {
+    padding: 60px 80px 100px;
+    position: relative;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .header {
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: var(--terracota);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .title {
+    font-weight: 300;
+    font-size: 40px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 0 0 24px;
+  }
+  .title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--terracota);
+  }
+
+  /* Room tabs */
+  .tabs {
+    display: flex;
+    gap: 12px;
+  }
+  .tab {
+    padding: 14px 36px;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid rgba(31, 32, 34, 0.18);
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+  }
+  .tab:hover {
+    border-color: rgba(31, 32, 34, 0.5);
+    background: rgba(31, 32, 34, 0.04);
+  }
+  .tab.is-active {
+    background: var(--ink);
+    color: var(--bege);
+    border-color: var(--ink);
+  }
+  .tab.is-active:hover {
+    background: var(--ink);
+  }
+
+  /* Scene — renders each image at its natural aspect ratio so the
+     portrait kitchen render isn't cropped. The active scene defines
+     the stage height. */
+  .stage {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--grey);
+  }
+  .scene { position: relative; display: none; }
+  .scene.is-active { display: block; }
+  .scene img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: filter 0.5s ease, transform 0.7s ease;
+  }
+  .scene.is-open img {
+    filter: brightness(0.6);
+    transform: scale(1.02);
+  }
+  .vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.3) 100%);
+  }
+
+  /* Scene-switch arrows */
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 25;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.25s ease, background 0.25s ease;
+  }
+  .nav-arrow:hover {
+    transform: translateY(-50%) scale(1.08);
+    background: #fff;
+  }
+  .nav-arrow.left { left: 20px; }
+  .nav-arrow.right { right: 20px; }
+
+  /* Hotspots */
+  .hotspot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    min-width: 52px;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  /* Ring (pulsing) and dot are rendered as ::before / ::after so the
+     button markup can stay empty. */
+  .hotspot::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 34px;
+    height: 34px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: rgba(151, 67, 21, 0.25);
+    border: 1.5px solid rgba(151, 67, 21, 0.5);
+    animation: acabPulse 2s infinite;
+    transition: width 0.3s ease, height 0.3s ease, background 0.3s ease;
+  }
+  .hotspot::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--terracota);
+    box-shadow:
+      0 0 14px rgba(151, 67, 21, 0.6),
+      0 0 0 3px rgba(255, 255, 255, 0.35);
+    transition: width 0.3s ease, height 0.3s ease, box-shadow 0.3s ease;
+  }
+  .hotspot:hover::before,
+  .hotspot.is-active::before {
+    animation: none;
+    width: 42px;
+    height: 42px;
+    background: rgba(151, 67, 21, 0.35);
+  }
+  .hotspot:hover::after {
+    width: 20px;
+    height: 20px;
+    box-shadow:
+      0 0 20px rgba(151, 67, 21, 0.8),
+      0 0 0 3px rgba(255, 255, 255, 0.4);
+  }
+  .hotspot.is-active::after {
+    width: 22px;
+    height: 22px;
+  }
+  @keyframes acabPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.6); opacity: 0.3; }
+  }
+
+  /* Detail panel */
+  .panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(31, 32, 34, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 28px 40px;
+    z-index: 20;
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+  }
+  .panel.is-open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .panel-tag {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    background: var(--terracota);
+    color: #fff;
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+  .panel-title {
+    font-family: inherit;
+    font-weight: 400;
+    font-size: 22px;
+    color: #fff;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .panel-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.15);
+    flex-shrink: 0;
+  }
+  .panel-detail {
+    font-size: 13px;
+    line-height: 1.75;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    flex: 1;
+    text-wrap: pretty;
+  }
+  .panel-link {
+    color: #fff;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 1px;
+    margin-left: 10px;
+    white-space: nowrap;
+    transition: border-color var(--transition);
+  }
+  .panel-link:hover { border-color: var(--terracota); }
+  .panel-close {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+  .panel-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  .panel-close svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Developer hand-off block */
+  .handoff {
+    margin-top: 96px;
+    padding: 40px;
+    background: rgba(31, 32, 34, 0.92);
+    color: #fff;
+    border-radius: 8px;
+  }
+  .handoff h2 {
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terracota);
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .handoff p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 16px;
+    max-width: 720px;
+  }
+  .handoff code {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: #f5d0b8;
+  }
+  .handoff pre {
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 6px;
+    padding: 20px;
+    overflow-x: auto;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+    max-height: 480px;
+    overflow-y: auto;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .acabamentos { padding: 40px 24px 80px; }
+    .title { font-size: 28px; }
+    .panel { flex-wrap: wrap; gap: 12px; padding: 18px 20px; }
+    .panel-divider { display: none; }
+    .panel-title { font-size: 18px; }
+    .panel-detail { font-size: 12px; line-height: 1.6; }
+    .nav-arrow { display: none; }
+    .handoff { margin-top: 60px; padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="acabamentos">
+  <div class="container">
+
+    <header class="header">
+      <div class="eyebrow">Materials</div>
+      <h2 class="title">Details that make <em>the difference.</em></h2>
+      <div class="tabs" role="tablist">
+        <button class="tab is-active" data-room="banho" role="tab">Bathroom</button>
+        <button class="tab" data-room="cozinha" role="tab">Kitchen</button>
+      </div>
+    </header>
+
+    <div class="stage">
+
+      <!-- ===================== BATHROOM ===================== -->
+      <div class="scene is-active" data-room="banho">
+        <img src="bathroom.jpg" alt="Bathroom — Lir 725" />
+        <div class="vignette"></div>
+
+        <button class="nav-arrow left" data-direction="-1" aria-label="Previous scene">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2022" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="nav-arrow right" data-direction="1" aria-label="Next scene">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2022" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+
+        <button class="hotspot" style="left:47%; top:8%;"  data-id="b-ceiling" aria-label="Ceiling"></button>
+        <button class="hotspot" style="left:78%; top:22%;" data-id="b-shower"  aria-label="Shower"></button>
+        <button class="hotspot" style="left:28%; top:38%;" data-id="b-mirror"  aria-label="Mirror"></button>
+        <button class="hotspot" style="left:60%; top:92%;" data-id="b-tile"    aria-label="Tile"></button>
+        <button class="hotspot" style="left:29%; top:62%;" data-id="b-faucet"  aria-label="Faucet"></button>
+        <button class="hotspot" style="left:25%; top:66%;" data-id="b-basin"   aria-label="Washbasin"></button>
+        <button class="hotspot" style="left:52%; top:78%;" data-id="b-wc"      aria-label="WC"></button>
+        <button class="hotspot" style="left:25%; top:76%;" data-id="b-vanity"  aria-label="Vanity"></button>
+
+        <div class="panel" data-panel="banho">
+          <div class="panel-tag">—</div>
+          <h3 class="panel-title">—</h3>
+          <div class="panel-divider"></div>
+          <p class="panel-detail">—</p>
+          <button class="panel-close" aria-label="Close">
+            <svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round">
+              <path d="M1 1l10 10M11 1L1 11" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ===================== KITCHEN ===================== -->
+      <div class="scene" data-room="cozinha">
+        <img src="kitchen.png" alt="Kitchen — Lir 725" />
+        <div class="vignette"></div>
+
+        <button class="nav-arrow left" data-direction="-1" aria-label="Previous scene">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2022" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="nav-arrow right" data-direction="1" aria-label="Next scene">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2022" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+
+        <button class="hotspot" style="left:50%; top:8%;"  data-id="k-ceiling"    aria-label="Ceiling"></button>
+        <button class="hotspot" style="left:65%; top:38%;" data-id="k-cab-upper"  aria-label="Upper cabinets — Tortora"></button>
+        <button class="hotspot" style="left:48%; top:47%;" data-id="k-backsplash" aria-label="Backsplash"></button>
+        <button class="hotspot" style="left:76%; top:53%;" data-id="k-faucet"     aria-label="Faucet"></button>
+        <button class="hotspot" style="left:32%; top:60%;" data-id="k-countertop" aria-label="Countertop"></button>
+        <button class="hotspot" style="left:78%; top:72%;" data-id="k-cab-lower"  aria-label="Lower cabinets — Sunny White"></button>
+        <button class="hotspot" style="left:60%; top:92%;" data-id="k-flooring"   aria-label="Flooring"></button>
+
+        <div class="panel" data-panel="cozinha">
+          <div class="panel-tag">—</div>
+          <h3 class="panel-title">—</h3>
+          <div class="panel-divider"></div>
+          <p class="panel-detail">—</p>
+          <button class="panel-close" aria-label="Close">
+            <svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round">
+              <path d="M1 1l10 10M11 1L1 11" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===================== DEV HANDOFF ===================== -->
+    <div class="handoff">
+      <h2>For the developer</h2>
+      <p>Replace the placeholder <code>ACABAMENTOS_ROOMS</code> array inside <code>project.jsx</code> (around line 1100, section "4b. Acabamentos") with the block below. Hotspot <code>x</code>/<code>y</code> values are percentages — adjust them once the renders are placed at production resolution.</p>
+      <p>The two renders are referenced as <code>bathroom.jpg</code> and <code>kitchen.png</code> in this demo. In production, swap those to the WordPress-hosted URLs (e.g. <code>https://tiagoc108.sg-host.com/wp-content/uploads/...</code>).</p>
+      <pre id="dev-snippet"></pre>
+    </div>
+
+  </div>
+</section>
+
+<script>
+/* ============================================================
+   Materials data — single source of truth
+   For dev: this is the array to swap into project.jsx
+============================================================ */
+const ACABAMENTOS_ROOMS = [
+  {
+    id: 'banho',
+    label: 'Bathroom',
+    image: 'bathroom.jpg',
+    spots: [
+      {
+        id: 'b-ceiling', x: 47, y: 8,
+        label: 'Ceiling',
+        material: 'Plasterboard RAL 9010',
+        detail: 'Smooth plasterboard ceiling in pure white. Clean planes that recede so light and form lead the room.',
+        url: null
+      },
+      {
+        id: 'b-shower', x: 78, y: 22,
+        label: 'Shower',
+        material: 'BRUMA — Recessed system',
+        detail: 'BRUMA recessed shower system with wall-mounted rain head and handset. Concealed valves keep the wall uninterrupted.',
+        url: 'https://www.bruma.pt/assets/INFO/new/1673602CR_ficha.pdf'
+      },
+      {
+        id: 'b-mirror', x: 28, y: 38,
+        label: 'Mirror',
+        material: 'ITALBOX — Backlit',
+        detail: 'ITALBOX circular mirror with an integrated LED halo. Soft ambient glow framing a precise reflection.',
+        url: 'https://italbox.pt/pt/produtos/espelhos/espelhos-com-iluminacao/redondo-'
+      },
+      {
+        id: 'b-tile', x: 60, y: 92,
+        label: 'Tile',
+        material: 'MARAZZI — Grande Concrete Look White',
+        detail: 'MARAZZI Grande Concrete Look White on walls and floor. Oversized slabs minimise grout lines for a continuous concrete-effect surface.',
+        url: 'https://www.marazzitile.co.uk/collections/grande-concrete-look-collections/'
+      },
+      {
+        id: 'b-faucet', x: 29, y: 62,
+        label: 'Faucet',
+        material: 'BRUMA — Brushed stainless steel',
+        detail: 'Premium anti-fingerprint brushed stainless steel finish. Minimalist design with integrated temperature control.',
+        url: 'https://www.bruma.pt/?page=products&prod=4596'
+      },
+      {
+        id: 'b-basin', x: 25, y: 66,
+        label: 'Washbasin',
+        material: 'ITALBOX — Solid surface',
+        detail: 'ITALBOX Quadratum basin in seamless solid surface. Sharp geometry, warm to the touch, non-porous and easy to maintain.',
+        url: 'https://italbox.pt/pt/produtos/lavatorios/solid-surface-1/bancada-lavatorio-quadratum-ss'
+      },
+      {
+        id: 'b-wc', x: 52, y: 78,
+        label: 'WC',
+        material: 'GEBERIT — Wall-hung',
+        detail: 'GEBERIT wall-hung toilet with concealed cistern and flush plate. Floor stays clear for easier cleaning and a lighter visual footprint.',
+        url: 'https://catalog.geberit.pt/pt-PT/product/PRO_1511968'
+      },
+      {
+        id: 'b-vanity', x: 25, y: 76,
+        label: 'Vanity',
+        material: 'ITALBOX — Oak veneer',
+        detail: 'Wall-hung ITALBOX vanity in oak veneer. Natural grain warms the cool stone and ceramic around it.',
+        url: null
+      }
+    ]
+  },
+  {
+    id: 'cozinha',
+    label: 'Kitchen',
+    image: 'kitchen.png',
+    spots: [
+      {
+        id: 'k-ceiling', x: 50, y: 8,
+        label: 'Ceiling',
+        material: 'Plasterboard RAL 9010',
+        detail: 'Smooth plasterboard ceiling in pure white. A quiet backdrop for the cabinetry and stone below.',
+        url: null
+      },
+      {
+        id: 'k-cab-upper', x: 65, y: 38,
+        label: 'Upper cabinets',
+        material: 'ONESKIN — Tortora',
+        detail: 'ONESKIN cabinet finish in Tortora on the upper run — a warm muted taupe. Matte texture that diffuses light and resists fingerprints.',
+        url: 'https://www.oneskin.pt/products_sub/tortora-1'
+      },
+      {
+        id: 'k-backsplash', x: 48, y: 47,
+        label: 'Backsplash',
+        material: 'COSENTINO — Dekton Keena',
+        detail: 'Ultracompact Dekton in Keena, with soft marble veining. Heat-, stain- and scratch-resistant for an everyday-tough work surface.',
+        url: 'https://www.cosentino.com/pt-pt/cores/dekton/keena/'
+      },
+      {
+        id: 'k-faucet', x: 76, y: 53,
+        label: 'Faucet',
+        material: 'BRUMA — Chrome',
+        detail: 'BRUMA single-lever kitchen mixer with high swivel spout. Ceramic cartridge for precise flow and temperature.',
+        url: 'https://www.bruma.pt/?page=products&prod=6625'
+      },
+      {
+        id: 'k-countertop', x: 32, y: 60,
+        label: 'Countertop',
+        material: 'COSENTINO — Dekton Keena',
+        detail: 'Countertop in the same Dekton Keena as the backsplash. One material, one continuous surface from horizontal to vertical.',
+        url: 'https://www.cosentino.com/pt-pt/cores/dekton/keena/'
+      },
+      {
+        id: 'k-cab-lower', x: 78, y: 72,
+        label: 'Lower cabinets',
+        material: 'ONESKIN — Sunny White',
+        detail: 'ONESKIN cabinet finish in Sunny White on the lower run. A soft, warm white that reflects daylight without going clinical.',
+        url: 'https://www.oneskin.pt/products_sub/sunny-white'
+      },
+      {
+        id: 'k-flooring', x: 60, y: 92,
+        label: 'Flooring',
+        material: 'Pine — Staggered lay',
+        detail: 'Solid pine flooring laid in a staggered (offset) pattern. Random plank lengths add rhythm and grounded warmth underfoot.',
+        url: null
+      }
+    ]
+  }
+];
+
+/* ============================================================
+   Interaction
+============================================================ */
+const tabs   = document.querySelectorAll('.tab');
+const scenes = document.querySelectorAll('.scene');
+
+function getSpot(id) {
+  for (const room of ACABAMENTOS_ROOMS) {
+    const s = room.spots.find(s => s.id === id);
+    if (s) return s;
+  }
+  return null;
+}
+
+function switchRoom(roomId) {
+  tabs.forEach(t => t.classList.toggle('is-active', t.dataset.room === roomId));
+  scenes.forEach(s => s.classList.toggle('is-active', s.dataset.room === roomId));
+  closeAllPanels();
+}
+
+function closeAllPanels() {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('is-open'));
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('is-open'));
+  document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('is-active'));
+}
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => switchRoom(tab.dataset.room));
+});
+
+document.querySelectorAll('.hotspot').forEach(dot => {
+  dot.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const data = getSpot(dot.dataset.id);
+    if (!data) return;
+
+    const scene = dot.closest('.scene');
+    const panel = scene.querySelector('.panel');
+
+    scene.querySelectorAll('.hotspot').forEach(d => d.classList.toggle('is-active', d === dot));
+
+    panel.querySelector('.panel-tag').textContent = data.material;
+    panel.querySelector('.panel-title').textContent = data.label;
+
+    const detailEl = panel.querySelector('.panel-detail');
+    detailEl.innerHTML = '';
+    detailEl.appendChild(document.createTextNode(data.detail));
+    if (data.url) {
+      const link = document.createElement('a');
+      link.className = 'panel-link';
+      link.href = data.url;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = 'View product ↗';
+      detailEl.appendChild(link);
+    }
+
+    panel.classList.add('is-open');
+    scene.classList.add('is-open');
+  });
+});
+
+document.querySelectorAll('.panel-close').forEach(btn => {
+  btn.addEventListener('click', closeAllPanels);
+});
+
+document.querySelectorAll('.nav-arrow').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const dir = parseInt(btn.dataset.direction, 10);
+    const order = ['banho', 'cozinha'];
+    const activeTab = document.querySelector('.tab.is-active');
+    const i = order.indexOf(activeTab.dataset.room);
+    const next = (i + dir + order.length) % order.length;
+    switchRoom(order[next]);
+  });
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAllPanels();
+});
+
+/* ============================================================
+   Pretty-print the data block for the dev handoff card.
+============================================================ */
+document.getElementById('dev-snippet').textContent =
+  'const ACABAMENTOS_ROOMS = ' +
+  JSON.stringify(ACABAMENTOS_ROOMS, null, 2)
+    .replace(/"([a-zA-Z][a-zA-Z0-9_]*)":/g, '$1:')
+    .replace(/"/g, "'") + ';';
+</script>
+
+</body>
+</html>
