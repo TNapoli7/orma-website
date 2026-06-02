@@ -1027,7 +1027,7 @@ function ConceptRender({ project }) {
             letterSpacing: '-0.02em', color: C.ink, margin: '0 0 28px',
             perspective: 600,
           }}>
-            {(project.conceptTitle || project.name).split(' ').map((word, i) => (
+            {project.name.split(' ').map((word, i) => (
               <span key={i} className="cr-title-word" style={{
                 display: 'inline-block', opacity: 0, marginRight: '0.25em',
                 transformOrigin: 'bottom left',
@@ -1045,11 +1045,13 @@ function ConceptRender({ project }) {
             />
           )}
           {project.descriptionExtra && (
-            <p style={{
-              fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
-              margin: 0, maxWidth: 520, fontFamily: '"General Sans", system-ui, sans-serif',
-              opacity: 0.75,
-            }}>{project.descriptionExtra}</p>
+            <ConceptWordReveal
+              text={project.descriptionExtra}
+              style={{
+                fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
+                margin: 0, maxWidth: 520, fontFamily: '"General Sans", system-ui, sans-serif',
+              }}
+            />
           )}
         </div>
 
@@ -1205,13 +1207,13 @@ function Galleries({ project }) {
     const next = ((nextIdx) % total + total) % total;
     // Smooth crossfade with subtle scale + blur
     gsap.to(imgRef.current, {
-      opacity: 0, scale: 1.04, filter: 'blur(4px)', duration: 0.35, ease: 'power2.inOut',
+      opacity: 0, duration: 0.3, ease: 'power2.inOut',
       onComplete: () => {
         setImgIdx(next);
         requestAnimationFrame(() => {
           if (imgRef.current) gsap.fromTo(imgRef.current,
-            { opacity: 0, scale: 0.98, filter: 'blur(4px)' },
-            { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' }
+            { opacity: 0 },
+            { opacity: 1, duration: 0.45, ease: 'power2.out' }
           );
         });
       },
@@ -1359,9 +1361,9 @@ function Galleries({ project }) {
             onClick={openLb}
             loading="lazy"
             style={{
-              width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-              cursor: 'zoom-in', transition: 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)',
-              willChange: 'transform',
+              width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 65%', display: 'block',
+              cursor: 'zoom-in', transition: 'opacity 0.4s ease, transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)',
+              willChange: 'transform, opacity',
             }}
             onMouseOver={e => e.currentTarget.style.transform = 'scale(1.03)'}
             onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
