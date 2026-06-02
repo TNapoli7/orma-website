@@ -20,8 +20,8 @@ const C = {
 const PROJECTS = {
   'lir-725': {
     name: 'Lir 725',
-    location: 'Porto, Portugal',
-    tagline: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+    location: 'Foz, Porto',
+    tagline: 'Áreas generosas, privacidade e luz natural constante a poucos minutos do mar.',
     hero: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
     heroVideo: 'assets/hero-project.mp4',
     render: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80',
@@ -704,13 +704,9 @@ function BrochureBox({ projectName }) {
       opacity: isMobile ? 0 : 1,
     }}>
       <p style={{
-        fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase',
-        color: 'rgba(255,255,255,0.5)', fontWeight: 600, margin: '0 0 6px',
-      }}>Brochura</p>
-      <p style={{
         fontSize: isMobile ? 15 : 18, fontWeight: 300, color: C.white, margin: isMobile ? '0 0 14px' : '0 0 20px', lineHeight: 1.3,
       }}>
-        Receba os detalhes do {projectName || 'projecto'}
+        Saiba tudo sobre o {projectName || 'projecto'}
       </p>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 8 : 12 }}>
@@ -750,8 +746,8 @@ function BrochureBox({ projectName }) {
             onChange={e => setAgreed(e.target.checked)}
             style={{ accentColor: C.green, flexShrink: 0 }}
           />
-          <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
-            Aceito os termos e a política de privacidade.
+          <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', lineHeight: 1.2 }}>
+            Aceito os <a href="https://docs.google.com/document/d/1O4AEvDYWC2lBJgqIiTjNrDMOZFl1THq7r-Ay4dkOkRs/edit" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'underline' }}>termos</a> e a <a href="https://docs.google.com/document/d/107iYVCpO5_59dvI3KhUq_LoafRZwY1-89oZtNZJutyA/edit" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'underline' }}>política de privacidade</a>.
           </span>
         </label>
 
