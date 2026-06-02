@@ -2562,7 +2562,7 @@ function ProjectFooter() {
         }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <a href="index.html" style={{ lineHeight: 0 }}>
-            <img src="./orma-bege-2.svg" alt="Orma" loading="lazy" style={{ height: 28, width: 'auto', display: 'block' }} />
+            <img src="./orma-bege-2.svg" alt="Orma" loading="lazy" style={{ height: 26, width: 'auto', display: 'block' }} />
           </a>
           <span>© {new Date().getFullYear()} Orma. All rights reserved.</span>
         </div>
