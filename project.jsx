@@ -99,8 +99,8 @@ const PROJECTS = {
       { type: 'T4', area: '[TBD] m²', bedrooms: 4, wc: 4, disposicao: 'Sala, Cozinha, 4 Quartos (1 suite), 4 WC, Terraço, 2 Lugares de garagem', planta: 'https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=1200&q=80', description: '[Description - to be provided]' },
     ],
     locationInfo: {
-      address: '[Address - to be provided]',
-      phone: '[TBD]',
+      address: 'Rua Lidador 725',
+      phone: '916 503 974',
       mapCoords: '41.1496,-8.6110',
       mapZoom: 15,
       highlights: [
