@@ -1822,7 +1822,7 @@ const ACABAMENTOS_ROOMS = [
       { id: 'faucet', x: 72, y: 50, label: 'Torneira', material: 'BRUMA — Cromada', detail: 'Torneira monocomando de lava-loiça BRUMA com bica alta giratória. Cartucho cerâmico para controlo preciso de caudal e temperatura.', url: 'https://www.bruma.pt/?page=products&prod=6625' },
       { id: 'countertop', x: 48, y: 60, label: 'Tampo', material: 'COSENTINO — Dekton Keena', detail: 'Tampo igual ao backsplash. Um material, uma superfície contínua do horizontal ao vertical.', url: 'https://www.cosentino.com/pt-pt/cores/dekton/keena/' },
       { id: 'cab-lower', x: 74, y: 74, label: 'Armários inferiores', material: 'ONESKIN — Sunny White', detail: 'Revestimento ONESKIN cor Sunny White nos armários inferiores. Um branco suave e quente que reflete a luz natural sem parecer clínico.', url: 'https://www.oneskin.pt/products_sub/sunny-white' },
-      { id: 'flooring', x: 8, y: 95, label: 'Pavimento', material: 'Madeira de pinho — Contra-fiado', detail: 'Pavimento em madeira de pinho com aplicação contra-fiado. Comprimentos aleatórios que acrescentam ritmo e calor ao espaço.' },
+      { id: 'flooring', x: 5, y: 88, label: 'Pavimento', material: 'Madeira de pinho — Contra-fiado', detail: 'Pavimento em madeira de pinho com aplicação contra-fiado. Comprimentos aleatórios que acrescentam ritmo e calor ao espaço.' },
     ],
   },
 ];
