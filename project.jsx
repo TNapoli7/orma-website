@@ -878,10 +878,10 @@ function ProjectHero({ project }) {
 // 3a. ConceptWordReveal — scroll-driven word fill (same as homepage)
 // Each word starts faded (0.15 opacity), fills to 1 as user scrolls.
 // ============================================================
-function ConceptWordReveal({ text, style, scrollDelay = 0 }) {
+function ConceptWordReveal({ paragraphs, style }) {
+  // paragraphs: array of strings, each rendered as a <p> but all words in one scroll sequence
   const containerRef = useRef(null);
-
-  const words = text ? text.split(/\s+/) : [];
+  const texts = Array.isArray(paragraphs) ? paragraphs : [paragraphs];
 
   useEffect(() => {
     const container = containerRef.current;
@@ -893,13 +893,13 @@ function ConceptWordReveal({ text, style, scrollDelay = 0 }) {
     const update = () => {
       const rect = container.getBoundingClientRect();
       const wh = window.innerHeight;
-      const enter = wh * 0.85 - scrollDelay;
-      const full = wh * 0.25 - scrollDelay;
+      const enter = wh * 0.85;
+      const full = wh * 0.15;
       const totalWords = wordEls.length;
 
       wordEls.forEach((wordEl, i) => {
         const wordStart = enter - (i / totalWords) * (enter - full);
-        const wordEnd = wordStart - (enter - full) * 0.12;
+        const wordEnd = wordStart - (enter - full) * 0.08;
         let p;
         if (rect.top >= wordStart) p = 0;
         else if (rect.top <= wordEnd) p = 1;
@@ -922,14 +922,21 @@ function ConceptWordReveal({ text, style, scrollDelay = 0 }) {
   }, []);
 
   return (
-    <p ref={containerRef} style={style}>
-      {words.map((w, i) => (
-        <span key={i}>
-          <span data-word style={{ display: 'inline', opacity: 0.15, transition: 'opacity 0.05s linear' }}>{w}</span>
-          {i < words.length - 1 ? ' ' : ''}
-        </span>
-      ))}
-    </p>
+    <div ref={containerRef}>
+      {texts.map((text, pi) => {
+        const words = text ? text.split(/\s+/) : [];
+        return (
+          <p key={pi} style={{ ...style, marginBottom: pi < texts.length - 1 ? 20 : 0 }}>
+            {words.map((w, i) => (
+              <span key={i}>
+                <span data-word style={{ display: 'inline', opacity: 0.15, transition: 'opacity 0.05s linear' }}>{w}</span>
+                {i < words.length - 1 ? ' ' : ''}
+              </span>
+            ))}
+          </p>
+        );
+      })}
+    </div>
   );
 }
 
@@ -1037,17 +1044,7 @@ function ConceptRender({ project }) {
 
           {project.description && (
             <ConceptWordReveal
-              text={project.description}
-              style={{
-                fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
-                margin: '0 0 20px', maxWidth: 520, fontFamily: '"General Sans", system-ui, sans-serif',
-              }}
-            />
-          )}
-          {project.descriptionExtra && (
-            <ConceptWordReveal
-              text={project.descriptionExtra}
-              scrollDelay={200}
+              paragraphs={[project.description, project.descriptionExtra].filter(Boolean)}
               style={{
                 fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
                 margin: 0, maxWidth: 520, fontFamily: '"General Sans", system-ui, sans-serif',
@@ -1207,25 +1204,21 @@ function Galleries({ project }) {
     if (total <= 1) return;
     const next = ((nextIdx) % total + total) % total;
     // Smooth crossfade with subtle scale + blur
-    // Preload next image before transitioning
+    // Preload next image, then crossfade
     const nextSrc = images[next];
-    const preload = new Image();
+    const preload = new window.Image();
     preload.src = nextSrc;
     const doTransition = () => {
-      gsap.to(imgRef.current, {
-        opacity: 0, duration: 0.25, ease: 'power2.in',
-        onComplete: () => {
-          setImgIdx(next);
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              if (imgRef.current) gsap.fromTo(imgRef.current,
-                { opacity: 0 },
-                { opacity: 1, duration: 0.4, ease: 'power2.out' }
-              );
-            });
-          });
-        },
-      });
+      // Hide current image
+      if (imgRef.current) imgRef.current.style.opacity = '0';
+      // Wait for opacity transition, then swap src
+      setTimeout(() => {
+        setImgIdx(next);
+        // After React updates src, wait a frame then fade in
+        setTimeout(() => {
+          if (imgRef.current) imgRef.current.style.opacity = '1';
+        }, 50);
+      }, 280);
     };
     if (preload.complete) {
       doTransition();
@@ -1377,7 +1370,7 @@ function Galleries({ project }) {
             loading="lazy"
             style={{
               width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 65%', display: 'block',
-              cursor: 'zoom-in', transition: 'opacity 0.4s ease, transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)',
+              cursor: 'zoom-in', transition: 'opacity 0.3s ease, transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)',
               willChange: 'transform, opacity',
             }}
             onMouseOver={e => e.currentTarget.style.transform = 'scale(1.03)'}
