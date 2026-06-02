@@ -614,11 +614,6 @@ function ConsultancyHero() {
         padding: isMobile ? '0 24px 80px' : '0 64px 100px',
         maxWidth: 1280, margin: '0 auto',
       }}>
-        <div style={{
-          fontSize: 11, letterSpacing: '0.24em', textTransform: 'uppercase',
-          fontWeight: 600, color: 'rgba(255,255,255,0.7)', marginBottom: 20,
-          animation: 'fadeIn 0.8s ease-out 0.3s both',
-        }}>CONSULTORIA</div>
         <h1 style={{
           fontWeight: 300, fontSize: isMobile ? 40 : 64,
           lineHeight: 1.08, letterSpacing: '-0.02em',
@@ -1155,7 +1150,7 @@ function BattleTested() {
     return (
       <section style={{ background: C.bege, overflow: 'hidden' }}>
         <div style={{ height: 300, overflow: 'hidden' }}>
-          <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1800&q=80" alt="Track Record"
+          <img src="./office interior.png" alt="Track Record"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
         <div style={{ padding: '48px 24px 80px' }}>
@@ -1184,7 +1179,7 @@ function BattleTested() {
         position: 'absolute', top: 0, left: '0%', width: '100%', height: '100%',
         overflow: 'hidden', zIndex: 2,
       }}>
-        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1800&q=80" alt="Track Record"
+        <img src="./office interior.png" alt="Track Record"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         <div style={{
           position: 'absolute', inset: 0,
@@ -1610,13 +1605,13 @@ function FloatingButtons() {
       </button>
       {/* WhatsApp */}
       <a
-        href="https://wa.me/351220000000"
+        href="https://wa.me/351916503974"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
         style={{
           width: 52, height: 52, borderRadius: '50%',
-          background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: C.green, display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
           transition: 'transform 0.25s ease, box-shadow 0.25s ease',
           textDecoration: 'none',
