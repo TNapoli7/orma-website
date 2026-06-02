@@ -1798,31 +1798,31 @@ function Typologies({ project }) {
 const ACABAMENTOS_ROOMS = [
   {
     id: 'banho',
-    label: 'Bathroom',
+    label: 'Casa de Banho',
     image: './bathroom.jpg',
     spots: [
-      { id: 'ceiling', x: 47, y: 4, label: 'Ceiling', material: 'Plasterboard RAL 9010', detail: 'Smooth plasterboard ceiling in pure white. Clean planes that recede so light and form lead the room.' },
-      { id: 'shower', x: 76, y: 18, label: 'Shower', material: 'BRUMA — Recessed system', detail: 'BRUMA recessed shower system with wall-mounted rain head and handset. Concealed valves keep the wall uninterrupted.', url: 'https://www.bruma.pt/assets/INFO/new/1673602CR_ficha.pdf' },
-      { id: 'mirror', x: 42, y: 34, label: 'Mirror', material: 'ITALBOX — Backlit', detail: 'ITALBOX circular mirror with an integrated LED halo. Soft ambient glow framing a precise reflection.', url: 'https://italbox.pt/pt/produtos/espelhos/espelhos-com-iluminacao/redondo-' },
-      { id: 'faucet', x: 52, y: 56, label: 'Faucet', material: 'BRUMA — Brushed stainless steel', detail: 'Premium anti-fingerprint brushed stainless steel finish. Minimalist design with integrated temperature control.', url: 'https://www.bruma.pt/?page=products&prod=4596' },
-      { id: 'basin', x: 48, y: 62, label: 'Washbasin', material: 'ITALBOX — Solid surface', detail: 'ITALBOX Quadratum basin in seamless solid surface. Sharp geometry, warm to the touch, non-porous and easy to maintain.', url: 'https://italbox.pt/pt/produtos/lavatorios/solid-surface-1/bancada-lavatorio-quadratum-ss' },
-      { id: 'vanity', x: 38, y: 71, label: 'Vanity', material: 'ITALBOX — Oak veneer', detail: 'Wall-hung ITALBOX vanity in oak veneer. Natural grain warms the cool stone and ceramic around it.' },
-      { id: 'wc', x: 56, y: 73, label: 'WC', material: 'GEBERIT — Wall-hung', detail: 'GEBERIT wall-hung toilet with concealed cistern and flush plate. Floor stays clear for easier cleaning and a lighter visual footprint.', url: 'https://catalog.geberit.pt/pt-PT/product/PRO_1511968' },
-      { id: 'tile', x: 55, y: 90, label: 'Tile', material: 'MARAZZI — Grande Concrete Look White', detail: 'MARAZZI Grande Concrete Look White on walls and floor. Oversized slabs minimise grout lines for a continuous concrete-effect surface.', url: 'https://www.marazzitile.co.uk/collections/grande-concrete-look-collections/' },
+      { id: 'ceiling', x: 47, y: 4, label: 'Teto', material: 'Gesso cartonado RAL 9010', detail: 'Teto falso em gesso cartonado branco puro. Planos limpos que recuam para que a luz e a forma conduzam o espaço.' },
+      { id: 'shower', x: 73, y: 14, label: 'Duche', material: 'BRUMA — Sistema embutido', detail: 'Sistema de duche embutido BRUMA com chuveiro de parede e douchette. Válvulas ocultas mantêm a parede contínua.', url: 'https://www.bruma.pt/assets/INFO/new/1673602CR_ficha.pdf' },
+      { id: 'mirror', x: 43, y: 28, label: 'Espelho', material: 'ITALBOX — Retroiluminado', detail: 'Espelho redondo ITALBOX com halo LED integrado. Iluminação ambiente suave a enquadrar o reflexo.', url: 'https://italbox.pt/pt/produtos/espelhos/espelhos-com-iluminacao/redondo-' },
+      { id: 'faucet', x: 38, y: 49, label: 'Torneira', material: 'BRUMA — Aço inox escovado', detail: 'Torneira monocomando de lavatório BRUMA em aço inox escovado anti-impressões digitais. Design minimalista com controlo de temperatura integrado.', url: 'https://www.bruma.pt/?page=products&prod=4596' },
+      { id: 'basin', x: 40, y: 54, label: 'Lavatório', material: 'ITALBOX — Solid surface', detail: 'Lavatório ITALBOX Quadratum em solid surface. Geometria precisa, quente ao toque, não poroso e fácil de manter.', url: 'https://italbox.pt/pt/produtos/lavatorios/solid-surface-1/bancada-lavatorio-quadratum-ss' },
+      { id: 'vanity', x: 36, y: 64, label: 'Móvel', material: 'ITALBOX — Folheado a carvalho', detail: 'Móvel de lavatório suspenso ITALBOX em folheado de carvalho. O veio natural aquece a pedra e a cerâmica envolventes.' },
+      { id: 'wc', x: 54, y: 76, label: 'Sanita', material: 'GEBERIT — Suspensa', detail: 'Conjunto sanita suspensa GEBERIT com autoclismo oculto e comando de descarga. O chão fica livre para fácil limpeza.', url: 'https://catalog.geberit.pt/pt-PT/product/PRO_1511968' },
+      { id: 'tile', x: 55, y: 90, label: 'Cerâmico', material: 'MARAZZI — Grande Concrete Look White', detail: 'Cerâmico MARAZZI Grande Concrete Look White em paredes e pavimento. Placas de grande formato que minimizam juntas.', url: 'https://www.marazzitile.co.uk/collections/grande-concrete-look-collections/' },
     ],
   },
   {
     id: 'cozinha',
-    label: 'Kitchen',
+    label: 'Cozinha',
     image: './kitchen.png',
     spots: [
-      { id: 'ceiling', x: 42, y: 6, label: 'Ceiling', material: 'Plasterboard RAL 9010', detail: 'Smooth plasterboard ceiling in pure white. A quiet backdrop for the cabinetry and stone below.' },
-      { id: 'cab-upper', x: 72, y: 35, label: 'Upper cabinets', material: 'ONESKIN — Tortora', detail: 'ONESKIN cabinet finish in Tortora on the upper run — a warm muted taupe. Matte texture that diffuses light and resists fingerprints.', url: 'https://www.oneskin.pt/products_sub/tortora-1' },
-      { id: 'backsplash', x: 60, y: 44, label: 'Backsplash', material: 'COSENTINO — Dekton Keena', detail: 'Ultracompact Dekton in Keena, with soft marble veining. Heat-, stain- and scratch-resistant for an everyday-tough work surface.', url: 'https://www.cosentino.com/pt-pt/cores/dekton/keena/' },
-      { id: 'faucet', x: 55, y: 50, label: 'Faucet', material: 'BRUMA — Chrome', detail: 'BRUMA single-lever kitchen mixer with high swivel spout. Ceramic cartridge for precise flow and temperature.', url: 'https://www.bruma.pt/?page=products&prod=6625' },
-      { id: 'countertop', x: 50, y: 55, label: 'Countertop', material: 'COSENTINO — Dekton Keena', detail: 'Countertop in the same Dekton Keena as the backsplash. One material, one continuous surface from horizontal to vertical.', url: 'https://www.cosentino.com/pt-pt/cores/dekton/keena/' },
-      { id: 'cab-lower', x: 72, y: 65, label: 'Lower cabinets', material: 'ONESKIN — Sunny White', detail: 'ONESKIN cabinet finish in Sunny White on the lower run. A soft, warm white that reflects daylight without going clinical.', url: 'https://www.oneskin.pt/products_sub/sunny-white' },
-      { id: 'flooring', x: 35, y: 88, label: 'Flooring', material: 'Pine — Staggered lay', detail: 'Solid pine flooring laid in a staggered (offset) pattern. Random plank lengths add rhythm and grounded warmth underfoot.' },
+      { id: 'ceiling', x: 42, y: 3, label: 'Teto', material: 'Gesso cartonado RAL 9010', detail: 'Teto falso em gesso cartonado branco puro. Um fundo silencioso para a marcenaria e a pedra.' },
+      { id: 'cab-upper', x: 75, y: 30, label: 'Armários superiores', material: 'ONESKIN — Tortora', detail: 'Revestimento ONESKIN cor Tortora nos armários superiores — um taupe suave e quente. Textura mate que difunde a luz e resiste a impressões digitais.', url: 'https://www.oneskin.pt/products_sub/tortora-1' },
+      { id: 'backsplash', x: 62, y: 42, label: 'Backsplash', material: 'COSENTINO — Dekton Keena', detail: 'Backsplash em composto dekton COSENTINO, referência Keena. Resistente ao calor, manchas e riscos.', url: 'https://www.cosentino.com/pt-pt/cores/dekton/keena/' },
+      { id: 'faucet', x: 68, y: 48, label: 'Torneira', material: 'BRUMA — Cromada', detail: 'Torneira monocomando de lava-loiça BRUMA com bica alta giratória. Cartucho cerâmico para controlo preciso de caudal e temperatura.', url: 'https://www.bruma.pt/?page=products&prod=6625' },
+      { id: 'countertop', x: 55, y: 54, label: 'Tampo', material: 'COSENTINO — Dekton Keena', detail: 'Tampo igual ao backsplash. Um material, uma superfície contínua do horizontal ao vertical.', url: 'https://www.cosentino.com/pt-pt/cores/dekton/keena/' },
+      { id: 'cab-lower', x: 75, y: 66, label: 'Armários inferiores', material: 'ONESKIN — Sunny White', detail: 'Revestimento ONESKIN cor Sunny White nos armários inferiores. Um branco suave e quente que reflete a luz natural sem parecer clínico.', url: 'https://www.oneskin.pt/products_sub/sunny-white' },
+      { id: 'flooring', x: 35, y: 90, label: 'Pavimento', material: 'Madeira de pinho — Contra-fiado', detail: 'Pavimento em madeira de pinho com aplicação contra-fiado. Comprimentos aleatórios que acrescentam ritmo e calor ao espaço.' },
     ],
   },
 ];
@@ -1867,7 +1867,7 @@ function AcabamentosPanel({ spot, onClose }) {
             fontSize: 11, letterSpacing: '0.1em', color: C.terracota,
             textDecoration: 'none', marginTop: 8, display: 'inline-block',
             fontFamily: '"General Sans", system-ui, sans-serif', fontWeight: 500,
-          }}>Ver produto →</a>
+          }}>Ver ficha técnica →</a>
         )}
       </div>
 
