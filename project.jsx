@@ -2638,7 +2638,7 @@ function FloatingButtons() {
       display: 'flex', flexDirection: 'column', gap: isMobile ? 8 : 12, alignItems: 'center',
     }}>
       <a
-        href="https://wa.me/351XXXXXXXXX"
+        href="https://wa.me/351916503974"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
