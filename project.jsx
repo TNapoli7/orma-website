@@ -2063,11 +2063,11 @@ function Acabamentos() {
         {/* Interactive image with hotspots */}
         <div ref={imgWrapRef} style={{
           position: 'relative', width: '100%', borderRadius: 12, overflow: 'hidden',
-          aspectRatio: isMobile ? '4/3' : '16/9', background: C.grey, opacity: 0,
+          background: C.grey, opacity: 0,
         }}>
           <div
             ref={containerRef}
-            style={{ position: 'absolute', inset: 0 }}
+            style={{ position: 'relative', width: '100%' }}
           >
             {/* Arrow buttons to switch rooms */}
             {ACABAMENTOS_ROOMS.length > 1 && !isMobile && (
@@ -2104,7 +2104,7 @@ function Acabamentos() {
             <img
               src={room.image} alt={room.label} loading="lazy"
               style={{
-                position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+                display: 'block', width: '100%', height: 'auto',
                 filter: isOpen && !isMobile ? 'brightness(0.6)' : 'brightness(1)',
                 transform: isOpen && !isMobile ? 'scale(1.02)' : 'scale(1)',
                 transition: 'filter 0.5s ease, transform 0.7s ease',
