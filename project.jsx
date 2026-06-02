@@ -1819,10 +1819,10 @@ const ACABAMENTOS_ROOMS = [
       { id: 'ceiling', x: 33, y: 2, label: 'Teto', material: 'Gesso cartonado RAL 9010', detail: 'Teto falso em gesso cartonado branco puro. Um fundo silencioso para a marcenaria e a pedra.' },
       { id: 'cab-upper', x: 68, y: 18, label: 'Armários superiores', material: 'ONESKIN — Tortora', detail: 'Revestimento ONESKIN cor Tortora nos armários superiores — um taupe suave e quente. Textura mate que difunde a luz e resiste a impressões digitais.', url: 'https://www.oneskin.pt/products_sub/tortora-1' },
       { id: 'backsplash', x: 58, y: 42, label: 'Backsplash', material: 'COSENTINO — Dekton Keena', detail: 'Backsplash em composto dekton COSENTINO, referência Keena. Resistente ao calor, manchas e riscos.', url: 'https://www.cosentino.com/pt-pt/cores/dekton/keena/' },
-      { id: 'faucet', x: 70, y: 50, label: 'Torneira', material: 'BRUMA — Cromada', detail: 'Torneira monocomando de lava-loiça BRUMA com bica alta giratória. Cartucho cerâmico para controlo preciso de caudal e temperatura.', url: 'https://www.bruma.pt/?page=products&prod=6625' },
-      { id: 'countertop', x: 48, y: 55, label: 'Tampo', material: 'COSENTINO — Dekton Keena', detail: 'Tampo igual ao backsplash. Um material, uma superfície contínua do horizontal ao vertical.', url: 'https://www.cosentino.com/pt-pt/cores/dekton/keena/' },
-      { id: 'cab-lower', x: 72, y: 68, label: 'Armários inferiores', material: 'ONESKIN — Sunny White', detail: 'Revestimento ONESKIN cor Sunny White nos armários inferiores. Um branco suave e quente que reflete a luz natural sem parecer clínico.', url: 'https://www.oneskin.pt/products_sub/sunny-white' },
-      { id: 'flooring', x: 30, y: 96, label: 'Pavimento', material: 'Madeira de pinho — Contra-fiado', detail: 'Pavimento em madeira de pinho com aplicação contra-fiado. Comprimentos aleatórios que acrescentam ritmo e calor ao espaço.' },
+      { id: 'faucet', x: 65, y: 50, label: 'Torneira', material: 'BRUMA — Cromada', detail: 'Torneira monocomando de lava-loiça BRUMA com bica alta giratória. Cartucho cerâmico para controlo preciso de caudal e temperatura.', url: 'https://www.bruma.pt/?page=products&prod=6625' },
+      { id: 'countertop', x: 48, y: 60, label: 'Tampo', material: 'COSENTINO — Dekton Keena', detail: 'Tampo igual ao backsplash. Um material, uma superfície contínua do horizontal ao vertical.', url: 'https://www.cosentino.com/pt-pt/cores/dekton/keena/' },
+      { id: 'cab-lower', x: 66, y: 68, label: 'Armários inferiores', material: 'ONESKIN — Sunny White', detail: 'Revestimento ONESKIN cor Sunny White nos armários inferiores. Um branco suave e quente que reflete a luz natural sem parecer clínico.', url: 'https://www.oneskin.pt/products_sub/sunny-white' },
+      { id: 'flooring', x: 8, y: 95, label: 'Pavimento', material: 'Madeira de pinho — Contra-fiado', detail: 'Pavimento em madeira de pinho com aplicação contra-fiado. Comprimentos aleatórios que acrescentam ritmo e calor ao espaço.' },
     ],
   },
 ];
@@ -1836,7 +1836,7 @@ function AcabamentosPanel({ spot, onClose }) {
       borderTop: '1px solid rgba(255,255,255,0.08)',
       display: 'flex', alignItems: 'center', gap: 40,
       padding: '28px 40px',
-      zIndex: 20,
+      zIndex: 30,
     }}>
       {/* Material badge */}
       <div style={{
