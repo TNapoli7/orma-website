@@ -2113,9 +2113,9 @@ function Footer() {
         transform: 'translateX(-50%)',
         pointerEvents: 'none',
         opacity: 0.06,
-        width: isMobile ? 440 : 770,
+        width: isMobile ? 418 : 732,
       }}>
-        <img src="./orma-watermark.svg" alt="" style={{ width: '100%', height: 'auto' }} />
+        <img src="./orma-bege-2.svg" alt="" style={{ width: '100%', height: 'auto' }} />
       </div>
 
       {/* Main content */}
@@ -2269,7 +2269,7 @@ function Footer() {
           fontSize: 12, color: 'rgba(177,180,169,0.6)', letterSpacing: '0.04em',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <img src="./orma-bege-2.svg" alt="Orma" loading="lazy" style={{ height: 26, width: 'auto', display: 'block' }} />
+            <img src="./orma-bege-2.svg" alt="Orma" loading="lazy" style={{ height: 28, width: 'auto', display: 'block' }} />
             <span>© {new Date().getFullYear()} Orma. All rights reserved.</span>
           </div>
           <div style={{ display: 'flex', gap: 24 }}>
