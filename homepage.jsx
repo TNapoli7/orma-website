@@ -1826,7 +1826,7 @@ function Sustainability() {
     return (
       <section id="sustainability" style={{ background: C.bege, overflow: 'hidden' }}>
         <div style={{ height: 300, overflow: 'hidden' }}>
-          <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400&q=80" alt="Sustainability"
+          <img src="./4_Edit.png" alt="Sustainability"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
         <div style={{ padding: '48px 24px 80px' }}>
@@ -1855,7 +1855,7 @@ function Sustainability() {
         position: 'absolute', top: 0, left: '0%', width: '100%', height: '100%',
         overflow: 'hidden', zIndex: 2,
       }}>
-        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1800&q=80" alt="Sustainability"
+        <img src="./4_Edit.png" alt="Sustainability"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         <div style={{
           position: 'absolute', inset: 0,
