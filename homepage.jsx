@@ -756,7 +756,7 @@ function PillarIconTrust() {
 
 const PILLAR_SVG = { land: PillarIconLand, design: PillarIconDesign, trust: PillarIconTrust };
 
-function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRef, titleRef, isMobile }) {
+function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRef, titleRef, treeRef, isMobile }) {
   const [hovered, setHovered] = useState(false);
   const IconComponent = PILLAR_SVG[item.kind];
 
@@ -821,9 +821,13 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
           }}>{item.body}</p>
         </div>
 
+        <div ref={treeRef} style={{ display: 'none' }} />
       </div>
     );
   }
+
+  const treeRotations = [0, 0, 0];
+  const treeSizes = [220, 200, 190];
 
   return (
     <div style={{
@@ -832,6 +836,23 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
       position: 'relative',
       marginBottom: index < 2 ? 140 : 0,
     }}>
+      {/* Tree on the OPPOSITE side */}
+      {!isLeft && (
+        <div ref={treeRef} className="pillar-tree" style={{
+          width: 'calc(50% - 80px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          marginRight: 'auto',
+          pointerEvents: 'none',
+        }}>
+          <div style={{
+            width: treeSizes[index], height: treeSizes[index],
+            transform: 'rotate(' + treeRotations[index] + 'deg)',
+          }}>
+            <TreeMark opacity={0.12} style={{ filter: 'sepia(1) saturate(0.3) hue-rotate(60deg) brightness(0.92)' }} />
+          </div>
+        </div>
+      )}
+
       {/* Timeline dot */}
       <div ref={dotRef} style={{
         position: 'absolute', left: '50%', top: '50%',
@@ -908,6 +929,22 @@ function PillarCard({ item, index, isLeft, itemRef, dotRef, connectorRef, iconRe
         }}>{item.body}</p>
       </div>
 
+      {/* Tree on the OPPOSITE side */}
+      {isLeft && (
+        <div ref={treeRef} className="pillar-tree" style={{
+          width: 'calc(50% - 80px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          marginLeft: 'auto',
+          pointerEvents: 'none',
+        }}>
+          <div style={{
+            width: treeSizes[index], height: treeSizes[index],
+            transform: 'rotate(' + treeRotations[index] + 'deg)',
+          }}>
+            <TreeMark opacity={0.12} style={{ filter: 'sepia(1) saturate(0.3) hue-rotate(60deg) brightness(0.92)' }} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -921,7 +958,7 @@ function Pillars() {
   const connectorRefs = useRef([]);
   const iconRefs = useRef([]);
   const titleRefs = useRef([]);
-  const bgTreeRef = useRef(null);
+  const treeRefs = useRef([]);
   const headingRef = useRef(null);
 
   const items = [
@@ -1060,28 +1097,26 @@ function Pillars() {
         triggers.push(titleTween.scrollTrigger);
       }
 
+      // Tree on opposite side — subtle fade + scale
+      const tree = treeRefs.current[i];
+      if (tree) {
+        const treeTween = gsap.fromTo(tree,
+          { opacity: 0, scale: 0.85 },
+          {
+            opacity: 1, scale: 1,
+            duration: 1.2,
+            delay: 0.5,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 80%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+        triggers.push(treeTween.scrollTrigger);
+      }
     });
-
-    // Background tree — parallax scroll
-    const bgTree = bgTreeRef.current;
-    if (bgTree) {
-      const yStart = isMobile ? -5 : -10;
-      const yEnd = isMobile ? 5 : 10;
-      const treeTween = gsap.fromTo(bgTree,
-        { yPercent: yStart },
-        {
-          yPercent: yEnd,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 0.8,
-          },
-        }
-      );
-      triggers.push(treeTween.scrollTrigger);
-    }
 
     return () => triggers.forEach(t => t && t.kill());
   }, []);
@@ -1093,34 +1128,6 @@ function Pillars() {
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Background tree — large, centered, parallax */}
-      <div style={{
-        position: 'absolute',
-        top: 0, left: 0, right: 0, bottom: 0,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        pointerEvents: 'none',
-        zIndex: 0,
-        overflow: 'hidden',
-      }}>
-        <div ref={bgTreeRef} style={{
-          width: isMobile ? 684 : 1368,
-          height: isMobile ? 684 : 1368,
-          flexShrink: 0,
-        }}>
-          <div style={{
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            backgroundImage: 'url(./orma-arvore.svg)',
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            opacity: 0.275,
-            filter: 'sepia(1) saturate(0.15) hue-rotate(60deg) brightness(0.33)',
-          }} aria-hidden="true" />
-        </div>
-      </div>
-
       {/* Section heading — WordReveal */}
       <div style={{ textAlign: 'center', marginBottom: isMobile ? 48 : 100, position: 'relative', zIndex: 1 }}>
         <div style={{
@@ -1172,6 +1179,7 @@ function Pillars() {
               connectorRef={el => connectorRefs.current[i] = el}
               iconRef={el => iconRefs.current[i] = el}
               titleRef={el => titleRefs.current[i] = el}
+              treeRef={el => treeRefs.current[i] = el}
             />
           );
         })}
