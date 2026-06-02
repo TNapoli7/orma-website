@@ -25,8 +25,9 @@ const PROJECTS = {
     hero: 'https://tiagoc108.sg-host.com/wp-content/uploads/2026/04/Tardoz_Sunset-scaled.png',
     heroVideo: 'assets/hero-project.mp4',
     render: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mattis vel risus a euismod. Nulla id egestas elit. Aliquam pretium posuere risus, in vestibulum arcu semper ac. Vestibulum nec enim at odio accumsan euismod sed et nisl. Maecenas posuere malesuada dolor nec tincidunt. Donec placerat dignissim diam volutpat pretium. Nunc eget vestibulum ex, ut porttitor lectus. Cras tristique elit ultricies, suscipit lorem eu, fermentum odio. Pellentesque sodales scelerisque neque vitae rutrum.',
-    descriptionExtra: 'Cras ullamcorper finibus turpis. Aliquam erat volutpat. Integer imperdiet arcu et tincidunt venenatis. Cras ultricies nec odio quis ullamcorper. Aenean posuere magna eu enim volutpat, ut efficitur magna dapibus. Vivamus et maximus nisl. Donec lacinia risus at placerat tempor. Morbi in maximus dui, a feugiat arcu.',
+    conceptTitle: 'Amplitude, Luz, Acção.',
+    description: 'No centro da arquitetura, um vazio vertical atravessa todos os pisos para criar continuidade entre a luz, a circulação e o espaço. Este elemento repete-se ao longo de toda a fachada, unindo-a numa linguagem silenciosamente comum.',
+    descriptionExtra: 'O Lir 725 explora a proximidade com o mar através de áreas generosas, profundidade dimensional e uma relação constante com a luz natural. Em cada divisão, os grandes vãos prolongam o espaço para o exterior e reforçam a sensação de abertura ao longo da casa.',
     stats: [
       { label: 'Units', value: '[TBD]' },
       { label: 'Typologies', value: '[TBD]' },
@@ -38,43 +39,26 @@ const PROJECTS = {
     galleries: {
       interior: [
         {
-          name: 'Casas de Banho',
+          name: 'Interior',
           images: [
-            'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1920&q=80',
-            'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1920&q=80',
-            'https://images.unsplash.com/photo-1620626011761-996317b8d101?w=1920&q=80',
-          ],
-        },
-        {
-          name: 'Cozinhas',
-          images: [
-            'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80',
-            'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80',
-            'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1920&q=80',
-          ],
-        },
-        {
-          name: 'Quartos',
-          images: [
-            'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1920&q=80',
-            'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1920&q=80',
+            './Interior.png',
+            './Cobertura_2.png',
+            './LIR KITCHEN_opt 1.png',
+            './LIR WC02_02_Edit-2.jpg',
+            './LIR_Bedroom_07.png',
           ],
         },
       ],
       exterior: [
         {
-          name: 'Jardim',
+          name: 'Exterior',
           images: [
-            'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80',
-            'https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=1920&q=80',
-            'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80',
-          ],
-        },
-        {
-          name: 'Estacionamento',
-          images: [
-            'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?w=1920&q=80',
-            'https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?w=1920&q=80',
+            './1_Edit.png',
+            './2_Edit.png',
+            './3_Edit.png',
+            './4_Edit.png',
+            './5_Edit.png',
+            './Tardoz_Sunset-3.jpg',
           ],
         },
       ],
@@ -1043,7 +1027,7 @@ function ConceptRender({ project }) {
             letterSpacing: '-0.02em', color: C.ink, margin: '0 0 28px',
             perspective: 600,
           }}>
-            {project.name.split(' ').map((word, i) => (
+            {(project.conceptTitle || project.name).split(' ').map((word, i) => (
               <span key={i} className="cr-title-word" style={{
                 display: 'inline-block', opacity: 0, marginRight: '0.25em',
                 transformOrigin: 'bottom left',
@@ -1056,9 +1040,16 @@ function ConceptRender({ project }) {
               text={project.description}
               style={{
                 fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
-                margin: 0, maxWidth: 520, fontFamily: '"General Sans", system-ui, sans-serif',
+                margin: '0 0 20px', maxWidth: 520, fontFamily: '"General Sans", system-ui, sans-serif',
               }}
             />
+          )}
+          {project.descriptionExtra && (
+            <p style={{
+              fontSize: isMobile ? 15 : 16, lineHeight: 1.85, color: C.green,
+              margin: 0, maxWidth: 520, fontFamily: '"General Sans", system-ui, sans-serif',
+              opacity: 0.75,
+            }}>{project.descriptionExtra}</p>
           )}
         </div>
 
